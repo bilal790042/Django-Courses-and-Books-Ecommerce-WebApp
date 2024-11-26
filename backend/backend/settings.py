@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from environs import Env
+env = Env()
+env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,6 +30,7 @@ SECRET_KEY = "django-insecure-5z7e)3m*5=d_iln#tsvh#-350%rp%+ans6d&h8obmm4lq2-gis
 DEBUG = True
 
 ALLOWED_HOSTS = []
+AUTH_USER_MODEL = 'userauths.User'
 
 
 # Application definition
@@ -33,6 +38,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'jazzmin',
     "django.contrib.admin",
+    
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -41,11 +47,19 @@ INSTALLED_APPS = [
 
     'core',
     'userauths',
-    'api'
+    'api',
+    
+    'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
+	'corsheaders',
+    'anymail',
+    'drf_yasg',
+    
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    # "django.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -56,10 +70,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "backend.urls"
 
+from datetime import timedelta
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, 'templates')],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -85,6 +101,19 @@ DATABASES = {
     }
 }
 
+
+# MAILGUN_SECRET_KEY = env("MAILGUN_SECRET_KEY")
+# MAILERSEND_API_TOKEN = env("MAILERSEND_API_TOKEN")
+# MAILERSEND_SENDER_DOMAIN = env("MAILGUN_SENDER_DOMAIN")
+
+# ANYMAIL = {
+#     "MAILGUN_API_KEY": env("MAILGUN_API_KEY"),
+#     "MAILGUN_SENDER_DOMAIN": env("MAILGUN_SENDER_DOMAIN"),
+
+# }
+
+# FROM_EMAIL = env("FROM_EMAIL")
+# EMAIL_BACKED = 'anymail.backends.mailgun.EmailBackend'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -122,6 +151,25 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+# STATIC_ROOT = BASE_DIR / 'templates'
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR/ 'media'
+
+# STATIC_URL = "/static/"
+
+# # Specify directories to look for additional static files
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
+# # Directory where static files will be collected
+STATIC_ROOT = os.path.join(BASE_DIR, "templates")
+
+# # Media files configuration
+# MEDIA_URL = "/media/"
+# MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -150,3 +198,42 @@ JAZZMIN_SETTINGS = {
 
     "show_ui_builder": True,
 }
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=50),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN': False,
+
+    'ALGORITHM': 'HS256',
+
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+    'JWK_URL': None,
+    'LEEWAY': 0,
+
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
+
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+    'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
+
+    'JTI_CLAIM': 'jti',
+
+    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+}
+
+
+
+
+# Set coresheader to allow all origin
+CORS_ALLOW_ALL_ORIGINS = True
