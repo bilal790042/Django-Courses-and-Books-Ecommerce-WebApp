@@ -11,8 +11,8 @@ class User(AbstractUser):
     otp = models.CharField(max_length=100, null=True, blank=True)
     refresh_token = models.CharField(max_length=1000, null= True, blank=True)
     
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    # USERNAME_FIELD = 'email'
+    # REQUIRED_FIELDS = ['username']
    
     def __str__(self):
         return self.email
@@ -57,9 +57,9 @@ class Profile(models.Model):
 
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        Profile.objects.create(user = instance, **kwargs)
+        Profile.objects.create(user = instance)
 
-def save_user_profile(sender, instance, **kwargs):
+def save_user_profile(sender, instance,*args, **kwargs):
     instance.profile.save()
 
 post_save.connect(create_user_profile, sender=User)
