@@ -46,25 +46,28 @@ class PasswordResetEmailVerifyAPIView(generics.RetrieveAPIView):
            user.save() 
 
            link = f"http://localhost:5173/create-new-password/?otp={user.otp}&uuidb64= {uuidb64}&=refresh_token{refresh_token}"
-        #    merge_data = {
-        #        "link": link,
-        #        "username": user.username
-        #    }
+           merge_data = {
+               "link": link,
+               "username": user.username
+           }
+           context = {
+            "user": user,
+            "reset_url": "http://127.0.0.1:8000/api/v1/user/password-reset/<email>/",  # Replace with your actual reset URL
+        }
 
-        #    subject = "Password Rest Email"
-        #    text_body = render_to_string("email/password_reset.txt", context)
-        #    html_body = render_to_string("email/password_reset.html", context)
+           subject = "Password Rest Email"
+           text_body = render_to_string("email/password_reset.txt", context)
+           html_body = render_to_string("email/password_reset.html", context)
 
-        #    msg = EmailMultiAlternatives(
-        #        subject= subject,
-        #        from_email = settings.FROM_EMAIL,
-        #        to = [user.email],
-        #        body=text_body
-        #    )
+           msg = EmailMultiAlternatives(
+               subject= subject,
+               from_email = settings.FROM_EMAIL,
+               to = [user.email],
+               body=text_body
+           )
 
-        #    msg.attach_alternative(html_body, "text/html")
-        #    msg.send()
-
+           msg.attach_alternative(html_body, "text/html")
+           msg.send()
 
            print("link ======", link)
            return user

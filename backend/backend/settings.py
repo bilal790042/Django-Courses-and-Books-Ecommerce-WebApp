@@ -103,18 +103,20 @@ DATABASES = {
 }
 
 
-# MAILGUN_SECRET_KEY = env("MAILGUN_SECRET_KEY")
-# MAILERSEND_API_TOKEN = env("MAILERSEND_API_TOKEN")
-# MAILERSEND_SENDER_DOMAIN = env("MAILGUN_SENDER_DOMAIN")
+MAILGUN_SECRET_KEY = env("MAILGUN_SECRET_KEY")
+MAILERSEND_API_TOKEN = env("MAILERSEND_API_TOKEN")
+MAILERSEND_SENDER_DOMAIN = env("MAILGUN_SENDER_DOMAIN")
 
-# ANYMAIL = {
-#     "MAILGUN_API_KEY": env("MAILGUN_API_KEY"),
-#     "MAILGUN_SENDER_DOMAIN": env("MAILGUN_SENDER_DOMAIN"),
+ANYMAIL = {
+    "MAILGUN_API_KEY": env("MAILGUN_API_KEY"),
+    "MAILGUN_SENDER_DOMAIN": env("MAILGUN_SENDER_DOMAIN"),
 
-# }
+}
 
-# FROM_EMAIL = env("FROM_EMAIL")
-# EMAIL_BACKED = 'anymail.backends.mailgun.EmailBackend'
+FROM_EMAIL = env("FROM_EMAIL")
+# EMAIL_BACKEND = 'anymail.backends.mailgun.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "no-reply@bilalcompany.com"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
