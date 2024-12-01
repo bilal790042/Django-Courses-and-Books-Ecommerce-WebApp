@@ -1,10 +1,38 @@
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom'
+
+import apiInstance from '../../utils/axios';
 import React from 'react'
 import BaseHeader from '../partials/BaseHeader'
 import BaseFooter from '../partials/BaseFooter'
-import { Link } from 'react-router-dom'
+import { register } from '../../utils/auth';
+
 
 
 function Register() {
+  const [fullname, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [password2, setPassword2] = useState(""); 
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const navigate = useNavigate();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    
+    
+    const {error} = await register(fullname, email, password,password2); 
+
+    if (error) {
+      alert(error);
+      setIsLoading(false);
+    } else {
+      navigate("/");
+      alert("Registration Successfull");
+      setIsLoading(false);
+    }
+  };
   return (
     <>
       <BaseHeader />
@@ -24,17 +52,20 @@ function Register() {
                   </span>
                 </div>
                 {/* Form */}
-                <form className="needs-validation" noValidate="">
+                <form className="needs-validation" noValidate="" 
+                   onSubmit={handleSubmit}
+                >
                   {/* Username */}
                   <div className="mb-3">
                     <label htmlFor="email" className="form-label">Full Name</label>
                     <input
                       type="text"
-                      id="full_name"
+                      id="fullname"
                       className="form-control"
-                      name="full_name"
+                      name="fullname"
                       placeholder="John Doe"
                       required=""
+                      onChange={(e) => setFullName(e.target.value)}
                     />
                   </div>
                   <div className="mb-3">
@@ -46,6 +77,7 @@ function Register() {
                       name="email"
                       placeholder="johndoe@gmail.com"
                       required=""
+                      onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
                   
@@ -59,6 +91,7 @@ function Register() {
                       name="password"
                       placeholder="**************"
                       required=""
+                      onChange={(e) => setPassword(e.target.value)}
                     />
                   </div>
                   <div className="mb-3">
@@ -70,13 +103,23 @@ function Register() {
                       name="password"
                       placeholder="**************"
                       required=""
+                      onChange={(e) => setPassword2(e.target.value)}
                     />
                   </div>
                   <div>
                     <div className="d-grid">
-                      <button type="submit" className="btn btn-primary">
+                      {isLoading === true && (
+                        <button disabled type="submit" className="btn btn-primary">
+                        Processing <i className='fas fa-spinner fa-spin'></i>
+                        </button>
+                      )}
+
+                        {isLoading === false && (
+                        <button type="submit" className="btn btn-primary">
                         Sign Up <i className='fas fa-user-plus'></i>
-                      </button>
+                        </button>
+                      )}
+
                     </div>
                   </div>
                 </form>

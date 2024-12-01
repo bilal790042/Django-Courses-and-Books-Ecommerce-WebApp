@@ -1,10 +1,19 @@
 import React from 'react'
 import BaseHeader from '../partials/BaseHeader'
 import BaseFooter from '../partials/BaseFooter'
+import { logout } from '../../utils/auth'
+import { useEffect } from 'react'
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 
 
+ 
 function Logout() {
-  return (
+  useEffect(() => {
+    logout(); 
+    alert("You have been logged out");
+  }, []);
+
+  return ( 
     <>
       <BaseHeader />
 
@@ -19,16 +28,19 @@ function Logout() {
                     Thanks for visiing our website, come back anytime!
                   </span>
                 </div>
-                <form className="needs-validation mt-5" noValidate="">
-                  <div className="d-grid d-flex">
-                    <button type="submit" className="btn btn-primary me-2 w-100">
-                      Login <i className='fas fa-sign-in-alt'></i>
-                    </button>
-                    <button type="submit" className="btn btn-primary w-100">
-                      Register <i className='fas fa-user-plus'></i>
-                    </button>
-                  </div>
-                </form>
+
+              <form className="needs-validation mt-5" noValidate>
+                <div className="d-grid d-flex">
+                  <Link to="/login/" className="btn btn-primary me-2 w-100">
+                    Login <i className="fas fa-sign-in-alt"></i>
+                  </Link>
+                  
+                  <Link to="/register/" className="btn btn-primary w-100">
+                    Register <i className="fas fa-user-plus"></i>
+                  </Link>
+                </div>
+              </form>
+
               </div>
             </div>
           </div>
@@ -40,4 +52,4 @@ function Logout() {
   )
 }
 
-export default Logout
+export default Logout;

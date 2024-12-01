@@ -200,8 +200,6 @@ JAZZMIN_SETTINGS = {
 
     "show_ui_builder": True,
 }
-
-
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=50),
@@ -235,11 +233,6 @@ SIMPLE_JWT = {
 }
 
 
-
-
-# Set coresheader to allow all origin
 CORS_ALLOW_ALL_ORIGINS = True
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Replace with your frontend URL
-]
+

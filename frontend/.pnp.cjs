@@ -1811,7 +1811,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["browserslist", "npm:4.24.2"],\
           ["caniuse-lite", "npm:1.0.30001684"],\
-          ["electron-to-chromium", "npm:1.5.66"],\
+          ["electron-to-chromium", "npm:1.5.67"],\
           ["node-releases", "npm:2.0.18"],\
           ["update-browserslist-db", "virtual:0bc5f13e3b070c660ccf3396ff30b6fc44ede2343c6543d593ce4624807ab1bafdbcd764ac20b4d55e6854e63e2568f1c6d09371eb639766b95e2d401b5b05cb#npm:1.1.1"]\
         ],\
@@ -2112,7 +2112,7 @@ const RAW_RUNTIME_STATE =
           ["define-data-property", "npm:1.1.4"],\
           ["es-define-property", "npm:1.0.0"],\
           ["es-errors", "npm:1.3.0"],\
-          ["gopd", "npm:1.0.1"]\
+          ["gopd", "npm:1.1.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -2186,10 +2186,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["electron-to-chromium", [\
-      ["npm:1.5.66", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/electron-to-chromium-npm-1.5.66-79cae5f089-10c0.zip/node_modules/electron-to-chromium/",\
+      ["npm:1.5.67", {\
+        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/electron-to-chromium-npm-1.5.67-1838619444-10c0.zip/node_modules/electron-to-chromium/",\
         "packageDependencies": [\
-          ["electron-to-chromium", "npm:1.5.66"]\
+          ["electron-to-chromium", "npm:1.5.67"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -2259,7 +2259,7 @@ const RAW_RUNTIME_STATE =
           ["get-intrinsic", "npm:1.2.4"],\
           ["get-symbol-description", "npm:1.0.2"],\
           ["globalthis", "npm:1.0.4"],\
-          ["gopd", "npm:1.0.1"],\
+          ["gopd", "npm:1.1.0"],\
           ["has-property-descriptors", "npm:1.0.2"],\
           ["has-proto", "npm:1.0.3"],\
           ["has-symbols", "npm:1.0.3"],\
@@ -2325,7 +2325,7 @@ const RAW_RUNTIME_STATE =
           ["function-bind", "npm:1.1.2"],\
           ["get-intrinsic", "npm:1.2.4"],\
           ["globalthis", "npm:1.0.4"],\
-          ["gopd", "npm:1.0.1"],\
+          ["gopd", "npm:1.1.0"],\
           ["has-property-descriptors", "npm:1.0.2"],\
           ["has-proto", "npm:1.0.3"],\
           ["has-symbols", "npm:1.0.3"],\
@@ -2979,16 +2979,16 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["globalthis", "npm:1.0.4"],\
           ["define-properties", "npm:1.2.1"],\
-          ["gopd", "npm:1.0.1"]\
+          ["gopd", "npm:1.1.0"]\
         ],\
         "linkType": "HARD"\
       }]\
     ]],\
     ["gopd", [\
-      ["npm:1.0.1", {\
-        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/gopd-npm-1.0.1-10c1d0b534-10c0.zip/node_modules/gopd/",\
+      ["npm:1.1.0", {\
+        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/gopd-npm-1.1.0-8f54f55643-10c0.zip/node_modules/gopd/",\
         "packageDependencies": [\
-          ["gopd", "npm:1.0.1"],\
+          ["gopd", "npm:1.1.0"],\
           ["get-intrinsic", "npm:1.2.4"]\
         ],\
         "linkType": "HARD"\
@@ -4656,7 +4656,7 @@ const RAW_RUNTIME_STATE =
           ["es-abstract", "npm:1.23.5"],\
           ["es-errors", "npm:1.3.0"],\
           ["get-intrinsic", "npm:1.2.4"],\
-          ["gopd", "npm:1.0.1"],\
+          ["gopd", "npm:1.1.0"],\
           ["which-builtin-type", "npm:1.2.0"]\
         ],\
         "linkType": "HARD"\
@@ -4822,7 +4822,7 @@ const RAW_RUNTIME_STATE =
           ["es-errors", "npm:1.3.0"],\
           ["function-bind", "npm:1.1.2"],\
           ["get-intrinsic", "npm:1.2.4"],\
-          ["gopd", "npm:1.0.1"],\
+          ["gopd", "npm:1.1.0"],\
           ["has-property-descriptors", "npm:1.0.2"]\
         ],\
         "linkType": "HARD"\
@@ -5005,7 +5005,7 @@ const RAW_RUNTIME_STATE =
           ["es-errors", "npm:1.3.0"],\
           ["es-object-atoms", "npm:1.0.0"],\
           ["get-intrinsic", "npm:1.2.4"],\
-          ["gopd", "npm:1.0.1"],\
+          ["gopd", "npm:1.1.0"],\
           ["has-symbols", "npm:1.0.3"],\
           ["internal-slot", "npm:1.0.7"],\
           ["regexp.prototype.flags", "npm:1.5.3"],\
@@ -5189,7 +5189,7 @@ const RAW_RUNTIME_STATE =
           ["typed-array-byte-length", "npm:1.0.1"],\
           ["call-bind", "npm:1.0.7"],\
           ["for-each", "npm:0.3.3"],\
-          ["gopd", "npm:1.0.1"],\
+          ["gopd", "npm:1.1.0"],\
           ["has-proto", "npm:1.0.3"],\
           ["is-typed-array", "npm:1.1.13"]\
         ],\
@@ -5204,7 +5204,7 @@ const RAW_RUNTIME_STATE =
           ["available-typed-arrays", "npm:1.0.7"],\
           ["call-bind", "npm:1.0.7"],\
           ["for-each", "npm:0.3.3"],\
-          ["gopd", "npm:1.0.1"],\
+          ["gopd", "npm:1.1.0"],\
           ["has-proto", "npm:1.0.3"],\
           ["is-typed-array", "npm:1.1.13"],\
           ["reflect.getprototypeof", "npm:1.0.7"]\
@@ -5219,7 +5219,7 @@ const RAW_RUNTIME_STATE =
           ["typed-array-length", "npm:1.0.7"],\
           ["call-bind", "npm:1.0.7"],\
           ["for-each", "npm:0.3.3"],\
-          ["gopd", "npm:1.0.1"],\
+          ["gopd", "npm:1.1.0"],\
           ["is-typed-array", "npm:1.1.13"],\
           ["possible-typed-array-names", "npm:1.0.0"],\
           ["reflect.getprototypeof", "npm:1.0.7"]\
@@ -5503,7 +5503,7 @@ const RAW_RUNTIME_STATE =
           ["available-typed-arrays", "npm:1.0.7"],\
           ["call-bind", "npm:1.0.7"],\
           ["for-each", "npm:0.3.3"],\
-          ["gopd", "npm:1.0.1"],\
+          ["gopd", "npm:1.1.0"],\
           ["has-tostringtag", "npm:1.0.2"]\
         ],\
         "linkType": "HARD"\

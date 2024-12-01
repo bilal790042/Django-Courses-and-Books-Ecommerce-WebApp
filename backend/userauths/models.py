@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
+from django.contrib.auth.hashers import make_password
 
 # Create your models here.
 
@@ -11,8 +12,8 @@ class User(AbstractUser):
     otp = models.CharField(max_length=100, null=True, blank=True)
     refresh_token = models.CharField(max_length=1000, null= True, blank=True)
     
-    # USERNAME_FIELD = 'email'
-    # REQUIRED_FIELDS = ['username']
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['full_name']
    
     def __str__(self):
         return self.email
@@ -21,7 +22,7 @@ class User(AbstractUser):
         # Split the email to derive username and full name
         email_username, _ = self.email.split("@")
 
-        # Assign the derived username to `self.username` if it's empty
+        # Assign the derived username to self.username if it's empty
         if not self.full_name:  # Check if full_name is empty or None
             self.full_name = email_username
 
