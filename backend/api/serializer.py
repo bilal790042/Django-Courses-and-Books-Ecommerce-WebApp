@@ -2,6 +2,7 @@ from rest_framework import serializers
 from userauths.models import Profile, User
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth import get_user_model
 
 
 from django.contrib.auth.password_validation import validate_password
@@ -32,7 +33,9 @@ class ProfileSerializer(serializers.ModelSerializer):
     
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField( required=True, validators=[validate_password])
-    password2 = serializers.CharField( required=True)
+    # password2 = serializers.CharField( required=True)
+    password2 = serializers.CharField(write_only=True)
+
 
     class Meta:
         model = User
@@ -45,7 +48,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         return attr
     
 
-    
     def create(self, validated_data):
         user = User.objects.create(
             full_name = validated_data['full_name'],
