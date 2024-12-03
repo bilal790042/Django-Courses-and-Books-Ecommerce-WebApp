@@ -45,7 +45,7 @@ class PasswordResetEmailVerifyAPIView(generics.RetrieveAPIView):
            user.otp = generate_random_otp()
            user.save() 
 
-           link = f"http://localhost:5173/create-new-password/?otp={user.otp}&uuidb64= {uuidb64}&=refresh_token{refresh_token}"
+           link = f"http://localhost:5173/create-new-password/?otp={user.otp}&uuidb64= {uuidb64}&refresh_token={refresh_token}"
            merge_data = {
                "link": link,
                "username": user.username

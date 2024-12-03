@@ -1,7 +1,8 @@
 from django.db import models
 from userauths.models import User, Profile
 from django.utils.text import slugify
-from shortuuid.django_fields import ShortuuidField
+from shortuuid.django_fields import ShortUUIDField
+
 from django.utils import timezone
 
 # Create your models here.
@@ -87,20 +88,20 @@ class Course(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)
     price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
-    language = models.CharField(choices=LANGUAGE, default="English")
-    level = models.CharField(choices=LEVEL, default="Beginner")
-    platform_status = models.CharField(choices=PLATFORM_STATUS, default="Published")
-    teacher_course_status = models.CharField(choices=TEACHER_STATUS, default="Published")
+    language = models.CharField(choices=LANGUAGE, default="English", max_length=50)  # Added max_length
+    level = models.CharField(choices=LEVEL, default="Beginner", max_length=50)  # Added max_length
+    platform_status = models.CharField(choices=PLATFORM_STATUS, default="Published", max_length=50)  # Added max_length
+    teacher_course_status = models.CharField(choices=TEACHER_STATUS, default="Published", max_length=50)  # Added max_length
     featured = models.BooleanField(default=False)
-    course_id = ShortuuidField(unique= True, Length = 6, max_length= 20, alphabet = "1234567890")
+    course_id = ShortUUIDField(unique=True, length=6, max_length=20, alphabet="1234567890")
     slug = models.SlugField(unique=True, null=True, blank=True)
     date = models.DateTimeField(default=timezone.now)
-     
-    def __str__(self):
-      return self.title
 
+    def __str__(self):
+        return self.title
 
     def save(self, *args, **kwargs):
-      if self.slug == "" or self.slug == None:
-        self.slug = slugify(self.title)
-      super(Category, self).save(*args, **kwargs)
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super(Course, self).save(*args, **kwargs)
+

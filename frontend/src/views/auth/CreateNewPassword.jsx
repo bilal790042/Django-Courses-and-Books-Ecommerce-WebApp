@@ -1,9 +1,51 @@
-import React from 'react'
+import { useState,useEffect } from 'react'
+import apiInstance from '../../utils/axios'
 import BaseHeader from '../partials/BaseHeader'
 import BaseFooter from '../partials/BaseFooter'
+import {useNavigate, useSearchParams} from "react-router-dom" // we grab data from url using useParm
 
 
 function CreateNewPassword() {
+
+  const [password,setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+
+  const navigate =useNavigate()
+  
+  const [searchParams] = useSearchParams(); 
+
+  const otp = searchParams.get("otp");
+  const uuidb64 = searchParams.get("uuidb64");
+  const refresh_token = searchParams.get("refresh_token");
+  console.log(otp); 
+  useEffect(() => {
+    // If OTP is missing, navigate to a fallback page
+    if (!otp) {
+      console.warn("OTP not found, redirecting to forgot-password page");
+      navigate("/forgot-password");
+    }
+  }, [otp, navigate]);
+  
+
+  const handleCreatePassword = (e) =>{
+    e.preventDefault()
+    if(confirmPassword !== password){
+      alert("Passwords does not match");
+      return;
+    }else{
+      const formdata = new FormData()
+      formdata.append("otp", otp);  
+      formdata.append("uuidb64", uuidb64);  
+      formdata.append("refresh_token", refresh_token);  
+
+      apiInstance.post(`user/password-change/`,formdata).then((res) =>{
+        console.log(res.data);
+      })
+    }
+
+  }
+
   return (
     <>
       <BaseHeader />
@@ -19,7 +61,7 @@ function CreateNewPassword() {
                     Choose a new password for your account
                   </span>
                 </div>
-                <form className="needs-validation" noValidate="">
+                <form className="needs-validation" noValidate="" onSubmit={handleCreatePassword}>
                   <div className="mb-3">
                     <label htmlFor="password" className="form-label">
                       Enter New Password
@@ -31,6 +73,7 @@ function CreateNewPassword() {
                       name="password"
                       placeholder="**************"
                       required=""
+                      onChange={(e) =>setPassword(e.target.value)}
                     />
                     <div className="invalid-feedback">
                       Please enter valid password.
@@ -49,6 +92,7 @@ function CreateNewPassword() {
                       name="password"
                       placeholder="**************"
                       required=""
+                      onChange={(e) =>setConfirmPassword(e.target.value)}
                     />
                     <div className="invalid-feedback">
                       Please enter valid password.
@@ -76,4 +120,4 @@ function CreateNewPassword() {
   )
 }
 
-export default CreateNewPassword
+export default CreateNewPassword;
