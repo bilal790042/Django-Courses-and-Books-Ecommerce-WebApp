@@ -2,6 +2,10 @@ from django.db import models
 from userauths.models import User, Profile
 from django.utils.text import slugify
 from shortuuid.django_fields import ShortUUIDField
+<<<<<<< HEAD
+=======
+
+>>>>>>> 29495d6c9684e264b676291a0b164e3932a7ea7f
 from django.utils import timezone
 from moviepy import VideoFileClip
 import math
@@ -113,20 +117,29 @@ class Course(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)
     price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+<<<<<<< HEAD
     language = models.CharField(choices=LANGUAGE, default="English",max_length=200)
     level = models.CharField(choices=LEVEL, default="Beginner", max_length=200)
     platform_status = models.CharField(choices=PLATFORM_STATUS, default="Published",max_length=200)
     teacher_course_status = models.CharField(choices=TEACHER_STATUS, default="Published", max_length=200)
     featured = models.BooleanField(default=False)
     course_id = ShortUUIDField(unique= True, length = 6, max_length= 20, alphabet = "1234567890")
+=======
+    language = models.CharField(choices=LANGUAGE, default="English", max_length=50)  # Added max_length
+    level = models.CharField(choices=LEVEL, default="Beginner", max_length=50)  # Added max_length
+    platform_status = models.CharField(choices=PLATFORM_STATUS, default="Published", max_length=50)  # Added max_length
+    teacher_course_status = models.CharField(choices=TEACHER_STATUS, default="Published", max_length=50)  # Added max_length
+    featured = models.BooleanField(default=False)
+    course_id = ShortUUIDField(unique=True, length=6, max_length=20, alphabet="1234567890")
+>>>>>>> 29495d6c9684e264b676291a0b164e3932a7ea7f
     slug = models.SlugField(unique=True, null=True, blank=True)
     date = models.DateTimeField(default=timezone.now)
-     
-    def __str__(self):
-      return self.title
 
+    def __str__(self):
+        return self.title
 
     def save(self, *args, **kwargs):
+<<<<<<< HEAD
       if self.slug == "" or self.slug == None:
         self.slug = slugify(self.title)
       super(Course, self).save(*args, **kwargs)
@@ -424,3 +437,9 @@ class Country(models.Model):
     def __str__(self):
             return self.name
         
+=======
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super(Course, self).save(*args, **kwargs)
+
+>>>>>>> 29495d6c9684e264b676291a0b164e3932a7ea7f

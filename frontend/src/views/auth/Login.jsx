@@ -1,11 +1,11 @@
 import React from 'react';
 import { login } from '../../utils/auth';
 import apiInstance from '../../utils/axios';
+import { useState, useEffect } from 'react'; 
 
 import BaseHeader from '../partials/BaseHeader';
 import BaseFooter from '../partials/BaseFooter';
 import { Link, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
  
 function Login() {
   const [email, setEmail] = useState("");
@@ -115,7 +115,6 @@ function Login() {
                       {isLoading === false && (
                         <button type="submit" className="btn btn-primary">
                           Sign in <i className='fas fa-sign-in-alt'></i>
-                          Processing <i className='fas fa-spinner fa-spin'></i>
                         </button>
                       )}
 
