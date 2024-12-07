@@ -2,10 +2,6 @@ from django.db import models
 from userauths.models import User, Profile
 from django.utils.text import slugify
 from shortuuid.django_fields import ShortUUIDField
-<<<<<<< HEAD
-=======
-
->>>>>>> 29495d6c9684e264b676291a0b164e3932a7ea7f
 from django.utils import timezone
 from moviepy import VideoFileClip
 import math
@@ -44,6 +40,7 @@ NOTI_TYPE = (
     ("New Course Question", "New Course Question"),
     ("Draft", "Draft"),
     ("Course Published", "Course Published"),
+    ("Course Enrollment Completed", "Course Enrollment Completed"),
 )
 
 
@@ -91,10 +88,10 @@ class Category(models.Model):
     title = models.CharField(max_length=100)
     image = models.FileField(upload_to="course-file", default="category.jpg", null=True, blank=True)
     active = models.BooleanField(default=True)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, null=True, blank=True)
 
     class Meta:
-        verbose_name_plural = 'Category'
+        verbose_name_plural = "Category"
         ordering = ['title']
 
     def __str__(self):
@@ -105,9 +102,8 @@ class Category(models.Model):
     
     def save(self, *args, **kwargs):
         if self.slug == "" or self.slug == None:
-            self.slug = slugify(self.title)
-        super(Category, self).save(*args, **kwargs)
-
+            self.slug = slugify(self.slug)
+        super(Category,self).save(*args, **kwargs)
 
 class Course(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
@@ -117,21 +113,12 @@ class Course(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)
     price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
-<<<<<<< HEAD
     language = models.CharField(choices=LANGUAGE, default="English",max_length=200)
     level = models.CharField(choices=LEVEL, default="Beginner", max_length=200)
     platform_status = models.CharField(choices=PLATFORM_STATUS, default="Published",max_length=200)
     teacher_course_status = models.CharField(choices=TEACHER_STATUS, default="Published", max_length=200)
     featured = models.BooleanField(default=False)
     course_id = ShortUUIDField(unique= True, length = 6, max_length= 20, alphabet = "1234567890")
-=======
-    language = models.CharField(choices=LANGUAGE, default="English", max_length=50)  # Added max_length
-    level = models.CharField(choices=LEVEL, default="Beginner", max_length=50)  # Added max_length
-    platform_status = models.CharField(choices=PLATFORM_STATUS, default="Published", max_length=50)  # Added max_length
-    teacher_course_status = models.CharField(choices=TEACHER_STATUS, default="Published", max_length=50)  # Added max_length
-    featured = models.BooleanField(default=False)
-    course_id = ShortUUIDField(unique=True, length=6, max_length=20, alphabet="1234567890")
->>>>>>> 29495d6c9684e264b676291a0b164e3932a7ea7f
     slug = models.SlugField(unique=True, null=True, blank=True)
     date = models.DateTimeField(default=timezone.now)
 
@@ -139,7 +126,6 @@ class Course(models.Model):
         return self.title
 
     def save(self, *args, **kwargs):
-<<<<<<< HEAD
       if self.slug == "" or self.slug == None:
         self.slug = slugify(self.title)
       super(Course, self).save(*args, **kwargs)
@@ -268,6 +254,15 @@ class Cart(models.Model):
         return self.course.title
     
 
+class Test(models.Model):
+    name = models.CharField(max_length=200)
+    age = models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+    
+
+
 class CartOrder(models.Model):
     student = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     teachers = models.ManyToManyField(Teacher, blank=True)
@@ -303,7 +298,7 @@ class CartOrderItem(models.Model):
     total = models.DecimalField(max_digits=12, default=0.00, decimal_places= 2)
     initial_total = models.DecimalField(max_digits=12, default=0.00, decimal_places= 2)
     saved = models.DecimalField(max_digits=12, default=0.00, decimal_places= 2)
-    coupons = models.ManyToManyField("api.Coupon", on_delete=models.SET_NULL, blank=True, null=True)
+    coupons = models.ManyToManyField("api.Coupon",  blank=True, null=True)
     applied_coupon = models.BooleanField(default=False)
     oid = ShortUUIDField(unique=True, length =6, max_length= 20, alphabet= "1234567890")
     date = models.DateTimeField(default=timezone.now)
@@ -435,11 +430,6 @@ class Country(models.Model):
     active = models.BooleanField(default=True)
 
     def __str__(self):
-            return self.name
-        
-=======
-        if not self.slug:
-            self.slug = slugify(self.title)
-        super(Course, self).save(*args, **kwargs)
-
->>>>>>> 29495d6c9684e264b676291a0b164e3932a7ea7f
+        return self.name
+     
+       

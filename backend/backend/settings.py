@@ -99,9 +99,16 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
+        
     }
 }
 
+# STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
+# PAYPAL_CLIENT_ID = env('PAYPAL_CLIENT_ID')
+# PAYPAL_SECRET_ID = env('PAYPAL_SECRET_ID')
+
+FRONTEND_SITE_URL = env("FRONTEND_SITE_URL")
+BACKEND_SITE_URL = env("BACKEND_SITE_URL")
 
 MAILGUN_SECRET_KEY = env("MAILGUN_SECRET_KEY")
 MAILERSEND_API_TOKEN = env("MAILERSEND_API_TOKEN")

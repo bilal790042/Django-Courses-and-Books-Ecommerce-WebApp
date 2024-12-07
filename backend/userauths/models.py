@@ -13,7 +13,7 @@ class User(AbstractUser):
     refresh_token = models.CharField(max_length=1000, null= True, blank=True)
     
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['full_name']
+    REQUIRED_FIELDS = ['username']
    
     def __str__(self):
         return self.email
