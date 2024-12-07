@@ -88,7 +88,7 @@ export const setAuthUser = (access_token, refresh_token) => {
 
 export const getRefreshedToken = async () => {
     const refresh_token = Cookie.get("refresh_token");
-    const response = await axios.post('token/refresh/', {
+    const response = await axios.post('user/token/refresh/', {
         refresh: refresh_token,
     });
     return response.data;
