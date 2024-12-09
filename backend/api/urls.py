@@ -22,5 +22,9 @@ urlpatterns = [
     path("order/coupon/", api_views.CouponApplyAPIView.as_view()),
     # path("payment/stripe-checkoutt/<order_oid>/", api_views.StripeCheckoutAPIView.as_view()),
     path("payment/payment-success/", api_views.PaymentSuccessAPIView.as_view()),
-
+    
+    # students api
+    path("student/summery/<user_id>/", api_views.StudentSummeryAPIView.as_view()),
+    path("student/course-list/<user_id>/", api_views.StudentCourseListAPIView.as_view()),
+    path("student/course-detail/<user_id>/<enrollment_id>/", api_views.StudentCourseDetailAPIView.as_view()),
 ]

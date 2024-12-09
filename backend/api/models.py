@@ -135,18 +135,18 @@ class Course(models.Model):
     
 
     def curriculm(self):
-        return VariantItem.objects.filter(varient_course=self)
+        return VariantItem.objects.filter(variant__course=self)
     
 
     def lectures(self):
-        return VariantItem.objects.filter(varient_course=self)
+        return VariantItem.objects.filter(variant__course=self)
     
     
     def average_rating(self):
-        average_rating = Review.objects.filter(course= self).aggregate()
-
+        average_rating = Review.objects.filter(course= self).aggregate(avg_rating = models.Avg('rating'))
+        return average_rating['avg_rating']
     def rating_count(self):
-        return Review.objects.filter(course= self).count()
+        return Review.objects.filter(course= self, active = True).count()
     
     def review(self):
         return Review.objects.filter(course= self, active=True)

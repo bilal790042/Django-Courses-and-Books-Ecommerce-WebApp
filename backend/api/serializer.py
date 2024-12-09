@@ -242,3 +242,9 @@ class CourseSerializer(serializers.ModelSerializer):
 
         ]
         model = api_models.Course
+
+
+class StudentSummerySerializer(serializers.Serializer):
+    total_courses = serializers.IntegerField(default=0)
+    completed_lessons = serializers.IntegerField(default=0)
+    achieved_certificates = serializers.IntegerField(default=0)

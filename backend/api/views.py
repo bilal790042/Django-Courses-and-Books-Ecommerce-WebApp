@@ -13,7 +13,9 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.conf import settings
 from api import models as api_models
+# import decimal
 from decimal import Decimal
+
 import stripe
 import requests
 # PAYPAL_CLIENT_ID = settings.PAYPAL_CLIENT_ID
@@ -126,9 +128,11 @@ class CourseListAPIView(generics.ListAPIView):
 class CourseDetailAPIView(generics.RetrieveAPIView):
     serializer_class = api_serializer.CourseSerializer
     permission_classes= [AllowAny]
+    queryset = api_models.Course.objects.filter(platform_status= "Published", teacher_course_status= "Published")
+
 
     def get_object(self):
-        slug = self.kwargsp['slug']
+        slug = self.kwargs['slug']
         course = api_models.Course.objects.get(slug= slug, platform_status= "Published", teacher_course_status= "Published")
         return course
     
@@ -145,7 +149,7 @@ class CartAPIView(generics.CreateAPIView):
         counrty_name = request.data['country_name']
         cart_id = request.data['cart_id']
 
-        course = api_models.Course.filter(id= course_id).first()
+        course = api_models.Course.objects.filter(id= course_id).first()
 
         if user_id != "undefined":
             user = User.objects.filter(id= user_id).first()
@@ -155,7 +159,7 @@ class CartAPIView(generics.CreateAPIView):
 
         try:
             country_object = api_models.Country.objects.filter(name= counrty_name).first()
-        
+            country = country_object.name
         except: 
             country_object = None
             country = "United States"
@@ -172,10 +176,10 @@ class CartAPIView(generics.CreateAPIView):
             cart.course = course
             cart.user = user
             cart.price = price
-            cart.tax_fee = decimal(price) * decimal(tax_rate)
+            cart.tax_fee = Decimal(price) * Decimal(tax_rate)
             cart.country = country
             cart.cart_id = cart_id
-            cart.total = decimal(cart.tax_fee)
+            cart.total = Decimal(cart.price) + Decimal(cart.tax_fee)
             cart.save()
 
             return Response({"message": "Cart Updated Successfully"}, status= status.HTTP_200_OK)
@@ -186,13 +190,13 @@ class CartAPIView(generics.CreateAPIView):
             cart.course = course
             cart.user = user
             cart.price = price
-            cart.tax_fee = decimal(price) * decimal(tax_rate)
+            cart.tax_fee = Decimal(price) * Decimal(tax_rate)
             cart.country = country
             cart.cart_id = cart_id
-            cart.total = decimal(cart.tax_fee)
+            cart.total = Decimal(cart.tax_fee) + Decimal(cart.price)
             cart.save()
 
-            return Response({"message": "Cart Created Successfully"}, status= status.HTTP_201_OK)
+            return Response({"message": "Cart Created Successfully"}, status= status.HTTP_200_OK)
 
 
 class CartListAPIView(generics.ListAPIView):
@@ -316,7 +320,7 @@ class CheckoutAPIView(generics.RetrieveAPIView):
     serializer_class = api_serializer.CartOrderSerializer
     permission_classes = [AllowAny]
     queryset = api_models.CartOrder.objects.all()
-    lookup_fields = 'oid'
+    lookup_field = 'oid'
 
 
 class CouponApplyAPIView(generics.CreateAPIView):
@@ -503,3 +507,53 @@ class SearchCourseAPIView(generics.ListAPIView):
         query = self.request.GET.get('query')
         
         return api_models.Course.objects.filter(title__icontains=query, platform_status= "Published", teacher_course_status= "Published")
+    
+
+class StudentSummeryAPIView(generics.ListAPIView):
+    serializer_class = api_serializer.StudentSummerySerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        user = User.objects.get(id= user_id)
+
+        total_courses = api_models.EnrolledCourse.objects.filter(user = user).count()
+        completed_lesson = api_models.CompletedLesson.objects.filter(user= user).count()
+        achieved_certificates = api_models.Certificate.objects.filter(user=user).count()
+
+        return [{
+            "total_courses": total_courses,
+            "completed_lessons": completed_lesson,
+            "achieved_certificates": achieved_certificates,
+        }]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many= True)
+        return Response(serializer.data)
+    
+
+class StudentCourseListAPIView(generics.ListAPIView):
+    serializer_class = api_serializer.EnrolledCourseSerializer
+    permission_classes = [AllowAny]
+
+
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        user = User.objects.get(id=user_id)
+
+        return api_models.EnrolledCourse.objects.filter(user = user)
+
+class StudentCourseDetailAPIView(generics.RetrieveAPIView):
+    serializer_class = api_serializer.EnrolledCourseSerializer
+    permission_classes = [AllowAny]
+
+    lookup_fields = 'enrollment_id'
+
+    def get_object(self):
+        user_id = self.kwargs['user_id']
+        enrollment_id = self.kwargs['enrollment_id']
+
+        user = User.objects.get(id=user_id)
+        return api_models.EnrolledCourse.objects.get(user= user, enrollment_id= enrollment_id)
+
