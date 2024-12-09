@@ -308,3 +308,10 @@ class TeacherSummarySerializer(serializers.Serializer):
     total_students = serializers.IntegerField(default=0)
     total_revenue = serializers.IntegerField(default=0)
     monthly_revenue = serializers.IntegerField(default=0)
+
+
+class StudentSummerySerializer(serializers.Serializer):
+    total_courses = serializers.IntegerField(default=0)
+    completed_lessons = serializers.IntegerField(default=0)
+    achieved_certificates = serializers.IntegerField(default=0)
+

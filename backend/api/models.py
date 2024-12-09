@@ -104,8 +104,9 @@ class Category(models.Model):
         return Course.objects.filter(category= self).count()
     
     def save(self, *args, **kwargs):
-        if self.slug == "" or self.slug == None:
-            self.slug = slugify(self.slug)
+        if not self.slug:
+            self.slug = slugify(self.title)
+
         super(Category,self).save(*args, **kwargs)
 
 class Course(models.Model):
@@ -139,8 +140,9 @@ class Course(models.Model):
 
     def save(self, *args, **kwargs):
 
-      if self.slug == "" or self.slug == None:
+      if not self.slug:
         self.slug = slugify(self.title)
+
       super(Course, self).save(*args, **kwargs)
 
     def students(self):
@@ -156,11 +158,11 @@ class Course(models.Model):
     
     
     def average_rating(self):
-        average_rating = Review.objects.filter(course= self, active = True).aggregate(avg_rating = models.Avg('rating'))
-        return average_rating ['avg_rating']
+         return Review.objects.filter(course=self).aggregate(Avg('rating'))['rating__avg'] or 0
+
 
     def rating_count(self):
-        return Review.objects.filter(course= self).count()
+        return Review.objects.filter(course= self, active = True).count()
     
     def review(self):
         return Review.objects.filter(course= self, active=True)
@@ -177,7 +179,8 @@ class Variant(models.Model):
         return self.title
     
     def variant_items(self):
-        return VariantItem.objects.filter(variant.self)
+        return VariantItem.objects.filter(variant=self)
+
     
 
 class VariantItem(models.Model):
@@ -193,7 +196,8 @@ class VariantItem(models.Model):
 
 
     def __str__(self):
-        return f"{self.variant_title} - {self.title}"
+        return f"{self.variant.title} - {self.title}"
+
     
 
     def save(self, *args, **kwargs):
@@ -209,7 +213,7 @@ class VariantItem(models.Model):
 
             duration_text = f"{minutes}m {seconds}s"
             self.content_duration = duration_text
-            super.save(update_fields= ['content_duration'])
+            super().save(update_fields=['content_duration'])
 
 
 class Question_Answer(models.Model):
