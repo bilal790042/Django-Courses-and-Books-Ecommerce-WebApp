@@ -1,27 +1,58 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
 
-import BaseHeader from '../partials/BaseHeader'
-import BaseFooter from '../partials/BaseFooter'
+import BaseHeader from '../partials/BaseHeader';
+import BaseFooter from '../partials/BaseFooter';
+import useAxios from '../../utils/useAxios';
 
 function CourseDetail() {
+    const [course, setCourse] = useState({});
+    const [isLoading, setIsLoading] = useState(true);
+
+    const param = useParams();
+    console.log(param.slug);
+
+    const fetchCourse = () => {
+        useAxios()
+            .get(`course/course-detail/${param.slug}/`) // Corrected to use backticks
+            .then((res) => {
+                console.log(res.data);
+                setCourse(res.data); // Update course state with response data
+                setIsLoading(false);
+            })
+            .catch((err) => {
+                console.error(err); // Handle errors gracefully
+                setIsLoading(false);
+            });
+    };
+
+    useEffect(() => {
+        fetchCourse();
+    }, []); // Dependency array remains empty as param won't change
+
     return (
         <>
             <BaseHeader />
 
-            <>
-                <section className="bg-light py-0 py-sm-5">
+            <div>
+                {isLoading ? (
+                    <p>
+                        Loading <i className="fas fa-spinner fa-spin"></i>
+                    </p>
+                ) : (
+                    <>
+                        <section className="bg-light py-0 py-sm-5">
                     <div className="container">
                         <div className="row py-5">
                             <div className="col-lg-8">
                                 {/* Badge */}
                                 <h6 className="mb-3 font-base bg-primary text-white py-2 px-4 rounded-2 d-inline-block">
-                                    Web Development
-                                </h6>
+                                    {/* {course.category.title} category name not working*/} 
+                                </h6> 
                                 {/* Title */}
-                                <h1 className='mb-3'>The Comprehensive React.Js and Django Course - A Bundle of 12 Courses in 1</h1>
-                                <p className='mb-3'>
-                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Doloribus facere hic quisquam suscipit aliquid distinctio repellat eum in molestias necessitatibus illum omnis autem laudantium adipisci, sit blanditiis accusantium dignissimos veniam!
+                                <h1 className='mb-3'>{course.title}</h1>
+                                <p className='mb-3' dangerouslySetInnerHTML={ {__html: `${course?.description?.slice(0,200)}`}}>
+                                    
                                 </p>
                                 {/* Content */}
                                 <ul className="list-inline mb-0">
@@ -1468,11 +1499,13 @@ function CourseDetail() {
                         </div>
                     </div>
                 </section>
-            </>
+                    </>
+                )}
+            </div>
 
             <BaseFooter />
         </>
-    )
+    );
 }
 
-export default CourseDetail
+export default CourseDetail;

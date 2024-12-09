@@ -2,6 +2,8 @@ from django.contrib import admin
 
 from api import models
 # Register your models here.
+admin.site.register(models.Test)
+
 admin.site.register(models.Teacher)
 admin.site.register(models.Category)
 admin.site.register(models.Course)

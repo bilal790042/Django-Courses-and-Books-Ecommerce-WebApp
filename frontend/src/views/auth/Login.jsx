@@ -1,38 +1,39 @@
-import React from 'react';
-import { login } from '../../utils/auth';
-import apiInstance from '../../utils/axios';
-import { useState, useEffect } from 'react'; 
+import { useState, useEffect } from "react";
 
-import BaseHeader from '../partials/BaseHeader';
-import BaseFooter from '../partials/BaseFooter';
-import { Link, useNavigate } from 'react-router-dom';
- 
+import apiInstance from "../../utils/axios";
+import { login } from "../../utils/auth";
+import BaseHeader from "../partials/BaseHeader";
+import BaseFooter from "../partials/BaseFooter";
+import { Link, useNavigate } from "react-router-dom";
+
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-
-    const {error} = await login(email, password)
+    const { error } = await login(email, password);
     if (error) {
       setIsLoading(false);
       alert(error);
-
     } else {
       navigate("/");
-      setIsLoading(true);
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <>
       <BaseHeader />
 
-      <section className="container d-flex flex-column vh-100" style={{ marginTop: "150px" }}>
+      <section
+        className="container d-flex flex-column vh-100"
+        style={{ marginTop: "150px" }}
+      >
         <div className="row align-items-center justify-content-center g-0 h-lg-100 py-8">
           <div className="col-lg-5 col-md-8 py-8 py-xl-0">
             <div className="card shadow">
@@ -47,7 +48,11 @@ function Login() {
                   </span>
                 </div>
                 {/* Form */}
-                <form className="needs-validation" noValidate="" onSubmit={handleSubmit}>
+                <form
+                  className="needs-validation"
+                  noValidate=""
+                  onSubmit={handleSubmit}
+                >
                   {/* Username */}
                   <div className="mb-3">
                     <label htmlFor="email" className="form-label">
@@ -107,18 +112,20 @@ function Login() {
                   <div>
                     <div className="d-grid">
                       {isLoading === true && (
-                        <button disabled type="submit" className="btn btn-primary">
-                          Processing <i className='fas fa-spinner fa-spin'></i>
+                        <button
+                          disabled
+                          type="submit"
+                          className="btn btn-primary"
+                        >
+                          Processing <i className="fas fa-spinner fa-spin"></i>
                         </button>
                       )}
 
                       {isLoading === false && (
                         <button type="submit" className="btn btn-primary">
-                          Sign in <i className='fas fa-sign-in-alt'></i>
+                          Sign in <i className="fas fa-sign-in-alt"></i>
                         </button>
                       )}
-
-
                     </div>
                   </div>
                 </form>
@@ -128,10 +135,9 @@ function Login() {
         </div>
       </section>
 
-
       <BaseFooter />
     </>
-  )
+  );
 }
 
-export default Login
+export default Login;
