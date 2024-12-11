@@ -55,20 +55,18 @@ function Index() {
                                 </h5>
                                 {/* heading */}
                                 <h1 className="display-3 fw-bold mb-3">
-                                    Grow your skills and advance career
+                                    Your future is just a course away
                                 </h1>
                                 {/* para */}
                                 <p className="pe-lg-10 mb-5">
-                                    Start, switch, or advance your career with more than 5,000
-                                    courses, Professional Certificates, and degrees from world-class
-                                    universities and companies.
+                                    Discover world-class programs designed to help you gain the skills you need to thrive in a competitive world
                                 </p>
                                 {/* btn */}
                                 <a href="#" className="btn btn-primary fs-4 text-inherit ms-3">
                                     Join Free Now <i className='fas fa-plus'></i>
                                 </a>
                                 <a
-                                    href="https://www.youtube.com/watch?v=Nfzi7034Kbg"
+                                    href=""
                                     className="btn btn-outline-success fs-4 text-inherit ms-3"
                                 >
 
@@ -81,7 +79,7 @@ function Index() {
                             {/* images */}
                             <div className="position-relative">
                                 <img
-                                    src="https://geeksui.codescandy.com/geeks/assets/images/background/acedamy-img/girl-image.png"
+                                    src="https://th.bing.com/th?id=OIP.Bz32soE4ORfDlEHh0ZYnkgHaLr&w=199&h=313&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2"
                                     alt="girl"
                                     className="end-0 bottom-0"
                                 />
@@ -102,7 +100,7 @@ function Index() {
                                     <i className="fe fe-award fs-2 text-info" />
                                 </div>
                                 <div className="lh-1">
-                                    <h2 className="mb-1">316,000+</h2>
+                                    <h2 className="mb-1">1000+</h2>
                                     <span>Qualified Instructor</span>
                                 </div>
                             </div>
@@ -115,7 +113,7 @@ function Index() {
                                 </div>
                                 {/* text */}
                                 <div className="lh-1">
-                                    <h2 className="mb-1">1.8 Billion+</h2>
+                                    <h2 className="mb-1">1000+</h2>
                                     <span>Course enrolments</span>
                                 </div>
                             </div>
@@ -128,7 +126,7 @@ function Index() {
                                 </div>
                                 {/* text */}
                                 <div className="lh-1">
-                                    <h2 className="mb-1">41,000+</h2>
+                                    <h2 className="mb-1">1200+</h2>
                                     <span>Courses in 42 languages</span>
                                 </div>
                             </div>
@@ -141,7 +139,7 @@ function Index() {
                                 </div>
                                 {/* text */}
                                 <div className="lh-1">
-                                    <h2 className="mb-1">179,000+</h2>
+                                    <h2 className="mb-1">5000+</h2>
                                     <span>Online Videos</span>
                                 </div>
                             </div>
@@ -156,10 +154,9 @@ function Index() {
                         {/* col */}
                         <div className="col-12">
                             <div className="mb-6">
-                                <h2 className="mb-1 h1">🔥Most Popular Courses</h2>
+                                <h2 className="mb-1 h1">🎓 Learn From the Best</h2>
                                 <p>
-                                    These are the most popular courses among Geeks Courses learners
-                                    worldwide in year 2022
+                                    These top courses captured the attention of learners around the globe in 2024
                                 </p>
                             </div>
                         </div>
@@ -207,7 +204,7 @@ function Index() {
                                                           <Rater total = {5} rating = {c.average_rating || 0} /> 
                                                         </span>
                                                     </span>
-                                                    <span className="text-warning">4.5</span>
+                                                    <span className="text-warning">3</span>
                                                     <span className="fs-6 ms-2">({c.reviews?.length} Reviews)</span>
                                                 </div>
                                             </div>
@@ -449,8 +446,8 @@ function Index() {
                                                             <span className="text-warning">5</span>
                                                             {/* text */}
                                                         </div>
-                                                        <h3 className="mb-0 h4">Gladys Colbert</h3>
-                                                        <span>Software Engineer at Palantir</span>
+                                                        <h3 className="mb-0 h4">Bilal Ahmad</h3>
+                                                        <span>Software Engineer at UET</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -527,8 +524,8 @@ function Index() {
                                                             <span className="text-warning">5</span>
                                                             {/* text */}
                                                         </div>
-                                                        <h3 className="mb-0 h4">Gladys Colbert</h3>
-                                                        <span>Software Engineer at Palantir</span>
+                                                        <h3 className="mb-0 h4">Noman Wahdat</h3>
+                                                        <span>Software Engineer at JHK</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -605,8 +602,8 @@ function Index() {
                                                             <span className="text-warning">5</span>
                                                             {/* text */}
                                                         </div>
-                                                        <h3 className="mb-0 h4">Gladys Colbert</h3>
-                                                        <span>Software Engineer at Palantir</span>
+                                                        <h3 className="mb-0 h4">Jakson</h3>
+                                                        <span>Software Engineer </span>
                                                     </div>
                                                 </div>
                                             </div>

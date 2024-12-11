@@ -8,11 +8,11 @@ function BaseFooter() {
           <div className="col-lg-4 col-md-6 col-12 text-white">
             {/* about company */}
             <div className="mb-4">
-              <h1>Desphixs</h1>
+              <h1>Skillz</h1>
               <div className="mt-4">
                 <p>
-                  Desphixs is feature-rich components and beautifully Bootstrap UIKit
-                  for developers, built with bootstrap responsive framework.
+                   Skillz
+                   Discover world-class programs designed to help you gain the skills you need to thrive in a competitive world
                 </p>
                 {/* social media */}
                 <div className="fs-4 mt-4">
@@ -129,14 +129,14 @@ function BaseFooter() {
             {/* contact info */}
             <div className="mb-4">
               <h3 className="fw-bold mb-3">Get in touch</h3>
-              <p>123 Main Street, U.S.A</p>
+              <p></p>
               <p className="mb-1">
                 Email:
-                <a href="#" className='text-white'> support@desphixs.com</a>
+                <a href="#" className='text-white'> support@Skillz.com</a>
               </p>
               <p>
                 Phone:
-                <span className="text-dark fw-semibold">(000) 123 456 789</span>
+                <span className="text-dark fw-semibold"></span>
               </p>
               <div className="d-flex">
                 <a href="#">
@@ -164,7 +164,7 @@ function BaseFooter() {
               <div className="me-4">
                 <span>
                   ©<span id="copyright5"></span>
-                  Desphixs
+                  Skillz
                 </span>
               </div>
               <div>
@@ -173,13 +173,10 @@ function BaseFooter() {
                     Privacy Policy
                   </a>
                   <a className="nav-link text-white px-2 px-md-3" href="#">
-                    Cookie Notice
-                  </a>
-                  <a className="nav-link text-white d-none d-lg-block" href="#">
-                    Do Not Sell My Personal Information
+                    {/* Cookie Notice */}
                   </a>
                   <a className="nav-link text-white" href="#">
-                    Terms of Use
+                    {/* Terms of Use */}
                   </a>
                 </nav>
               </div>
@@ -315,7 +312,7 @@ function BaseFooter() {
                         </defs>
                       </svg>
                     </span>
-                    Deutsch
+                    {/* cd  */}
                   </a>
                 </li>
               </ul>
