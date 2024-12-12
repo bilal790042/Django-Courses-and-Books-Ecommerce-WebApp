@@ -268,10 +268,10 @@ class CreateOrderAPIView(generics.CreateAPIView):
 
         cart_items = api_models.Cart.objects.filter(cart_id= cart_id)
 
-        total_price = decimal(0.00)
-        total_tax = decimal(0.00)
-        total_initial_total = decimal(0.00)
-        total_total = decimal(0.00)
+        total_price = Decimal(0.00)
+        total_tax = Decimal(0.00)
+        total_initial_total = Decimal(0.00)
+        total_total = Decimal(0.00)
 
         order = api_models.CartOrder.objects.create(
             full_name = full_name,
@@ -282,19 +282,20 @@ class CreateOrderAPIView(generics.CreateAPIView):
 
         for c in cart_items:
             api_models.CartOrderItem.objects.create(
-                order = order,
-                courses = c.courses,
-                price = c.price,
-                tax_fee = c.tax_fee,
-                total_fee = c.total,
-                initial_total = c.total,
-                teacher = c.course.teacher
+                order=order,
+                course=c.course,  # Correct field name
+                tax_fee=c.tax_fee,
+                total=c.total,    # Correct field name
+                 initial_total=c.total,
+                teacher=c.course.teacher,
+                 saved=0.00,  # Provide a value for the `saved` field if required
+                applied_coupon=False  # Or set it appropriately
             )
 
-            total_price += decimal(c.price)
-            total_tax += decimal(c.tax_fee)
-            total_initial_total += decimal(c.total)
-            total_total += decimal(c.total)
+            total_price += Decimal(c.price)
+            total_tax += Decimal(c.tax_fee)
+            total_initial_total += Decimal(c.total)
+            total_total += Decimal(c.total)
 
             order.teachers.add(c.course.teacher)
 
@@ -303,8 +304,9 @@ class CreateOrderAPIView(generics.CreateAPIView):
         order.initial_total = total_initial_total
         order.total = total_total   
         order.save()
-
-        return Response({"message": "Order created successfully"}, status = status.HTTP_201_CREATED)
+        print("Debug Order OID:", order.oid)  # Debugging
+        return Response({"message": "Order created successfully", "order_oid": order.oid}, status=status.HTTP_201_CREATED)
+        # return Response({"message": "Order created successfully", "order_oid": order.oid}, status = status.HTTP_201_CREATED)
 
 
 class CheckoutAPIView(generics.RetrieveAPIView):
