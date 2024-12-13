@@ -1,19 +1,22 @@
-import Cookie from "js-cookie";
+import Cookies from "js-cookie";
 import jwtDecode from "jwt-decode";
 
 function UserData() {
-  let access_token = Cookie.get("access_token");
-  let refresh_token = Cookie.get("refresh_token");
+  const access_token = Cookies.get("access_token");
+  const refresh_token = Cookies.get("refresh_token");
 
   if (access_token && refresh_token) {
-    const token = refresh_token;
-    const decoded = jwtDecode(token);
+    try {
+      const decoded = jwtDecode(refresh_token);
+      return decoded;
+    } catch (error) {
+      console.error("Invalid refresh token:", error);
+      return null; // Handle invalid token case
+    }
+  } 
 
-    return decoded;
-  } else {
-    // pass
-  }
+  // If tokens are missing, return null
+  return null;
 }
 
-
-export default UserData
+export default UserData;

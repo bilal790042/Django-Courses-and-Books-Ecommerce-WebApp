@@ -134,26 +134,28 @@ class CartAPIView(generics.CreateAPIView):
     permission_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):
-        course_id = request.data['course_id']
-        user_id = request.data['user_id']
+        course_id = request.data.get('course_id', None)
+        user_id = request.data.get('user_id', "undefined")
         price = request.data['price']
         country_name = request.data['country_name']
-        # cart_id = request.data['cart_id']
+        cart_id = request.data['cart_id']
 
         course = api_models.Course.objects.filter(id= course_id).first()
 
-        if user_id != "undefined":
+        if user_id:
+
             user = User.objects.filter(id= user_id).first()
 
         else:
             user = None
 
         try:
-            country_object = api_models.Country.objects.filter(name= counrty_name).first()
+            country_object = api_models.Country.objects.filter(name= country_name).first()
             country = country_object.name
         except: 
-            country_object = None
-            country = "United States"
+            country_object = api_models.Country.objects.filter(name=country_name).first()
+            country = country_object.name if country_object else "United States"
+
 
         if country_object:
             tax_rate = country_object.tax_rate / 100
@@ -167,7 +169,8 @@ class CartAPIView(generics.CreateAPIView):
             cart.course = course
             cart.user = user
             cart.price = price
-            cart.tax_fee = Decimal(price) * Decimal(tax_rate)
+            cart.tax_fee = Decimal(price or 0) * Decimal(tax_rate or 0)
+
             cart.country = country
             cart.cart_id = cart_id
             cart.total = Decimal(cart.price) + Decimal(cart.tax_fee)
@@ -261,10 +264,8 @@ class CreateOrderAPIView(generics.CreateAPIView):
         user_id = request.data['user_id']
 
 
-        if user_id != 0:
-            user = User.objects.get(id=user_id) 
-        else:
-            user = None
+        user = User.objects.filter(id=int(user_id)).first() if user_id and user_id.isdigit() else None
+
 
         cart_items = api_models.Cart.objects.filter(cart_id= cart_id)
 
@@ -305,8 +306,8 @@ class CreateOrderAPIView(generics.CreateAPIView):
         order.total = total_total   
         order.save()
         print("Debug Order OID:", order.oid)  # Debugging
-        return Response({"message": "Order created successfully", "order_oid": order.oid}, status=status.HTTP_201_CREATED)
-        # return Response({"message": "Order created successfully", "order_oid": order.oid}, status = status.HTTP_201_CREATED)
+        # return Response({"message": "Order created successfully",}, status=status.HTTP_201_CREATED)
+        return Response({"message": "Order created successfully", "order_oid": order.oid}, status = status.HTTP_201_CREATED)
 
 
 class CheckoutAPIView(generics.RetrieveAPIView):
