@@ -29,7 +29,12 @@ function Register() {
       setIsLoading(false);
     } else {
       navigate("/");
-      alert("Registration Successfull");
+   
+      toast().fire({
+        icon: "success",
+        title: "Registration Successful",
+      });
+      
       setIsLoading(false);
     }
   };

@@ -23,5 +23,5 @@ function CartId() {
     return existingRandomString
   }
   
-  export default CartId
+  export default CartId;
   

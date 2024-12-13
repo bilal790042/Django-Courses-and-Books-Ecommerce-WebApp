@@ -1,10 +1,105 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect, useContext } from 'react';
+import { Link , useNavigate} from 'react-router-dom'
 
-import BaseHeader from '../partials/BaseHeader'
-import BaseFooter from '../partials/BaseFooter'
+import BaseHeader from '../partials/BaseHeader';
+import BaseFooter from '../partials/BaseFooter';
+import apiInstance from '../../utils/axios';
+import cartId from '../plugin/cartId';
+import toast from '../plugin/toast';
+import CartId from '../plugin/cartId';
+import { CartContext } from '../plugin/Context';
+import { userId } from '../../utils/constants';
+
+
 
 function Cart() {
+    const [cart, setCart] = useState([]);
+    const [cartState, setCartState] = useState([])
+    const [cartCount, setCartCount ] = useContext(CartContext);
+    const [bioDate, setBioData] = useState({
+        full_name :"", 
+        email : "", 
+        country : "",
+    });
+
+    const fetchCartItem = async () => {
+        try {
+            await apiInstance.get(`course/cart-list/${CartId()}/`).then((res) => {
+                console.log(res.data);
+                setCart(res.data);
+
+
+
+            });
+
+            await apiInstance.get(`cart/stats/${CartId()}/`).then((res) => {
+                console.log(res.data);
+                setCartState(res.data);
+               
+
+            });
+        } catch (error) {
+            console.error("Error fetching cart data:", error.response || error.message || error);
+
+        }
+    };
+    useEffect(() => {
+        fetchCartItem();
+    }, []);
+
+    const navigate = useNavigate()
+
+
+
+
+    const cartItemDelete = async(itemId)=>{
+        await apiInstance.delete(`course/cart-item-delete/${cartId()}/${itemId}/`).then((res) =>{
+            console.log(res.data);
+            fetchCartItem();
+            toast().fire({
+                icon:"success",
+                title: "Cart Item Deleted"
+            });
+            apiInstance.get(`course/cart-list/${CartId()}/`).then((res) => {
+                setCartCount(res.data?.length);
+            });
+            
+        });
+
+    }
+
+
+    const handleBioDataChange = (event) =>{
+        setBioData({
+            ...bioDate,
+            [event.target.name]: event.target.value,
+        });
+    };
+
+    const createOrder = async(e) =>{
+        e.preventDefault()
+        const formdata = new FormData()
+        formdata.append("full_name",bioDate.full_name);
+        formdata.append("email", bioDate.email);
+        formdata.append("country", bioDate.country);
+        formdata.append("cart_id", CartId());
+        formdata.append("user_id", userId);
+
+        try {
+            await apiInstance.post(`order/create-order/`, formdata).then((res) =>{
+                console.log(res.data);
+                navigate(`/Checkout/${res.data.order_oid}/` )
+                
+            })
+        } catch (error) {
+            console.log(error);
+            
+        }
+    };
+     
+    
+
+
     return (
         <>
             <BaseHeader />
@@ -39,78 +134,60 @@ function Cart() {
 
             <section className="pt-5">
                 <div className="container">
-                    <form  >
+                    <form onSubmit={createOrder} >
                         <div className="row g-4 g-sm-5">
                             {/* Main content START */}
                             <div className="col-lg-8 mb-4 mb-sm-0">
                                 <div className="p-4 shadow rounded-3">
-                                    <h5 className="mb-0 mb-3">Cart Items (3)</h5>
+                                    <h5 className="mb-0 mb-3">Cart Items {cart.length}</h5>
 
                                     <div className="table-responsive border-0 rounded-3">
                                         <table className="table align-middle p-4 mb-0">
                                             <tbody className="border-top-2">
-                                                <tr>
-                                                    <td>
-                                                        <div className="d-lg-flex align-items-center">
-                                                            <div className="w-100px w-md-80px mb-2 mb-md-0">
-                                                                <img src="https://eduport.webestica.com/assets/images/courses/4by3/07.jpg" style={{ width: "100px", height: "70px", objectFit: "cover" }} className="rounded" alt="" />
+                                                {cart?.map((c, index) => (
+                                                    <tr>
+                                                        <td>
+                                                            <div className="d-lg-flex align-items-center">
+                                                                <div className="w-100px w-md-80px mb-2 mb-md-0">
+                                                                    <img
+                                                                        src={c.course.image}
+                                                                        style={{
+                                                                            width: "100px",
+                                                                            height: "70px",
+                                                                            objectFit: "cover",
+                                                                        }}
+                                                                        className="rounded"
+                                                                        alt=""
+                                                                    />
+                                                                </div>
+                                                                <h6 className="mb-0 ms-lg-3 mt-2 mt-lg-0">
+                                                                    <a
+                                                                        href="#"
+                                                                        className="text-decoration-none text-dark"
+                                                                    >
+                                                                        {c.course.title}
+                                                                    </a>
+                                                                </h6>
                                                             </div>
-                                                            <h6 className="mb-0 ms-lg-3 mt-2 mt-lg-0">
-                                                                <a href="#" className='text-decoration-none text-dark' >Building Scalable APIs with GraphQL</a>
-                                                            </h6>
-                                                        </div>
-                                                    </td>
-                                                    <td className="text-center">
-                                                        <h5 className="text-success mb-0">$350</h5>
-                                                    </td>
-                                                    <td>
-                                                        <button className="btn btn-sm btn-danger px-2 mb-0">
-                                                            <i className="fas fa-fw fa-times" />
-                                                        </button>
-                                                    </td>
-                                                </tr>
+                                                        </td>
+                                                        <td className="text-center">
+                                                            <h5 className="text-success mb-0">${c.price}</h5>
+                                                        </td>
+                                                        <td>
+                                                            <button
+                                                                onClick={() => cartItemDelete(c.id)}
+                                                                className="btn btn-sm btn-danger px-2 mb-0"
+                                                                type="button"
+                                                            >
+                                                                <i className="fas fa-fw fa-times" />
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                                {cart?.length < 1 &&
+                                                    <p className="mt-1 p-1">No Item In The Cart</p>
+                                                }
 
-                                                <tr>
-                                                    <td>
-                                                        <div className="d-lg-flex align-items-center">
-                                                            <div className="w-100px w-md-80px mb-2 mb-md-0">
-                                                                <img src="https://eduport.webestica.com/assets/images/courses/4by3/07.jpg" style={{ width: "100px", height: "70px", objectFit: "cover" }} className="rounded" alt="" />
-                                                            </div>
-                                                            <h6 className="mb-0 ms-lg-3 mt-2 mt-lg-0">
-                                                                <a href="#" className='text-decoration-none text-dark' >Building Scalable APIs with GraphQL</a>
-                                                            </h6>
-                                                        </div>
-                                                    </td>
-                                                    <td className="text-center">
-                                                        <h5 className="text-success mb-0">$350</h5>
-                                                    </td>
-                                                    <td>
-                                                        <button className="btn btn-sm btn-danger px-2 mb-0">
-                                                            <i className="fas fa-fw fa-times" />
-                                                        </button>
-                                                    </td>
-                                                </tr>
-
-                                                <tr>
-                                                    <td>
-                                                        <div className="d-lg-flex align-items-center">
-                                                            <div className="w-100px w-md-80px mb-2 mb-md-0">
-                                                                <img src="https://eduport.webestica.com/assets/images/courses/4by3/07.jpg" style={{ width: "100px", height: "70px", objectFit: "cover" }} className="rounded" alt="" />
-                                                            </div>
-                                                            <h6 className="mb-0 ms-lg-3 mt-2 mt-lg-0">
-                                                                <a href="#" className='text-decoration-none text-dark' >Building Scalable APIs with GraphQL</a>
-                                                            </h6>
-                                                        </div>
-                                                    </td>
-                                                    <td className="text-center">
-                                                        <h5 className="text-success mb-0">$350</h5>
-                                                    </td>
-                                                    <td>
-                                                        <button className="btn btn-sm btn-danger px-2 mb-0">
-                                                            <i className="fas fa-fw fa-times" />
-                                                        </button>
-                                                    </td>
-                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -132,6 +209,9 @@ function Cart() {
                                                 className="form-control"
                                                 id="yourName"
                                                 placeholder="Name"
+                                                name= "full_name"
+                                                value={bioDate.full_name}
+                                                onChange={handleBioDataChange}
                                             />
                                         </div>
                                         {/* Email */}
@@ -144,19 +224,25 @@ function Cart() {
                                                 className="form-control"
                                                 id="emailInput"
                                                 placeholder="Email"
+                                                name= "email"
+                                                value={bioDate.email}
+                                                onChange={handleBioDataChange}
                                             />
                                         </div>
-                                        
+
                                         {/* Country option */}
                                         <div className="col-md-12 bg-light-input">
                                             <label htmlFor="mobileNumber" className="form-label">
-                                                Select country *
+                                                Enter country *
                                             </label>
                                             <input
                                                 type="text"
                                                 className="form-control"
                                                 id="mobileNumber"
                                                 placeholder="Country"
+                                                name= "country"
+                                                value={bioDate.country}
+                                                onChange={handleBioDataChange}
                                             />
                                         </div>
 
@@ -171,21 +257,21 @@ function Cart() {
                                     <ul class="list-group mb-3">
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
                                             Sub Total
-                                            <span>$10.99</span>
+                                            <span>${cartState.price?.toFixed(2)}</span>
                                         </li>
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
                                             Tax
-                                            <span>$0.99</span>
+                                            <span>${cartState.tax?.toFixed(2)}</span>
                                         </li>
                                         <li class="list-group-item d-flex fw-bold justify-content-between align-items-center">
                                             Total
-                                            <span className='fw-bold'>$8.99</span>
+                                            <span className='fw-bold'>${cartState.total?.toFixed(2)}</span>
                                         </li>
                                     </ul>
                                     <div className="d-grid">
-                                        <Link to={`/checkout/`} className="btn btn-lg btn-success">
+                                        <button type="submit" className="btn btn-lg btn-success">
                                             Proceed to Checkout
-                                        </Link>
+                                        </button>
                                     </div>
                                     <p className="small mb-0 mt-2 text-center">
                                         By proceeding to checkout, you agree to these{" "}<a href="#"> <strong>Terms of Service</strong></a>
@@ -202,4 +288,4 @@ function Cart() {
     )
 }
 
-export default Cart
+export default Cart;

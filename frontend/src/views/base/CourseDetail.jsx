@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import moment from "moment";
+import Swal from "sweetalert2";
+import { CartContext } from '../plugin/Context';
 
 import BaseHeader from '../partials/BaseHeader';
 import BaseFooter from '../partials/BaseFooter';
@@ -11,13 +13,16 @@ import cartId from '../plugin/cartId';
 import GetCurrentAddress from '../plugin/UserCountry';
 import UserData from '../plugin/UserData';
 import { userId } from '../../utils/constants';
-
+import toast from '../plugin/toast';
+import CartId from '../plugin/cartId';
+import apiInstance from '../../utils/axios';
 
 
 function CourseDetail() {
     const [course, setCourse] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [addToCartBtn, setAddToCartBtn] = useState("Add To Cart");
+    const [cartCount, setCartCount ] = useContext(CartContext);
 
     const param = useParams();
     console.log(GetCurrentAddress().country);
@@ -61,11 +66,22 @@ function CourseDetail() {
             await useAxios().post(`course/cart/`, formdata).then((res) => {
                 console.log(res.data);
                 setAddToCartBtn("Added To Cart");
+                toast().fire({
+                    title: "Added To Cart",
+                    icon: "success",
+                    
+                });
+                //set cart count after adding to cart
+                apiInstance.get(`course/cart-list/${CartId()}/`).then((res) => {
+                    setCartCount(res.data?.length);
+                });
+               
+            
 
             });
         } catch (error) {
             console.log(error);
-            setAddToCartBtn("Add To Tart");
+            setAddToCartBtn("Add To Cart");
 
         }
     };

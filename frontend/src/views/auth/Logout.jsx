@@ -4,13 +4,19 @@ import BaseFooter from '../partials/BaseFooter'
 import { logout } from '../../utils/auth'
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import toast from '../plugin/toast'
 
 
  
 function Logout() {
   useEffect(() => {
     logout(); 
-    alert("You have been logged out");
+    
+    toast().fire({
+      icon: "success",
+      title: "You have been logged out",
+    });
+    
   }, []);
 
   return ( 

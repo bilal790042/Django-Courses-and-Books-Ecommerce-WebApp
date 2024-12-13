@@ -1,18 +1,31 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import BaseHeader from '../partials/BaseHeader';
 import BaseFooter from '../partials/BaseFooter';
 import { Link } from 'react-router-dom';
+import CartId from '../plugin/cartId';
+import GetCurrentAddress from '../plugin/UserCountry';
+import UserData from '../plugin/UserData';
+import toast from '../plugin/toast';
 
 import Rater from 'react-rater'   //for rating in react
-import "react-rater/lib/react-rater.css" 
+import "react-rater/lib/react-rater.css"
 
 import apiInstance from '../../utils/useAxios';
 import { useAuthStore } from '../../store/auth';
 import useAxios from '../../utils/useAxios';
+import { userId } from '../../utils/constants';
+import { CartContext } from '../plugin/Context';
+
+
 function Index() {
 
     const [courses, setCourses] = useState([])
     const [isLoading, setIsLoading] = useState(true)
+    const [cartCount, setCartCount] = useContext(CartContext);
+
+    const country = GetCurrentAddress().country;
+    const userId = UserData()?.user_id; // user_id is not defined 
+    const cartId = CartId();
 
 
     const fetchCourse = async () => {
@@ -23,7 +36,8 @@ function Index() {
                 setIsLoading(false);
             })
         } catch (error) {
-            console.log(error);
+            console.error("Error fetching courses:", error.response?.data || error.message);
+
 
         }
 
@@ -32,9 +46,45 @@ function Index() {
     useEffect(() => {
         fetchCourse();
     }, [])
-  
+
     console.log(courses);
-    
+
+
+
+    const addToCart = async (courseId, userId, price, country, cartId) => {
+
+        const formdata = new FormData();
+
+        formdata.append("course_id", courseId);
+        formdata.append("user_id", userId);
+        formdata.append("price", price);
+        formdata.append("country_name", country);
+        formdata.append("cart_id", cartId);
+
+        try {
+            await useAxios().post(`course/cart/`, formdata).then((res) => {
+                console.log(res.data);
+
+                toast().fire({
+                    title: "Added To Cart",
+                    icon: "success",
+
+                });
+                //set cart count after adding to cart
+                apiInstance().get(`course/cart-list/${CartId()}/`).then((res) => {
+                    setCartCount(res.data?.length);
+                });
+
+
+
+            });
+        } catch (error) {
+            console.log(error);
+
+
+        }
+    };
+
 
     return (
         <>
@@ -181,8 +231,8 @@ function Index() {
                                             <div className="card-body">
                                                 <div className="d-flex justify-content-between align-items-center mb-3">
                                                     <div>
-                                                    <span className="badge bg-info">{c.level}</span>
-                                                    <span className="badge bg-success ms-2">{c.language}</span>
+                                                        <span className="badge bg-info">{c.level}</span>
+                                                        <span className="badge bg-success ms-2">{c.language}</span>
                                                     </div>
                                                     <a href="#" className="fs-5">
                                                         <i className="fas fa-heart text-danger align-middle" />
@@ -194,14 +244,14 @@ function Index() {
                                                     </Link>
                                                 </h4>
                                                 <small>By: {c.teacher.full_name}</small> <br />
-                                                <small>{c.students?.length} student 
-                                                {c.students?.length >1 && "s" }
-                                                </small> 
-                                                <br/>
+                                                <small>{c.students?.length} student
+                                                    {c.students?.length > 1 && "s"}
+                                                </small>
+                                                <br />
                                                 <div className="lh-1 mt-3 d-flex">
                                                     <span className="align-text-top">
                                                         <span className="fs-6">
-                                                          <Rater total = {5} rating = {c.average_rating || 0} /> 
+                                                            <Rater total={5} rating={c.average_rating || 0} />
                                                         </span>
                                                     </span>
                                                     <span className="text-warning">3</span>
@@ -215,7 +265,8 @@ function Index() {
                                                         <h5 className="mb-0">${c.price}</h5>
                                                     </div>
                                                     <div className="col-auto">
-                                                        <button type='button' className="text-inherit text-decoration-none btn btn-primary me-2">
+                                                        <button type='button' onClick={() => addToCart(c.id, userId, c.price, country, cartId)}
+                                                            className="text-inherit text-decoration-none btn btn-primary me-2">
                                                             <i className="fas fa-shopping-cart text-primary text-white" />
                                                         </button>
                                                         <Link to={""} className="text-inherit text-decoration-none btn btn-primary">

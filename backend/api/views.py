@@ -137,8 +137,8 @@ class CartAPIView(generics.CreateAPIView):
         course_id = request.data['course_id']
         user_id = request.data['user_id']
         price = request.data['price']
-        counrty_name = request.data['country_name']
-        cart_id = request.data['cart_id']
+        country_name = request.data['country_name']
+        # cart_id = request.data['cart_id']
 
         course = api_models.Course.objects.filter(id= course_id).first()
 

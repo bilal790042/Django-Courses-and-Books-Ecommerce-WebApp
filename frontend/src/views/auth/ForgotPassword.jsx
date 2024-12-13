@@ -4,7 +4,7 @@ import { useState,useEffect } from 'react';
 import BaseFooter from '../partials/BaseFooter';
 import { Link } from 'react-router-dom';
 import apiInstance from '../../utils/axios';
-
+import toast from '../plugin/toast';
 
 function ForgotPassword() {
   const [email,setEmail] = useState("")
@@ -18,7 +18,11 @@ function ForgotPassword() {
     await apiInstance.get(`user/password-reset/${email}`).then((res)=>{
       console.log(res.data);
       setIsLoading(false);
-      alert("Password Reset Email Sent");
+
+      toast().fire({
+        icon: "success",
+        title: "Password Reset Email Sent",
+      });
     });
    } catch (error) {
     console.log("error:", error);
