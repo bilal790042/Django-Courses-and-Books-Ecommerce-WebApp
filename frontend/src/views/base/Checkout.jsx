@@ -1,10 +1,57 @@
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect, useContext } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
 
-import BaseHeader from '../partials/BaseHeader'
-import BaseFooter from '../partials/BaseFooter'
+
+import BaseHeader from '../partials/BaseHeader';
+import BaseFooter from '../partials/BaseFooter';
+import apiInstance from '../../utils/axios';
+import cartId from '../plugin/cartId';
+import toast from '../plugin/toast';
+import CartId from '../plugin/cartId';
+import { CartContext } from '../plugin/Context';
+import { PAYPAL_CLIENT_ID } from '../../utils/constants';
+
+import { userId } from '../../utils/constants';
 
 
 function Checkout() {
+
+    const [order, setOrder] = useState([])
+
+    const [paymentLoading, setPaymentLoading] = useState(false);
+
+    const param = useParams();
+
+    const fetchOrder = async () => {
+        try {
+            apiInstance.get(`order/checkout/${param.order_oid}/`).then((res) => {
+                console.log(res.data);
+                setOrder(res.data)
+
+            })
+        } catch (error) {
+            console.log(error);
+
+        }
+    };
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        fetchOrder();
+    }, []);
+
+    const initialOptions = {
+        clientId: PAYPAL_CLIENT_ID,
+        currency: "USD",
+        intent: "capture",
+    };
+
+    // const payWithStripe = (event) =>{
+    //     setPaymentLoading(true)
+    //     event.targit.form.submit()
+    // }
+
     return (
         <>
             <BaseHeader />
@@ -60,55 +107,25 @@ function Checkout() {
                                 <div className="table-responsive border-0 rounded-3">
                                     <table className="table align-middle p-4 mb-0">
                                         <tbody className="border-top-2">
-                                            <tr>
-                                                <td>
-                                                    <div className="d-lg-flex align-items-center">
-                                                        <div className="w-100px w-md-80px mb-2 mb-md-0">
-                                                            <img src="https://eduport.webestica.com/assets/images/courses/4by3/07.jpg" style={{ width: "100px", height: "70px", objectFit: "cover" }} className="rounded" alt="" />
+                                            {order?.order_items?.map((o, index) => (
+                                                <tr>
+                                                    <td>
+                                                        <div className="d-lg-flex align-items-center">
+                                                            <div className="w-100px w-md-80px mb-2 mb-md-0">
+                                                                <img src={o.course.image} style={{ width: "100px", height: "70px", objectFit: "cover" }} className="rounded" alt="" />
+                                                            </div>
+                                                            <h6 className="mb-0 ms-lg-3 mt-2 mt-lg-0">
+                                                                <a href="#" className='text-decoration-none text-dark' >{o.course.title}</a>
+                                                            </h6>
                                                         </div>
-                                                        <h6 className="mb-0 ms-lg-3 mt-2 mt-lg-0">
-                                                            <a href="#" className='text-decoration-none text-dark' >Building Scalable APIs with GraphQL</a>
-                                                        </h6>
-                                                    </div>
-                                                </td>
-                                                <td className="text-center">
-                                                    <h5 className="text-success mb-0">$350</h5>
-                                                </td>
+                                                    </td>
+                                                    <td className="text-center">
+                                                        <h5 className="text-success mb-0">${o.course.price}</h5>
+                                                    </td>
 
-                                            </tr>
+                                                </tr>
+                                            ))}
 
-                                            <tr>
-                                                <td>
-                                                    <div className="d-lg-flex align-items-center">
-                                                        <div className="w-100px w-md-80px mb-2 mb-md-0">
-                                                            <img src="https://eduport.webestica.com/assets/images/courses/4by3/07.jpg" style={{ width: "100px", height: "70px", objectFit: "cover" }} className="rounded" alt="" />
-                                                        </div>
-                                                        <h6 className="mb-0 ms-lg-3 mt-2 mt-lg-0">
-                                                            <a href="#" className='text-decoration-none text-dark' >Building Scalable APIs with GraphQL</a>
-                                                        </h6>
-                                                    </div>
-                                                </td>
-                                                <td className="text-center">
-                                                    <h5 className="text-success mb-0">$350</h5>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td>
-                                                    <div className="d-lg-flex align-items-center">
-                                                        <div className="w-100px w-md-80px mb-2 mb-md-0">
-                                                            <img src="https://eduport.webestica.com/assets/images/courses/4by3/07.jpg" style={{ width: "100px", height: "70px", objectFit: "cover" }} className="rounded" alt="" />
-                                                        </div>
-                                                        <h6 className="mb-0 ms-lg-3 mt-2 mt-lg-0">
-                                                            <a href="#" className='text-decoration-none text-dark' >Building Scalable APIs with GraphQL</a>
-                                                        </h6>
-                                                    </div>
-                                                </td>
-                                                <td className="text-center">
-                                                    <h5 className="text-success mb-0">$350</h5>
-                                                </td>
-
-                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -124,31 +141,24 @@ function Checkout() {
                                         </label>
                                         <input
                                             type="text"
-                                            className="form-control"
+                                            className="form-control bg-light"
                                             id="yourName"
                                             placeholder="Name"
+                                            readOnly
+                                            value={order.full_name}
                                         />
                                     </div>
-                                    <div className="col-md-6 bg-light-input">
+                                    <div className="col-md-12 bg-light-input">
                                         <label htmlFor="emailInput" className="form-label">
                                             Email address *
                                         </label>
                                         <input
                                             type="email"
-                                            className="form-control"
+                                            className="form-control bg-light"
                                             id="emailInput"
                                             placeholder="Email"
-                                        />
-                                    </div>
-                                    <div className="col-md-6 bg-light-input">
-                                        <label htmlFor="mobileNumber" className="form-label">
-                                            Mobile number *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            id="mobileNumber"
-                                            placeholder="Mobile number"
+                                            readOnly
+                                            value={order.email}
                                         />
                                     </div>
                                     {/* Country option */}
@@ -158,9 +168,11 @@ function Checkout() {
                                         </label>
                                         <input
                                             type="text"
-                                            className="form-control"
+                                            className="form-control bg-light"
                                             id="mobileNumber"
                                             placeholder="Country"
+                                            readOnly
+                                            value={order.country}
                                         />
                                     </div>
 
@@ -182,71 +194,8 @@ function Checkout() {
 
                                         </div>
 
-                                        {/* Course item START */}
-                                        <div className="row g-2 shadow p-2 mb-4 rounded-3">
-                                            <div className="col-sm-4">
-                                                <img src="https://eduport.webestica.com/assets/images/courses/4by3/07.jpg" className="rounded" style={{ width: "100px", height: "70px", objectFit: "cover" }} alt="" />
-                                            </div>
-                                            <div className="col-sm-8">
-                                                <h6 className="mb-0">
-                                                    <a href="#" className='text-decoration-none text-dark'>Building Scalable APIs with GraphQL</a>
-                                                </h6>
-                                                <div className="d-flex justify-content-between align-items-center mt-3">
-                                                    <span className="text-success fw-bold">$150</span>
-                                                    <div className="text-primary-hover">
-                                                        <Link to="/cart/" className="text-body me-2">
-                                                            <i className="bi bi-pencil-square me-1" />
-                                                            Edit
-                                                        </Link>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
 
-
-                                        {/* Course item START */}
-                                        <div className="row g-2 shadow p-2 mb-4 rounded-3">
-                                            <div className="col-sm-4">
-                                                <img src="https://eduport.webestica.com/assets/images/courses/4by3/07.jpg" className="rounded" style={{ width: "100px", height: "70px", objectFit: "cover" }} alt="" />
-                                            </div>
-                                            <div className="col-sm-8">
-                                                <h6 className="mb-0">
-                                                    <a href="#" className='text-decoration-none text-dark'>Building Scalable APIs with GraphQL</a>
-                                                </h6>
-                                                <div className="d-flex justify-content-between align-items-center mt-3">
-                                                    <span className="text-success fw-bold">$150</span>
-                                                    <div className="text-primary-hover">
-                                                        <Link to="/cart/" className="text-body me-2">
-                                                            <i className="bi bi-pencil-square me-1" />
-                                                            Edit
-                                                        </Link>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-                                        {/* Course item START */}
-                                        <div className="row g-2 shadow p-2 mb-4 rounded-3">
-                                            <div className="col-sm-4">
-                                                <img src="https://eduport.webestica.com/assets/images/courses/4by3/07.jpg" className="rounded" style={{ width: "100px", height: "70px", objectFit: "cover" }} alt="" />
-                                            </div>
-                                            <div className="col-sm-8">
-                                                <h6 className="mb-0">
-                                                    <a href="#" className='text-decoration-none text-dark'>Building Scalable APIs with GraphQL</a>
-                                                </h6>
-                                                <div className="d-flex justify-content-between align-items-center mt-3">
-                                                    <span className="text-success fw-bold">$150</span>
-                                                    <div className="text-primary-hover">
-                                                        <Link to="/cart/" className="text-body me-2">
-                                                            <i className="bi bi-pencil-square me-1" />
-                                                            Edit
-                                                        </Link>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="input-group mt-5">
+                                        <div className="input-group mt-1">
                                             <input className="form-control form-control" placeholder="COUPON CODE" />
                                             <button type="button" className="btn btn-primary">Apply</button>
                                         </div>
@@ -257,24 +206,58 @@ function Checkout() {
                                             <ul class="list-group mb-3">
                                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                                     Sub Total
-                                                    <span>$10.99</span>
+                                                    <span>${order.sub_total}</span>
                                                 </li>
                                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                                     Discount
-                                                    <span>$2.99</span>
+                                                    <span>${order.saved}</span>
                                                 </li>
                                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                                     Tax
-                                                    <span>$0.99</span>
+                                                    <span>${order.tax_fee}</span>
                                                 </li>
                                                 <li class="list-group-item d-flex fw-bold justify-content-between align-items-center">
                                                     Total
-                                                    <span className='fw-bold'>$8.99</span>
+                                                    <span className='fw-bold'>${order.total}</span>
                                                 </li>
                                             </ul>
                                             <div className="d-grid">
-                                                <Link to={`/success/txn_id/`} className="btn btn-lg btn-success mt-2"> Pay With PayPal</Link>
-                                                <Link to={`/success/txn_id/`} className="btn btn-lg btn-success mt-2"> Pay With Stripe</Link>
+                                                {/* <form action="" className="w=100" method="POST">
+                                                <button type="submit"
+                                                    className="btn btn-lg btn-success mt-2">
+                                                     Pay With Stripe
+                                                </button>
+                                                </form> */}
+
+                                                <PayPalScriptProvider options={initialOptions}>
+                                                    <PayPalButtons className='mt-3'
+                                                        createOrder={(data, actions) => {
+                                                            return actions.order.create({
+                                                                purchase_units: [
+                                                                    {
+                                                                        amount: {
+                                                                            currency_code: "USD",
+                                                                            value: order.total.toString(),
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            })
+                                                        }}
+
+                                                        onApprove={(data, actions) => {
+                                                            return actions.order.capture().then((details) => {
+                                                                const name = details.payer.name.given_name;
+                                                                const status = details.status;
+                                                                const paypal_order_id = data.orderID;
+
+                                                                console.log(status);
+                                                                if (status === "COMPLETED") {
+                                                                    navigate(`/payment-success/${order.oid}/?paypal_order_id=${paypal_order_id}`);
+                                                                }
+                                                            });
+                                                        }}
+                                                    />
+                                                </PayPalScriptProvider>
                                             </div>
                                             <p className="small mb-0 mt-2 text-center">
                                                 By proceeding to payment, you agree to these{" "}<a href="#"> <strong>Terms of Service</strong></a>

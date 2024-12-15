@@ -17,7 +17,7 @@ urlpatterns = [
     path("cart/stats/<cart_id>/", api_views.CartStatsAPIView.as_view()),
     path("course/cart-item-delete/<cart_id>/<item_id>/", api_views.CartItemDeleteAPIView.as_view()),
     path("order/create-order/", api_views.CreateOrderAPIView.as_view()),
-    path("order/checkout/<order_oid>/", api_views.CheckoutAPIView.as_view()),
+    path("order/checkout/<oid>/", api_views.CheckoutAPIView.as_view()),
     path("order/coupon/", api_views.CouponApplyAPIView.as_view()),
     # path("payment/stripe-checkoutt/<order_oid>/", api_views.StripeCheckoutAPIView.as_view()),
     path("payment/payment-success/", api_views.PaymentSuccessAPIView.as_view()),

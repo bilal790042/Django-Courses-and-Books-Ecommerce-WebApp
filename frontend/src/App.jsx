@@ -11,10 +11,12 @@ import CreateNewPassword from './views/auth/CreateNewPassword';
 import Index from './views/base/Index'; // Note uppercase
 import CourseDetail from './views/base/CourseDetail';
 import Cart from './views/base/Cart';
-import Checkout from './views/base/Checkout';
 import { CartContext } from './views/plugin/Context';
 import CartId from './views/plugin/cartId';
 import apiInstance from './utils/axios';
+import Checkout from './views/base/Checkout';
+import Success from './views/base/Success';
+import Search from './views/base/Search';
 
 
 function App() {
@@ -51,6 +53,8 @@ function App() {
             <Route path="/course-detail/:slug/" element={<CourseDetail />} />
             <Route path="/cart/" element={<Cart />} />
             <Route path="/Checkout/:order_oid" element={<Checkout />} />
+            <Route path="/payment-success/:order_oid" element={<Success />} />
+            <Route path="/Search/" element={<Search />} />
 
 
 

@@ -135,7 +135,7 @@ class CartAPIView(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         course_id = request.data.get('course_id', None)
-        user_id = request.data.get('user_id', "undefined")
+        user_id = request.data.get('user_id', None) 
         price = request.data['price']
         country_name = request.data['country_name']
         cart_id = request.data['cart_id']
@@ -397,7 +397,7 @@ class CouponApplyAPIView(generics.CreateAPIView):
 
 
 def get_access_token(client_id, secret_key):
-    token_url = "https://api.sandbox.paypal.com/v1/oauth/token"
+    token_url = "https://api.sandbox.paypal.com/v1/oauth2/token"
     data = {'grant_type': 'client_credientials'}
     auth = (client_id, secret_key)
 
@@ -467,7 +467,7 @@ class PaymentSuccessAPIView(generics.CreateAPIView):
             session = stripe.checkout.Session.retrieve(session_id)
             if session.payment_status == "Paid":
                 if order.payment_status == "Processing":
-                    order.payment_status == "Paid"
+                    order.payment_status = "Paid"
                     order.save()
                     api_models.Notification.objects.create(user=order.student, order = order, type = "Course Enrollment Completed" )    
                     for i in order_items:

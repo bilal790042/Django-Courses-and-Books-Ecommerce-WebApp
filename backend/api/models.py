@@ -123,12 +123,12 @@ class Course(models.Model):
     description = models.TextField(null=True, blank=True)
     price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
 
-    language = models.CharField(choices=LANGUAGE, default="English",max_length=200)
-    level = models.CharField(choices=LEVEL, default="Beginner", max_length=200)
-    platform_status = models.CharField(choices=PLATFORM_STATUS, default="Published",max_length=200)
-    teacher_course_status = models.CharField(choices=TEACHER_STATUS, default="Published", max_length=200)
-    featured = models.BooleanField(default=False)
-    course_id = ShortUUIDField(unique= True, length = 6, max_length= 20, alphabet = "1234567890")
+    # language = models.CharField(choices=LANGUAGE, default="English",max_length=200)
+    # level = models.CharField(choices=LEVEL, default="Beginner", max_length=200)
+    # platform_status = models.CharField(choices=PLATFORM_STATUS, default="Published",max_length=200)
+    # teacher_course_status = models.CharField(choices=TEACHER_STATUS, default="Published", max_length=200)
+    # featured = models.BooleanField(default=False)
+    # course_id = ShortUUIDField(unique= True, length = 6, max_length= 20, alphabet = "1234567890")
 
     language = models.CharField(choices=LANGUAGE, default="English", max_length=50)  # Added max_length
     level = models.CharField(choices=LEVEL, default="Beginner", max_length=50)  # Added max_length
@@ -146,9 +146,10 @@ class Course(models.Model):
     def save(self, *args, **kwargs):
 
       if not self.slug:
-        self.slug = slugify(self.title)
+        self.slug = slugify(self.title or "default-title")
+        
 
-      super(Course, self).save(*args, **kwargs)
+      super().save(*args, **kwargs)
 
     def students(self):
         return EnrolledCourse.objects.filter(course= self)

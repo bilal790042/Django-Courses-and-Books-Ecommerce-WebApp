@@ -25,7 +25,7 @@ function Index() {
     const [cartCount, setCartCount] = useContext(CartContext);
 
     const country = GetCurrentAddress().country;
-    const userId = UserData()?.user_id; // user_id is not defined 
+    // const userId = UserData()?.user_id; // user_id is not defined 
     const cartId = CartId();
 
 
@@ -61,6 +61,8 @@ function Index() {
         formdata.append("price", price);
         formdata.append("country_name", country);
         formdata.append("cart_id", cartId);
+        console.log("User ID:", userId); // Verify if `userId` is undefined here
+
 
         try {
             await useAxios().post(`course/cart/`, formdata).then((res) => {
@@ -85,6 +87,18 @@ function Index() {
 
         }
     };
+
+    //Pagination
+    const itemPerPage = 1
+    const [currentPage, setCurrentPage] = useState(1)
+    const indexOfLastItem = currentPage * itemPerPage
+    const indexOFirstItem = indexOfLastItem - itemPerPage
+    const currentItems = courses.slice(indexOFirstItem, indexOfLastItem)
+    const totalPage = Math.ceil(courses.length / itemPerPage)
+    const pageNumber = Array.from(
+        { length: totalPage },
+        (_, index) => index + 1
+    )
 
 
     return (
@@ -215,7 +229,7 @@ function Index() {
                     <div className="row">
                         <div className="col-md-12">
                             <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-                                {courses?.map((c, index) => (
+                                {currentItems?.map((c, index) => (
                                     <div className="col">
                                         {/* Card */}
                                         <div className="card card-hover">
@@ -279,49 +293,37 @@ function Index() {
                                         </div>
                                     </div>
                                 ))}
-
-
+                                <b></b>
+                                <b></b>
+                                <b></b>
                                 <nav className="d-flex mt-5">
                                     <ul className="pagination">
-                                        <li
-                                            className=""
-                                        >
-                                            <button
-                                                className="page-link me-1"
-                                            >
+                                        <li className={`page-item ${currentPage ===1 ? "disabled" : ""}`}>
+                                            <button className="page-link me-1" 
+                                                onClick={() => setCurrentPage(currentPage-1)}>
                                                 <i className="ci-arrow-left me-2" />
                                                 Previous
                                             </button>
                                         </li>
                                     </ul>
                                     <ul className="pagination">
-                                        <li
-                                            key={1}
-                                            className="active"
-                                        >
-                                            <button
-                                                className="page-link"
-                                            >
-                                                1
-                                            </button>
+                                       {pageNumber.map((number) => (
+                                         <li key={number} className={`page-item ${currentPage === number ? "active": ""}`}>
+                                         <button className="page-link" onClick={() =>setCurrentPage(number) } >
+                                             {number}
+                                         </button>
                                         </li>
+                                       ))}
                                     </ul>
                                     <ul className="pagination">
-                                        <li
-                                            className={`totalPages`}
-                                        >
-                                            <button
-                                                className="page-link ms-1"
-                                            >
+                                        <li  className={`page-item ${currentPage === totalPage ? "disabled" : ""}`}>
+                                            <button className="page-link ms-1" onClick={() => setCurrentPage(currentPage+1)}>
                                                 Next
-                                                <i className="ci-arrow-right ms-3" />
+                                            <i className="ci-arrow-right ms-3" />
                                             </button>
                                         </li>
                                     </ul>
                                 </nav>
-
-
-
 
                             </div>
 

@@ -1,9 +1,112 @@
-import React from "react";
-import BaseHeader from "../partials/BaseHeader";
-import BaseFooter from "../partials/BaseFooter";
-import { Link } from "react-router-dom";
+import { useEffect, useState, useContext } from 'react';
+import BaseHeader from '../partials/BaseHeader';
+import BaseFooter from '../partials/BaseFooter';
+import { Link } from 'react-router-dom';
+import CartId from '../plugin/cartId';
+import GetCurrentAddress from '../plugin/UserCountry';
+import UserData from '../plugin/UserData';
+import toast from '../plugin/toast';
+
+import Rater from 'react-rater'   //for rating in react
+import "react-rater/lib/react-rater.css"
+
+import apiInstance from '../../utils/useAxios';
+import { useAuthStore } from '../../store/auth';
+import useAxios from '../../utils/useAxios';
+import { userId } from '../../utils/constants';
+
+import { CartContext } from '../plugin/Context';
 
 function Search() {
+  const [courses, setCourses] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [cartCount, setCartCount] = useContext(CartContext);
+
+  const country = GetCurrentAddress().country;
+  // const userId = UserData()?.user_id; // user_id is not defined 
+  const cartId = CartId();
+
+
+  const fetchCourse = async () => {
+    setIsLoading(true);
+    try {
+      await useAxios().get(`/course/course-list/`).then((res) => {
+        setCourses(res.data);
+        setIsLoading(false);
+      })
+    } catch (error) {
+      console.error("Error fetching courses:", error.response?.data || error.message);
+
+
+    }
+
+  }
+
+  useEffect(() => {
+    fetchCourse();
+  }, [])
+
+  console.log(courses);
+
+
+
+  const addToCart = async (courseId, userId, price, country, cartId) => {
+
+    const formdata = new FormData();
+
+    formdata.append("course_id", courseId);
+    formdata.append("user_id", userId);
+    formdata.append("price", price);
+    formdata.append("country_name", country);
+    formdata.append("cart_id", cartId);
+    console.log("User ID:", userId); // Verify if `userId` is undefined here
+
+
+    try {
+      await useAxios().post(`course/cart/`, formdata).then((res) => {
+        console.log(res.data);
+
+        toast().fire({
+          title: "Added To Cart",
+          icon: "success",
+
+        });
+        //set cart count after adding to cart
+        apiInstance().get(`course/cart-list/${CartId()}/`).then((res) => {
+          setCartCount(res.data?.length);
+        });
+
+
+
+      });
+    } catch (error) {
+      console.log(error);
+
+
+    }
+  };
+
+  //search feature 
+
+  const [searchQuery, setSearchQuery] = useState("");
+  console.log(searchQuery);
+
+  const handleSearch = (e) =>{
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query)
+
+    if (query === "") {
+      fetchCourse(); // Fetches all courses when the search is cleared.
+    } else {
+      const filteredCourses = courses.filter((course) => {
+        return course.title.toLowerCase().includes(query); // Use `includes` here.
+      });
+      setCourses(filteredCourses); // Update the state with filtered courses.
+    }
+    
+  }
+  
+
   return (
     <>
       <BaseHeader />
@@ -15,7 +118,7 @@ function Search() {
             <div className="col-12">
               <div className="mb-6">
                 <h2 className="mb-1 h1">
-                  Showing Results for "LMS System Using Django"
+                  Showing Results for "{searchQuery || "No Search Query"}"
                 </h2>
               </div>
             </div>
@@ -27,6 +130,7 @@ function Search() {
                   placeholder="Search Courses..."
                   name=""
                   id=""
+                  onChange={handleSearch}
                 />
               </div>
             </div>
@@ -34,78 +138,71 @@ function Search() {
           <div className="row">
             <div className="col-md-12">
               <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-                <div className="col">
-                  {/* Card */}
-                  <div className="card card-hover">
-                    <Link to={`/course-detail/slug/`}>
-                      <img
-                        src="https://geeksui.codescandy.com/geeks/assets/images/course/course-css.jpg"
-                        alt="course"
-                        className="card-img-top"
-                        style={{
-                          width: "100%",
-                          height: "200px",
-                          objectFit: "cover",
-                        }}
-                      />
-                    </Link>
-                    {/* Card Body */}
-                    <div className="card-body">
-                      <div className="d-flex justify-content-between align-items-center mb-3">
-                        <span className="badge bg-info">Intermediate</span>
-                        <a href="#" className="fs-5">
-                          <i className="fas fa-heart text-danger align-middle" />
-                        </a>
-                      </div>
-                      <h4 className="mb-2 text-truncate-line-2 ">
-                        <Link
-                          to={`/course-detail/slug/`}
-                          className="text-inherit text-decoration-none text-dark fs-5"
-                        >
-                          How to easily create a website with JavaScript
-                        </Link>
-                      </h4>
-                      <small>By: Claire Evans</small> <br />
-                      <small>16k Students</small> <br />
-                      <div className="lh-1 mt-3 d-flex">
-                        <span className="align-text-top">
-                          <span className="fs-6">
-                            <i className="fas fa-star text-warning"></i>
-                            <i className="fas fa-star text-warning"></i>
-                            <i className="fas fa-star text-warning"></i>
-                            <i className="fas fa-star text-warning"></i>
-                            <i className="fas fa-star-half text-warning"></i>
-                          </span>
-                        </span>
-                        <span className="text-warning">4.5</span>
-                        <span className="fs-6 ms-2">(9,300)</span>
-                      </div>
-                    </div>
-                    {/* Card Footer */}
-                    <div className="card-footer">
-                      <div className="row align-items-center g-0">
-                        <div className="col">
-                          <h5 className="mb-0">$39.00</h5>
+                {/* Add courses from index.jsx */}
+                {courses?.map((c, index) => (
+                  <div className="col">
+                    {/* Card */}
+                    <div className="card card-hover">
+                      <Link to={`/course-detail/${c.slug}/`}>
+                        <img
+                          src={c.image}
+                          alt="course"
+                          className="card-img-top"
+                          style={{ width: "100%", height: "200px", objectFit: "cover" }}
+
+                        />
+                      </Link>
+                      {/* Card Body */}
+                      <div className="card-body">
+                        <div className="d-flex justify-content-between align-items-center mb-3">
+                          <div>
+                            <span className="badge bg-info">{c.level}</span>
+                            <span className="badge bg-success ms-2">{c.language}</span>
+                          </div>
+                          <a href="#" className="fs-5">
+                            <i className="fas fa-heart text-danger align-middle" />
+                          </a>
                         </div>
-                        <div className="col-auto">
-                          <button
-                            type="button"
-                            className="text-inherit text-decoration-none btn btn-primary me-2"
-                          >
-                            <i className="fas fa-shopping-cart text-primary text-white" />
-                          </button>
-                          <Link
-                            to={""}
-                            className="text-inherit text-decoration-none btn btn-primary"
-                          >
-                            Enroll Now{" "}
-                            <i className="fas fa-arrow-right text-primary align-middle me-2 text-white" />
+                        <h4 className="mb-2 text-truncate-line-2 ">
+                          <Link to={`/course-detail/slug/`} className="text-inherit text-decoration-none text-dark fs-5">
+                            {c.title}
                           </Link>
+                        </h4>
+                        <small>By: {c.teacher.full_name}</small> <br />
+                        <small>{c.students?.length} student
+                          {c.students?.length > 1 && "s"}
+                        </small>
+                        <br />
+                        <div className="lh-1 mt-3 d-flex">
+                          <span className="align-text-top">
+                            <span className="fs-6">
+                              <Rater total={5} rating={c.average_rating || 0} />
+                            </span>
+                          </span>
+                          <span className="text-warning">3</span>
+                          <span className="fs-6 ms-2">({c.reviews?.length} Reviews)</span>
+                        </div>
+                      </div>
+                      {/* Card Footer */}
+                      <div className="card-footer">
+                        <div className="row align-items-center g-0">
+                          <div className="col">
+                            <h5 className="mb-0">${c.price}</h5>
+                          </div>
+                          <div className="col-auto">
+                            <button type='button' onClick={() => addToCart(c.id, userId, c.price, country, cartId)}
+                              className="text-inherit text-decoration-none btn btn-primary me-2">
+                              <i className="fas fa-shopping-cart text-primary text-white" />
+                            </button>
+                            <Link to={""} className="text-inherit text-decoration-none btn btn-primary">
+                              Enroll Now <i className="fas fa-arrow-right text-primary align-middle me-2 text-white" />
+                            </Link>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                ))}
               </div>
 
               <nav className="d-flex mt-5">
