@@ -7,6 +7,20 @@ import { useAuthStore } from "../../store/auth";
 function BaseHeader() {
     const [cartCount, setCartCount] = useContext(CartContext);
     console.log(cartCount);
+    // const [searchQuery, setSearchQuery] = useState("");
+    // const navigate = useNavigate();
+
+    // const handleSearchSubmit = () =>{
+    //     navigate(`/search/? search =${searchQuery}`)
+    // }
+
+    const [isLoggedIn, user] = useAuthStore((state) =>[
+        state.isLoggedIn,
+        state.user,
+    ]);
+    console.log(isLoggedIn()); // Call the function
+      
+    
     
     
     return (
@@ -165,12 +179,24 @@ function BaseHeader() {
                                 Search <i className="fas fa-search"></i>
                             </button>
                         </form>
+                        {isLoggedIn() === true ?
+                        <>
+                        {/* logout button */}
+                        <Link to="/logout/" className="btn btn-primary ms-2" type="submit">
+                            Logout <i className="fas fa-sign-out-alt"></i>
+                        </Link>
+                        </>
+                        :
+                        <>
+                        {/* Login and register button */}
                         <Link to="/login/" className="btn btn-primary ms-2" type="submit">
                             Login <i className="fas fa-sign-in-alt"></i>
                         </Link>
                         <Link to="/register/" className="btn btn-primary ms-2" type="submit">
                             Register <i className="fas fa-user-plus"> </i>
                         </Link>
+                        </>
+                        }
                         <Link className="btn btn-success ms-2" to="/cart/">
                             Cart ({cartCount}) <i className="fas fa-shopping-cart"> </i>
                         </Link>

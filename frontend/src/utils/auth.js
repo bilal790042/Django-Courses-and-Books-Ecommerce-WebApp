@@ -1,7 +1,7 @@
 import { useAuthStore } from "../store/auth";
 import axios from "./axios";
 import jwt_decode from "jwt-decode";
-import Cookie from "js-cookie";
+import Cookies from "js-cookie";
 import Swal from "sweetalert2";
 
 // Login function
@@ -18,6 +18,8 @@ export const login = async (email, password) => {
     }
 
     return { data, error: null };
+    
+    
   } catch (error) {
     console.error("Login failed:", error);
     return {
@@ -26,6 +28,7 @@ export const login = async (email, password) => {
     };
   }
 };
+
 
 // Register function
 export const register = async (full_name, email, password, password2) => {
@@ -53,15 +56,15 @@ export const register = async (full_name, email, password, password2) => {
 
 // Logout function
 export const logout = () => {
-  Cookie.remove("access_token");
-  Cookie.remove("refresh_token");
+  Cookies.remove("access_token");
+  Cookies.remove("refresh_token");
   useAuthStore.getState().setUser(null);
   console.log("User logged out.");
 };
 
 // Token refresh logic
 export const getRefreshedToken = async () => {
-  const refresh_token = Cookie.get("refresh_token");
+  const refresh_token = Cookies.get("refresh_token");
 
   if (!refresh_token) {
     console.error("No refresh token found.");
@@ -82,15 +85,10 @@ export const getRefreshedToken = async () => {
 
 // Set authenticated user and cookies
 export const setAuthUser = (access_token, refresh_token) => {
-  Cookie.set("access_token", access_token, {
-    expires: 1,
-    secure: true,
-  });
-
-  Cookie.set("refresh_token", refresh_token, {
-    expires: 7,
-    secure: true,
-  });
+  Cookies.set("access_token", access_token, { expires: 1, sameSite: "Lax" });
+  Cookies.set("refresh_token", refresh_token, { expires: 7, sameSite: "Lax" });
+  console.log("Access token:", access_token);
+console.log("Refresh token:", refresh_token);
 
   try {
     console.log("Token being decoded:", access_token);
@@ -113,8 +111,8 @@ export const setAuthUser = (access_token, refresh_token) => {
 
 // Handle expired token and refresh logic
 export const setUser = async () => {
-  const access_token = Cookie.get("access_token");
-  const refresh_token = Cookie.get("refresh_token");
+  const access_token = Cookies.get("access_token");
+  const refresh_token = Cookies.get("refresh_token");
 
   if (!access_token || !refresh_token) {
     console.error("Tokens are missing.");

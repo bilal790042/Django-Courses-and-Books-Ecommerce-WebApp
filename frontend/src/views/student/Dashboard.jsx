@@ -1,13 +1,41 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import moment from "moment";
 
 import BaseHeader from '../partials/BaseHeader'
 import BaseFooter from '../partials/BaseFooter'
 import Sidebar from './Partials/Sidebar'
 import Header from './Partials/Header'
+import { useAuthStore } from '../../store/auth'
+import useAxios from '../../utils/useAxios'
+import UserData from '../plugin/UserData'
+import { login } from '../../utils/auth'
 
 
 function Dashboard() {
+
+    const [courses, setCourses] = useState([]);
+    const [stats, setStats] = useState([]);
+    const [fetching, setFetching] = useState(true);
+
+
+    const fetchData = () => {
+        useAxios().get(`student/summery/${UserData()?.user_id}/`).then((res) => {
+            console.log(res.data[0]);
+            setStats(res.data[0]);
+
+        });
+
+        useAxios().get(`student/course-list/${UserData()?.user_id}/`).then((res) => {
+            console.log(res.data);
+            setCourses(res.data);
+
+        });
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
     return (
         <>
             <BaseHeader />
@@ -31,7 +59,7 @@ function Dashboard() {
                                         </span>
                                         <div className="ms-4">
                                             <div className="d-flex">
-                                                <h5 className="purecounter mb-0 fw-bold" >0</h5>
+                                                <h5 className="purecounter mb-0 fw-bold" >{stats.total_courses}</h5>
                                             </div>
                                             <p className="mb-0 h6 fw-light">Total Courses</p>
                                         </div>
@@ -45,7 +73,7 @@ function Dashboard() {
                                         </span>
                                         <div className="ms-4">
                                             <div className="d-flex">
-                                                <h5 className="purecounter mb-0 fw-bold" > 0</h5>
+                                                <h5 className="purecounter mb-0 fw-bold" > {stats.completed_lessons}</h5>
                                             </div>
                                             <p className="mb-0 h6 fw-light">Complete lessons</p>
                                         </div>
@@ -59,7 +87,7 @@ function Dashboard() {
                                         </span>
                                         <div className="ms-4">
                                             <div className="d-flex">
-                                                <h5 className="purecounter mb-0 fw-bold" > 0</h5>
+                                                <h5 className="purecounter mb-0 fw-bold" > {stats.achieved_certificates}</h5>
                                             </div>
                                             <p className="mb-0 h6 fw-light">Achieved Certificates</p>
                                         </div>
@@ -98,45 +126,53 @@ function Dashboard() {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>
-                                                    <div className="d-flex align-items-center">
-                                                        <div>
-                                                            <a href="#">
-                                                                <img
-                                                                    src="https://geeksui.codescandy.com/geeks/assets/images/course/course-wordpress.jpg"
-                                                                    alt="course"
-                                                                    className="rounded img-4by3-lg"
-                                                                    style={{ width: "100px", height: "70px", borderRadius: "50%", objectFit: "cover" }}
-                                                                />
-                                                            </a>
-                                                        </div>
-                                                        <div className="ms-3">
-                                                            <h4 className="mb-1 h5">
-                                                                <a href="#" className="text-inherit text-decoration-none text-dark">
-                                                                    Create a Website with WordPress
+                                            {courses?.map((c, index) =>
+                                                <tr>
+                                                    <td>
+                                                        <div className="d-flex align-items-center">
+                                                            <div>
+                                                                <a href="#">
+                                                                    <img
+                                                                        src={c.course.image}
+                                                                        alt="course"
+                                                                        className="rounded img-4by3-lg"
+                                                                        style={{ width: "100px", height: "70px", borderRadius: "50%", objectFit: "cover" }}
+                                                                    />
                                                                 </a>
-                                                            </h4>
-                                                            <ul className="list-inline fs-6 mb-0">
-                                                                <li className="list-inline-item">
-                                                                    <i className='bi bi-clock-history'></i>
-                                                                    <span className='ms-1'>1hr 30 Mins</span>
-                                                                </li>
-                                                                <li className="list-inline-item">
-                                                                    <i className='bi bi-reception-4'></i>
-                                                                    <span className='ms-1'>Beginner</span>
-                                                                </li>
-                                                            </ul>
+                                                            </div>
+                                                            <div className="ms-3">
+                                                                <h4 className="mb-1 h5">
+                                                                    <a href="#" className="text-inherit text-decoration-none text-dark">
+                                                                        {c.course.title}
+                                                                    </a>
+                                                                </h4>
+                                                                <ul className="list-inline fs-6 mb-0">
+                                                                    <li className="list-inline-item">
+                                                                        <i className='bi bi-clock-history'></i>
+                                                                        <span className='ms-1'>{c.course.language}</span>
+                                                                    </li>
+                                                                    <li className="list-inline-item">
+                                                                        <i className='fas fa-user'></i>
+                                                                        <span className='ms-1'>{c.course.level}</span>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                                <td><p className='mt-3'>7/11/2025</p></td>
-                                                <td><p className='mt-3'>15</p></td>
-                                                <td><p className='mt-3'>7</p></td>
-                                                <td>
-                                                    <button className='btn btn-primary btn-sm mt-3'>Continue Course <i className='fas fa-arrow-right'></i></button>
-                                                </td>
-                                            </tr>
+                                                    </td>
+                                                    <td><p className='mt-3'>{moment(c.date.format("DD MMM, YYYY"))}</p></td>
+                                                    <td><p className='mt-3'>{c.lectures?.length}</p></td>
+                                                    <td><p className='mt-3'>{c.completed_lessons?.length}</p></td>
+                                                    <td>
+                                                        {c.completed_lessons?.length < 1 && (
+                                                            <button className='btn btn-success btn-sm mt-3'>Start Course <i className='fas fa-arrow-right ms-2'></i></button>
+                                                        )}
+
+                                                        {c.completed_lessons?.length >0 && (
+                                                            <button className='btn btn-primary btn-sm mt-3'>Continue Course <i className='fas fa-arrow-right ms-2'></i></button>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            )}
                                         </tbody>
                                     </table>
                                 </div>

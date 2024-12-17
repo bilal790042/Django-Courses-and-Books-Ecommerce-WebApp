@@ -17,6 +17,7 @@ import apiInstance from './utils/axios';
 import Checkout from './views/base/Checkout';
 import Success from './views/base/Success';
 import Search from './views/base/Search';
+import StudentDashboard from './views/student/Dashboard';
 
 
 function App() {
@@ -55,6 +56,10 @@ function App() {
             <Route path="/Checkout/:order_oid" element={<Checkout />} />
             <Route path="/payment-success/:order_oid" element={<Success />} />
             <Route path="/Search/" element={<Search />} />
+
+
+            {/* Student route */}
+            <Route path = "/student/dashboard/" element = {<StudentDashboard/>}/>
 
 
 

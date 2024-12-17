@@ -11,6 +11,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from rest_framework_simplejwt.views import TokenRefreshView
+
 from django.conf import settings
 from api import models as api_models
 # import decimal
@@ -420,7 +422,10 @@ class PaymentSuccessAPIView(generics.CreateAPIView):
         session_id = request.data['session_id']
         paypal_order_id = request.data['paypal_order_id']
 
-        order = api_models.CartOrder.objects.get(oid = order_oid)
+        try:
+             order = api_models.CartOrder.objects.get(oid=order_oid)
+        except api_models.CartOrder.DoesNotExist:
+            return Response({"message": "Order does not exist"}, status=404)
         order_items = api_models.CartOrderItem.objects.filter(order = order)
 
 
