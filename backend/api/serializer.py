@@ -55,6 +55,12 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
 
+class OneToOneMeetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = api_models.OneToOneMeeting
+        fields = ['id', 'student_id', 'teacher_id', 'requested_time', 'status', 'meeting_link']
+        # field = '__all__'
+
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
@@ -309,6 +315,21 @@ class TeacherSummarySerializer(serializers.Serializer):
     total_revenue = serializers.IntegerField(default=0)
     monthly_revenue = serializers.IntegerField(default=0)
 
+
+
+class WishlistSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        fields = '__all__'
+        model = api_models.WishList
+
+    def __init__(self, *args, **kwargs):
+        super(WishlistSerializer, self).__init__(*args, **kwargs)
+        request = self.context.get("request")
+        if request and request.method == "POST":
+            self.Meta.depth = 0
+        else:
+            self.Meta.depth = 3
 
 class StudentSummerySerializer(serializers.Serializer):
     total_courses = serializers.IntegerField(default=0)
