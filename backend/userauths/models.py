@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
+from django.contrib.auth.hashers import make_password
 
 # Create your models here.
 
@@ -21,7 +22,7 @@ class User(AbstractUser):
         # Split the email to derive username and full name
         email_username, _ = self.email.split("@")
 
-        # Assign the derived username to `self.username` if it's empty
+        # Assign the derived username to self.username if it's empty
         if not self.full_name:  # Check if full_name is empty or None
             self.full_name = email_username
 
@@ -57,9 +58,9 @@ class Profile(models.Model):
 
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        Profile.objects.create(user = instance, **kwargs)
+        Profile.objects.create(user = instance)
 
-def save_user_profile(sender, instance, **kwargs):
+def save_user_profile(sender, instance,*args, **kwargs):
     instance.profile.save()
 
 post_save.connect(create_user_profile, sender=User)

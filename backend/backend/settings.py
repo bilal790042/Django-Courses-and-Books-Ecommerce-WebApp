@@ -60,6 +60,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     # "django.middleware.CorsMiddleware",
+    "corsheaders.middleware.CorsMiddleware", 
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -98,22 +99,31 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
+        
     }
 }
 
+# STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
+# PAYPAL_CLIENT_ID = env('PAYPAL_CLIENT_ID')
+# PAYPAL_SECRET_ID = env('PAYPAL_SECRET_ID')
 
-# MAILGUN_SECRET_KEY = env("MAILGUN_SECRET_KEY")
-# MAILERSEND_API_TOKEN = env("MAILERSEND_API_TOKEN")
-# MAILERSEND_SENDER_DOMAIN = env("MAILGUN_SENDER_DOMAIN")
+FRONTEND_SITE_URL = env("FRONTEND_SITE_URL")
+BACKEND_SITE_URL = env("BACKEND_SITE_URL")
 
-# ANYMAIL = {
-#     "MAILGUN_API_KEY": env("MAILGUN_API_KEY"),
-#     "MAILGUN_SENDER_DOMAIN": env("MAILGUN_SENDER_DOMAIN"),
+MAILGUN_SECRET_KEY = env("MAILGUN_SECRET_KEY")
+MAILERSEND_API_TOKEN = env("MAILERSEND_API_TOKEN")
+MAILERSEND_SENDER_DOMAIN = env("MAILGUN_SENDER_DOMAIN")
 
-# }
+ANYMAIL = {
+    "MAILGUN_API_KEY": env("MAILGUN_API_KEY"),
+    "MAILGUN_SENDER_DOMAIN": env("MAILGUN_SENDER_DOMAIN"),
 
-# FROM_EMAIL = env("FROM_EMAIL")
-# EMAIL_BACKED = 'anymail.backends.mailgun.EmailBackend'
+}
+
+FROM_EMAIL = env("FROM_EMAIL")
+# EMAIL_BACKEND = 'anymail.backends.mailgun.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "no-reply@bilalcompany.com"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -186,8 +196,7 @@ JAZZMIN_SETTINGS = {
     # Title on the brand (19 chars max) (defaults to current_admin_site.site_header if absent or None)
     "site_brand": "Courses and Book Platform",
 
-    # Logo to use for your site, must be present in static files, used for brand on top left
-    "site_logo": "books/img/logo.png",
+    
 
    
     # Welcome text on the login screen
@@ -198,13 +207,13 @@ JAZZMIN_SETTINGS = {
 
     "show_ui_builder": True,
 }
-
-
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=50),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY, 
     'UPDATE_LAST_LOGIN': False,
 
     'ALGORITHM': 'HS256',
@@ -233,7 +242,6 @@ SIMPLE_JWT = {
 }
 
 
-
-
-# Set coresheader to allow all origin
 CORS_ALLOW_ALL_ORIGINS = True
+
+
