@@ -22,7 +22,7 @@ function CourseDetail() {
     const [course, setCourse] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [addToCartBtn, setAddToCartBtn] = useState("Add To Cart");
-    const [cartCount, setCartCount ] = useContext(CartContext);
+    const [cartCount, setCartCount] = useContext(CartContext);
 
     const param = useParams();
     console.log(GetCurrentAddress().country);
@@ -30,7 +30,7 @@ function CourseDetail() {
     const country = GetCurrentAddress().country;
     // const userId = UserData().user_id
     // console.log(userId);
-    
+
 
     const fetchCourse = () => {
         useAxios()
@@ -45,7 +45,7 @@ function CourseDetail() {
                 setIsLoading(false);
             });
     };
-    console.log(course);
+
 
     useEffect(() => {
         fetchCourse();
@@ -69,14 +69,14 @@ function CourseDetail() {
                 toast().fire({
                     title: "Added To Cart",
                     icon: "success",
-                    
+
                 });
                 //set cart count after adding to cart
                 apiInstance.get(`course/cart-list/${CartId()}/`).then((res) => {
                     setCartCount(res.data?.length);
                 });
-               
-            
+
+
 
             });
         } catch (error) {
@@ -85,6 +85,7 @@ function CourseDetail() {
 
         }
     };
+    
 
     return (
         <>
@@ -219,60 +220,63 @@ function CourseDetail() {
                                                             id="accordionExample2"
                                                         >
                                                             {/* Item */}
-                                                            {course?.lectures?.map((c, Index) => (
-                                                                <div className="accordion-item mb-3">
-                                                                    <h6 className="accordion-header font-base" id="heading-1">
-                                                                        <button
-                                                                            className="accordion-button fw-bold rounded d-sm-flex d-inline-block collapsed"
-                                                                            type="button"
-                                                                            data-bs-toggle="collapse"
-                                                                            data-bs-target={`#collapse-${c.variant_id}`}
-                                                                            aria-expanded="true"
-                                                                            aria-controls={`collapse-${c.variant_id}`}
+                                                            {course?.curriculum?.map((c, Index) => (
+                                                                    <div className="accordion-item mb-3">
+                                                                        <h6 className="accordion-header font-base" id="heading-1">
+                                                                            <button
+                                                                                className="accordion-button fw-bold rounded d-sm-flex d-inline-block collapsed"
+                                                                                type="button"
+                                                                                data-bs-toggle="collapse"
+                                                                                data-bs-target={`#collapse-${c.variant_id}`}
+                                                                                aria-expanded="true"
+                                                                                aria-controls={`collapse-${c.variant_id}`}
+                                                                            >
+                                                                                {c.title}
+                                                                            </button>
+                                                                        </h6>
+                                                                        <div
+                                                                            id={`collapse-${c.variant_id}`}
+                                                                            className="accordion-collapse collapse show"
+                                                                            aria-labelledby="heading-1"
+                                                                            data-bs-parent="#accordionExample2"
                                                                         >
-                                                                            {c.title}
-                                                                        </button>
-                                                                    </h6>
-                                                                    <div
-                                                                        id={`collapse-${c.variant_id}`}
-                                                                        className="accordion-collapse collapse show"
-                                                                        aria-labelledby="heading-1"
-                                                                        data-bs-parent="#accordionExample2"
-                                                                    >
-                                                                        <div className="accordion-body mt-3">
-                                                                            {/* Course lecture */}
-                                                                            {c.variant_items?.map((l, Index) => (
-                                                                                <>
-                                                                                    <div className="d-flex justify-content-between align-items-center">
-                                                                                        <div className="position-relative d-flex align-items-center">
-                                                                                            <a
-                                                                                                href="#"
-                                                                                                className="btn btn-danger-soft btn-round btn-sm mb-0 stretched-link position-static"
-                                                                                            >
-                                                                                                {l.preview === true ?
-                                                                                                    <i className="fas fa-play me-0" />
-                                                                                                    :
-                                                                                                    <i className="fas fa-lock me-0" />
-                                                                                                }
-                                                                                            </a>
-                                                                                            <span className="d-inline-block text-truncate ms-2 mb-0 h6 fw-light w-100px w-sm-200px w-md-400px">
-                                                                                                {l.title}
-                                                                                            </span>
+                                                                            <div className="accordion-body mt-3">
+                                                                                {/* Course lecture */}
+                                                                                {c.variant_items?.map((l, Index) => (
+                                                                                    <>
+                                                                                        <div className="d-flex justify-content-between align-items-center">
+                                                                                            <div className="position-relative d-flex align-items-center">
+                                                                                                <a
+                                                                                                    href="#"
+                                                                                                    className="btn btn-danger-soft btn-round btn-sm mb-0 stretched-link position-static"
+                                                                                                >
+                                                                                                    {l.preview === true ?
+                                                                                                        <i className="fas fa-play me-0" />
+                                                                                                        :
+                                                                                                        <i className="fas fa-lock me-0" />
+                                                                                                        
+                                                                                                    }
+                                                                                                    
+                                                                                                </a>
+                                                                                                
+                                                                                                <span className="d-inline-block text-truncate ms-2 mb-0 h6 fw-light w-100px w-sm-200px w-md-400px">
+                                                                                                    {l.title}
+                                                                                                </span>
+                                                                                            </div>
+                                                                                            <p className="mb-0">{c.content_duration}
+
+                                                                                            </p>
                                                                                         </div>
-                                                                                        <p className="mb-0">{c.content_duration}
+                                                                                        <hr />
+                                                                                    </>
 
-                                                                                        </p>
-                                                                                    </div>
-                                                                                    <hr />
-                                                                                </>
-
-                                                                            ))}
+                                                                                ))}
 
 
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                            ))}
+                                                                ))}
 
 
 
@@ -1030,7 +1034,7 @@ function CourseDetail() {
                                                             {addToCartBtn === "Adding To Cart" && (
 
                                                                 <button type="button"
-                                                                    className="btn btn-primary mb-0 w-100 me-2" onClick={() => addToCart(course.id, userId, course.price,country,cartId())}>
+                                                                    className="btn btn-primary mb-0 w-100 me-2" onClick={() => addToCart(course.id, userId, course.price, country, cartId())}>
 
                                                                     <i className='fas fa-spinner fa-spin'></i> Adding To Cart
                                                                 </button>

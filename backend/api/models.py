@@ -155,7 +155,7 @@ class Course(models.Model):
         return EnrolledCourse.objects.filter(course= self)
     
 
-    def curriculm(self):
+    def curriculum(self):
          return Variant.objects.filter(course=self)
     
 
@@ -378,7 +378,8 @@ class EnrolledCourse(models.Model):
         return CompletedLesson.objects.filter(course= self.course, user= self.user)
     
     def curriculum(self):
-        return Variant.objects.file(course= self.course)
+        return Variant.objects.filter(course=self.course)
+
     
     def note(self):
         return Note.objects.filter(course = self.course, user = self.user)

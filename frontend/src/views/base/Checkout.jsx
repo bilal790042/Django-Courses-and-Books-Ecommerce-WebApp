@@ -253,6 +253,9 @@ function Checkout() {
                                                                 console.log(status);
                                                                 if (status === "COMPLETED") {
                                                                     navigate(`/payment-success/${order.oid}/?paypal_order_id=${paypal_order_id}`);
+                                                                    console.log(order.oid);
+                                                                    console.log(paypal_order_id);
+                                                                    
                                                                 }
                                                             });
                                                         }}

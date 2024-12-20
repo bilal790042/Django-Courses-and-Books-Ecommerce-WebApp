@@ -18,6 +18,9 @@ import Checkout from './views/base/Checkout';
 import Success from './views/base/Success';
 import Search from './views/base/Search';
 import StudentDashboard from './views/student/Dashboard';
+import StudentCourses from './views/student/Courses';
+import StudentCourseDetail from "./views/student/CourseDetail"
+import MentoringSessions from "./views/student/MentoringSessions";
 
 
 function App() {
@@ -60,6 +63,11 @@ function App() {
 
             {/* Student route */}
             <Route path = "/student/dashboard/" element = {<StudentDashboard/>}/>
+            <Route path = "/student/courses/" element = {<StudentCourses/>}/>
+            <Route path = "/student/courses/:enrollment_id" element = {<StudentCourseDetail/>}/>
+
+            {/* Student mentoring sessions */}
+            <Route path="/student/mentoring-sessions" element={<MentoringSessions />} />
 
 
 

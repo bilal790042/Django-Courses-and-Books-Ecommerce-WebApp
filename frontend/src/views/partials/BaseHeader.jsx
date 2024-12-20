@@ -14,15 +14,15 @@ function BaseHeader() {
     //     navigate(`/search/? search =${searchQuery}`)
     // }
 
-    const [isLoggedIn, user] = useAuthStore((state) =>[
+    const [isLoggedIn, user] = useAuthStore((state) => [
         state.isLoggedIn,
         state.user,
     ]);
     console.log(isLoggedIn()); // Call the function
-      
-    
-    
-    
+
+
+
+
     return (
         <div>
             <nav className="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
@@ -31,7 +31,7 @@ function BaseHeader() {
                         Skillz
                     </Link>
                     <button
-                        className="navbar-toggler" 
+                        className="navbar-toggler"
                         type="button"
                         data-bs-toggle="collapse"
                         data-bs-target="#navbarSupportedContent"
@@ -159,6 +159,11 @@ function BaseHeader() {
                                             <i className="fas fa-envelope"></i> Q/A{" "}
                                         </Link>
                                     </li>
+                                    <li className="nav-item">
+                                        <Link className="nav-link" to={`/student/mentoring-sessions/`}>
+                                            <i className="fas fa-chalkboard-teacher"></i> Sessions
+                                        </Link>
+                                    </li>
                                     <li>
                                         <Link className="dropdown-item" to={`/student/profile/`}>
                                             {" "}
@@ -180,22 +185,22 @@ function BaseHeader() {
                             </button>
                         </form>
                         {isLoggedIn() === true ?
-                        <>
-                        {/* logout button */}
-                        <Link to="/logout/" className="btn btn-primary ms-2" type="submit">
-                            Logout <i className="fas fa-sign-out-alt"></i>
-                        </Link>
-                        </>
-                        :
-                        <>
-                        {/* Login and register button */}
-                        <Link to="/login/" className="btn btn-primary ms-2" type="submit">
-                            Login <i className="fas fa-sign-in-alt"></i>
-                        </Link>
-                        <Link to="/register/" className="btn btn-primary ms-2" type="submit">
-                            Register <i className="fas fa-user-plus"> </i>
-                        </Link>
-                        </>
+                            <>
+                                {/* logout button */}
+                                <Link to="/logout/" className="btn btn-primary ms-2" type="submit">
+                                    Logout <i className="fas fa-sign-out-alt"></i>
+                                </Link>
+                            </>
+                            :
+                            <>
+                                {/* Login and register button */}
+                                <Link to="/login/" className="btn btn-primary ms-2" type="submit">
+                                    Login <i className="fas fa-sign-in-alt"></i>
+                                </Link>
+                                <Link to="/register/" className="btn btn-primary ms-2" type="submit">
+                                    Register <i className="fas fa-user-plus"> </i>
+                                </Link>
+                            </>
                         }
                         <Link className="btn btn-success ms-2" to="/cart/">
                             Cart ({cartCount}) <i className="fas fa-shopping-cart"> </i>

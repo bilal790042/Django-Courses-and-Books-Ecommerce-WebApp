@@ -8,33 +8,31 @@ import apiInstance from '../../utils/axios'
 
 function Success() {
 
-    const [orderMessage, setOrderMessage] = useState("Processing Payment");
+    const [orderMessage, setOrderMessage] = useState("");
     const { order_oid } = useParams(); // Extract route param
-    const queryParams = new URLSearchParams(window.location.search); // Corrected `window`
-    const sessionId = queryParams.get("session_id");
+    const queryParams = new URLSearchParams(window.location.search); // Correctly accessing URL params
     const paypalOrderId = queryParams.get("paypal_order_id");
 
-    console.log({ sessionId, paypalOrderId, order_oid });
+    // Logging the values to check
+    console.log({ paypalOrderId, order_oid });
 
     useEffect(() => {
         const formdata = new FormData();
         formdata.append("order_oid", order_oid);
-        formdata.append("session_id", sessionId);
         formdata.append("paypal_order_id", paypalOrderId);
 
+        // Making POST request to the payment-success endpoint
         apiInstance
             .post("payment/payment-success/", formdata)
             .then((res) => {
-                console.log(res.data);
-                setOrderMessage(res.data.message);
+                console.log(res.data); // Log response from backend
+                setOrderMessage(res.data.message); // Display the message from backend response
             })
             .catch((error) => {
-                console.error("Error Response:", error.response?.data || error.message);
-                
-                setOrderMessage("Payment Failed");
+                console.error("Error Response:", error.response?.data || error.message); // Handle error
+                setOrderMessage("Payment Failed"); // Set message on error
             });
-    }, [order_oid, sessionId, paypalOrderId]);
-    console.log(orderMessage);
+    }, [order_oid, paypalOrderId]); 
 
 
     return (
