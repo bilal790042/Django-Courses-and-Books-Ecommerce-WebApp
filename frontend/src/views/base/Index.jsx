@@ -187,7 +187,7 @@ function Index() {
                             {/* icon */}
                             <div className="py-7 text-center">
                                 <div className="mb-3">
-                                    <i className="fe fe-tv fs-2 text-primary" />
+                                    <i className="fe fe-tv fs-2 text-primary"  />
                                 </div>
                                 {/* text */}
                                 <div className="lh-1">
@@ -226,109 +226,204 @@ function Index() {
                             </div>
                         </div>
                     </div>
-                    <div className="row">
-                        <div className="col-md-12">
-                            <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-                                {currentItems?.map((c, index) => (
-                                    <div className="col">
-                                        {/* Card */}
-                                        <div className="card card-hover">
-                                            <Link to={`/course-detail/${c.slug}/`}>
-                                                <img
-                                                    src={c.image}
-                                                    alt="course"
-                                                    className="card-img-top"
-                                                    style={{ width: "100%", height: "200px", objectFit: "cover" }}
 
-                                                />
-                                            </Link>
-                                            {/* Card Body */}
-                                            <div className="card-body">
-                                                <div className="d-flex justify-content-between align-items-center mb-3">
-                                                    <div>
-                                                        <span className="badge bg-info">{c.level}</span>
-                                                        <span className="badge bg-success ms-2">{c.language}</span>
-                                                    </div>
-                                                    <a href="#" className="fs-5">
-                                                        <i className="fas fa-heart text-danger align-middle" />
-                                                    </a>
-                                                </div>
-                                                <h4 className="mb-2 text-truncate-line-2 ">
-                                                    <Link to={`/course-detail/slug/`} className="text-inherit text-decoration-none text-dark fs-5">
-                                                        {c.title}
-                                                    </Link>
-                                                </h4>
-                                                <small>By: {c.teacher.full_name}</small> <br />
-                                                <small>{c.students?.length} student
-                                                    {c.students?.length > 1 && "s"}
-                                                </small>
-                                                <br />
-                                                <div className="lh-1 mt-3 d-flex">
-                                                    <span className="align-text-top">
-                                                        <span className="fs-6">
-                                                            <Rater total={5} rating={c.average_rating || 0} />
-                                                        </span>
-                                                    </span>
-                                                    <span className="text-warning">3</span>
-                                                    <span className="fs-6 ms-2">({c.reviews?.length} Reviews)</span>
-                                                </div>
-                                            </div>
-                                            {/* Card Footer */}
-                                            <div className="card-footer">
-                                                <div className="row align-items-center g-0">
-                                                    <div className="col">
-                                                        <h5 className="mb-0">${c.price}</h5>
-                                                    </div>
-                                                    <div className="col-auto">
-                                                        <button type='button' onClick={() => addToCart(c.id, userId, c.price, country, cartId)}
-                                                            className="text-inherit text-decoration-none btn btn-primary me-2">
-                                                            <i className="fas fa-shopping-cart text-primary text-white" />
-                                                        </button>
-                                                        <Link to={""} className="text-inherit text-decoration-none btn btn-primary">
-                                                            Enroll Now <i className="fas fa-arrow-right text-primary align-middle me-2 text-white" />
-                                                        </Link>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+
+                    <div className="container mt-4">
+    {/* Courses Section */}
+    <h3 className="mb-4">Courses</h3>
+    <div className="row">
+        <div className="col-md-12">
+            <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                {courses?.map((c, index) => (
+                    <div className="col" key={index}>
+                        {/* Card */}
+                        <div className="card card-hover">
+                            <Link to={`/course-detail/${c.slug}/`}>
+                                <img
+                                    src={c.image}
+                                    alt="course"
+                                    className="card-img-top"
+                                    style={{
+                                        width: "100%",
+                                        height: "200px",
+                                        objectFit: "cover",
+                                    }}
+                                />
+                            </Link>
+                            {/* Card Body */}
+                            <div className="card-body">
+                                <div className="d-flex justify-content-between align-items-center mb-3">
+                                    <div>
+                                        <span className="badge bg-info">{c.level}</span>
+                                        <span className="badge bg-success ms-2">{c.language}</span>
                                     </div>
-                                ))}
-                                <b></b>
-                                <b></b>
-                                <b></b>
-                                <nav className="d-flex mt-5">
-                                    <ul className="pagination">
-                                        <li className={`page-item ${currentPage ===1 ? "disabled" : ""}`}>
-                                            <button className="page-link me-1" 
-                                                onClick={() => setCurrentPage(currentPage-1)}>
-                                                <i className="ci-arrow-left me-2" />
-                                                Previous
-                                            </button>
-                                        </li>
-                                    </ul>
-                                    <ul className="pagination">
-                                       {pageNumber.map((number) => (
-                                         <li key={number} className={`page-item ${currentPage === number ? "active": ""}`}>
-                                         <button className="page-link" onClick={() =>setCurrentPage(number) } >
-                                             {number}
-                                         </button>
-                                        </li>
-                                       ))}
-                                    </ul>
-                                    <ul className="pagination">
-                                        <li  className={`page-item ${currentPage === totalPage ? "disabled" : ""}`}>
-                                            <button className="page-link ms-1" onClick={() => setCurrentPage(currentPage+1)}>
-                                                Next
-                                            <i className="ci-arrow-right ms-3" />
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </nav>
-
+                                    <a href="#" className="fs-5">
+                                        <i className="fas fa-heart text-danger align-middle" />
+                                    </a>
+                                </div>
+                                <h4 className="mb-2 text-truncate-line-2">
+                                    <Link
+                                        to={`/course-detail/${c.slug}/`}
+                                        className="text-inherit text-decoration-none text-dark fs-5"
+                                    >
+                                        {c.title}
+                                    </Link>
+                                </h4>
+                                <small>By: {c.teacher.full_name}</small> <br />
+                                <small>
+                                    {c.students?.length} student
+                                    {c.students?.length > 1 && "s"}
+                                </small>
+                                <br />
+                                <div className="lh-1 mt-3 d-flex">
+                                    <span className="align-text-top">
+                                        <span className="fs-6">
+                                            <Rater total={5} rating={c.average_rating || 0} />
+                                        </span>
+                                    </span>
+                                    <span className="text-warning">3</span>
+                                    <span className="fs-6 ms-2">
+                                        ({c.reviews?.length} Reviews)
+                                    </span>
+                                </div>
                             </div>
-
+                            {/* Card Footer */}
+                            <div className="card-footer">
+                                <div className="row align-items-center g-0">
+                                    <div className="col">
+                                        <h5 className="mb-0">${c.price}</h5>
+                                    </div>
+                                    <div className="col-auto">
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                addToCart(
+                                                    c.id,
+                                                    userId,
+                                                    c.price,
+                                                    country,
+                                                    cartId
+                                                )
+                                            }
+                                            className="text-inherit text-decoration-none btn btn-primary me-2"
+                                        >
+                                            <i className="fas fa-shopping-cart text-primary text-white" />
+                                        </button>
+                                        <Link
+                                            to=""
+                                            className="text-inherit text-decoration-none btn btn-primary"
+                                        >
+                                            Enroll Now{" "}
+                                            <i className="fas fa-arrow-right text-primary align-middle me-2 text-white" />
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                ))}
+            </div>
+
+            {/* Pagination */}
+            <nav className="d-flex mt-5">
+                <ul className="pagination">
+                    <li>
+                        <button className="page-link me-1">
+                            <i className="ci-arrow-left me-2" />
+                            Previous
+                        </button>
+                    </li>
+                </ul>
+                <ul className="pagination">
+                    <li key={1} className="active">
+                        <button className="page-link">1</button>
+                    </li>
+                </ul>
+                <ul className="pagination">
+                    <li className={`totalPages`}>
+                        <button className="page-link ms-1">
+                            Next
+                            <i className="ci-arrow-right ms-3" />
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    {/* Books Section */}
+    <h3 className="mt-5 mb-4">Books</h3>
+    <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        {/* {books?.map((b, index) => (
+            <div className="col" key={index}>
+                <div className="card">
+                    <img
+                        src={b.image}
+                        alt={b.title}
+                        className="card-img-top"
+                        style={{
+                            width: "100%",
+                            height: "200px",
+                            objectFit: "cover",
+                        }}
+                    />
+                    <div className="card-body">
+                        <h5 className="card-title">{b.title}</h5>
+                        <p className="card-text">By: {b.author}</p>
+                        <p className="card-text">
+                            <strong>Price:</strong> ${b.price}
+                        </p>
+                        <a href="#" className="btn btn-secondary">
+                            Buy Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        ))} */}
+
+<div>
+    <img
+        src="https://media.springernature.com/full/springer-static/cover-hires/book/978-1-4302-0072-7"
+        alt="Beginning Python From Novice to Professional"
+        style={{ width: "200px", height: "300px", objectFit: "cover" }}
+    />
+    <p>Beginning Python From Novice to Professional</p>
+
+    
+</div>
+
+<div>
+    <img
+        src="https://static-01.daraz.pk/p/d20543add3bdbc13f71188c0bb9f31d0.jpg"
+        alt="The One Minute Manager"
+        style={{ width: "200px", height: "300px", objectFit: "cover" }}
+    />
+    <p>The One Minute Manager</p>
+
+    
+</div>
+
+
+
+<div>
+    <img
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBPQE4Fasfkbp_u00xeNjwEGVkM5pXbAC5-w&s"
+        alt="Machine Learning Yearning"
+        style={{ width: "200px", height: "300px", objectFit: "cover" }}
+    />
+    <p>Machine Learning Yearning</p>
+
+    
+</div>
+
+
+    </div>
+</div>
+
+
+
+
+
                 </div>
             </section>
 

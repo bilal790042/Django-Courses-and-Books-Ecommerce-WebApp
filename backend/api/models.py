@@ -463,3 +463,23 @@ class Country(models.Model):
         if not self.slug:  # Ensure slug is set only if it's not already defined
             self.slug = slugify(self.name)  # Use name for the slug
         super(Country, self).save(*args, **kwargs) 
+
+ONE_ON_ONE_STATUS = (
+    ("Pending", "Pending"),
+    ("Accepted", "Accepted"),
+    ("Declined", "Declined"),
+)
+
+
+class OneToOneMeeting(models.Model):
+    request_id = ShortUUIDField(length=6, max_length=20, alphabet="1234567890")
+    student_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    teacher_id = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True)
+    requested_time = models.DateTimeField()
+    status = models.CharField(choices=ONE_ON_ONE_STATUS, default="Pending", max_length=100)
+    topic = models.CharField(max_length=100)
+    meeting_link = models.URLField()
+
+    def __str__(self):
+        return str(self.status)
+    
