@@ -50,6 +50,11 @@ function Sidebar() {
                                     <i className="fas fa-envelope"></i> Q/A{" "}
                                 </Link>
                             </li>
+                            <li className="nav-item">
+                                <Link className="nav-link" to={`/student/mentoring-sessions/`}>
+                                    <i className="fas fa-chalkboard-teacher"></i> Mentoring Sessions
+                                </Link>
+                            </li>
                         </ul>
 
                         {/* Navbar header */}

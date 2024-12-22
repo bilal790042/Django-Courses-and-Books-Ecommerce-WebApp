@@ -17,25 +17,50 @@ function Dashboard() {
     const [courses, setCourses] = useState([]);
     const [stats, setStats] = useState([]);
     const [fetching, setFetching] = useState(true);
+   
+    
+
 
 
     const fetchData = () => {
+        setFetching(true);
         useAxios().get(`student/summery/${UserData()?.user_id}/`).then((res) => {
             console.log(res.data[0]);
             setStats(res.data[0]);
-
+            
         });
 
         useAxios().get(`student/course-list/${UserData()?.user_id}/`).then((res) => {
             console.log(res.data);
             setCourses(res.data);
+            setFetching(false);
 
         });
     };
+    
 
     useEffect(() => {
         fetchData();
     }, []);
+
+    const handleSearch = (event) =>{
+        const query = event.target.value.toLowerCase()
+        console.log(query);
+        if(query === ""){
+            fetchData();
+        }else{
+            const filtered = courses.filter((c) =>{
+                return c.course.title.toLowerCase().includes(query);
+            });
+            setCourses(filtered);
+
+        }
+        
+    };
+    console.log("Courses: ", courses);
+
+
+    
     return (
         <>
             <BaseHeader />
@@ -94,7 +119,9 @@ function Dashboard() {
                                     </div>
                                 </div>
                             </div>
+                            {fetching === true && <p className="mt-3 p-3">Loading...</p>}
 
+                            {fetching ===false &&(
                             <div className="card mb-4">
                                 <div className="card-header">
                                     <h3 className="mb-0">Courses</h3>
@@ -109,6 +136,7 @@ function Dashboard() {
                                                 type="search"
                                                 className="form-control"
                                                 placeholder="Search Your Courses"
+                                                onChange={handleSearch}
                                             />
                                         </div>
                                     </form>
@@ -148,7 +176,7 @@ function Dashboard() {
                                                                 </h4>
                                                                 <ul className="list-inline fs-6 mb-0">
                                                                     <li className="list-inline-item">
-                                                                        <i className='bi bi-clock-history'></i>
+                                                                        <i className="fas fa-user"></i>
                                                                         <span className='ms-1'>{c.course.language}</span>
                                                                     </li>
                                                                     <li className="list-inline-item">
@@ -159,24 +187,32 @@ function Dashboard() {
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td><p className='mt-3'>{moment(c.date.format("DD MMM, YYYY"))}</p></td>
+                                                    <td><p className='mt-3'>{moment(c.date).format("DD MMM, YYYY")}</p></td>
                                                     <td><p className='mt-3'>{c.lectures?.length}</p></td>
                                                     <td><p className='mt-3'>{c.completed_lessons?.length}</p></td>
                                                     <td>
+                                                        {/* not working  */}
                                                         {c.completed_lessons?.length < 1 && (
-                                                            <button className='btn btn-success btn-sm mt-3'>Start Course <i className='fas fa-arrow-right ms-2'></i></button>
+                                                            <Link to= {`/student/courses/${c.enrollment_id}`} 
+                                                            className='btn btn-success btn-sm mt-3'>Start Course <i className='fas fa-arrow-right ms-2'></i></Link>
                                                         )}
-
+                                                        
                                                         {c.completed_lessons?.length >0 && (
-                                                            <button className='btn btn-primary btn-sm mt-3'>Continue Course <i className='fas fa-arrow-right ms-2'></i></button>
+                                                            <Link to= {`/student/courses/${c.enrollment_id}`}
+                                                            className='btn btn-primary btn-sm mt-3'>Continue Course <i className='fas fa-arrow-right ms-2'></i></Link>
                                                         )}
+                                                        
                                                     </td>
                                                 </tr>
+                                            )}
+                                            {courses?.length <1 && (
+                                                <p className="mt-4 p-4">No courses found</p>
                                             )}
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
+                            )}
                         </div>
                     </div>
                 </div>

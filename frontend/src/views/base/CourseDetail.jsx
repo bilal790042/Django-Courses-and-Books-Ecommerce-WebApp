@@ -22,7 +22,7 @@ function CourseDetail() {
     const [course, setCourse] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [addToCartBtn, setAddToCartBtn] = useState("Add To Cart");
-    const [cartCount, setCartCount ] = useContext(CartContext);
+    const [cartCount, setCartCount] = useContext(CartContext);
 
     const param = useParams();
     console.log(GetCurrentAddress().country);
@@ -30,7 +30,7 @@ function CourseDetail() {
     const country = GetCurrentAddress().country;
     // const userId = UserData().user_id
     // console.log(userId);
-    
+
 
     const fetchCourse = () => {
         useAxios()
@@ -45,7 +45,7 @@ function CourseDetail() {
                 setIsLoading(false);
             });
     };
-    console.log(course);
+
 
     useEffect(() => {
         fetchCourse();
@@ -69,14 +69,14 @@ function CourseDetail() {
                 toast().fire({
                     title: "Added To Cart",
                     icon: "success",
-                    
+
                 });
                 //set cart count after adding to cart
                 apiInstance.get(`course/cart-list/${CartId()}/`).then((res) => {
                     setCartCount(res.data?.length);
                 });
-               
-            
+
+
 
             });
         } catch (error) {
@@ -85,46 +85,8 @@ function CourseDetail() {
 
         }
     };
-
-    // const handleMeetingRequest = (event) => {
-    //     event.preventDefault(); // Prevent page reload
-    //     const meetingData = {
-    //         date: event.target.meetingDate.value,
-    //         time: event.target.meetingTime.value,
-    //     };
     
-    //     // Send data to the backend
-        // fetch('http://localhost:8000/api/v1/student/schedule-meeting/', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify(meetingData),
-        // })
-    //         .then((response) => response.json())
-    //         .then((data) => {
-    //             alert('Meeting Scheduled Successfully!');
-    //         })
-    //         .catch((error) => {
-    //             console.error('Error scheduling meeting:', error);
-    //         });
-    // };
-    const [isMeetingSubmitted, setIsMeetingSubmitted] = useState(false);
-    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
-    const handleMeetingRequest = (e) => {
-        e.preventDefault();
-        setIsMeetingSubmitted(true);
-        setIsButtonDisabled(true);
-
-        console.log("Meeting request submitted!");
-
-        // Redirect to "Reviews" tab after submission
-        const reviewsTab = document.getElementById("course-pills-tab-4"); // Assuming Reviews tab has this ID
-        if (reviewsTab) {
-            reviewsTab.click(); // Programmatically click the Reviews tab
-        }
-    };
 
     return (
         <>
@@ -219,12 +181,6 @@ function CourseDetail() {
                                                     </li>
 
                                                     
-                                                    <li className="nav-item me-2 me-sm-4" role="presentation">
-                                                        <button className="nav-link mb-2 mb-md-0" id="course-pills-tab-45" data-bs-toggle="pill" data-bs-target="#course-pills-45" type="button" role="tab" aria-controls="course-pills-45" aria-selected="false" >
-                                                            One to One Meeting
-                                                        </button>
-                                                    </li>
-                                                    
                                                     {/* Tab item */}
                                                     <li className="nav-item me-2 me-sm-4 d-none" role="presentation">
                                                         <button className="nav-link mb-2 mb-md-0" id="course-pills-tab-5" data-bs-toggle="pill" data-bs-target="#course-pills-5" type="button" role="tab" aria-controls="course-pills-5" aria-selected="false">
@@ -267,60 +223,63 @@ function CourseDetail() {
                                                             id="accordionExample2"
                                                         >
                                                             {/* Item */}
-                                                            {course?.lectures?.map((c, Index) => (
-                                                                <div className="accordion-item mb-3">
-                                                                    <h6 className="accordion-header font-base" id="heading-1">
-                                                                        <button
-                                                                            className="accordion-button fw-bold rounded d-sm-flex d-inline-block collapsed"
-                                                                            type="button"
-                                                                            data-bs-toggle="collapse"
-                                                                            data-bs-target={`#collapse-${c.variant_id}`}
-                                                                            aria-expanded="true"
-                                                                            aria-controls={`collapse-${c.variant_id}`}
+                                                            {course?.curriculum?.map((c, Index) => (
+                                                                    <div className="accordion-item mb-3">
+                                                                        <h6 className="accordion-header font-base" id="heading-1">
+                                                                            <button
+                                                                                className="accordion-button fw-bold rounded d-sm-flex d-inline-block collapsed"
+                                                                                type="button"
+                                                                                data-bs-toggle="collapse"
+                                                                                data-bs-target={`#collapse-${c.variant_id}`}
+                                                                                aria-expanded="true"
+                                                                                aria-controls={`collapse-${c.variant_id}`}
+                                                                            >
+                                                                                {c.title}
+                                                                            </button>
+                                                                        </h6>
+                                                                        <div
+                                                                            id={`collapse-${c.variant_id}`}
+                                                                            className="accordion-collapse collapse show"
+                                                                            aria-labelledby="heading-1"
+                                                                            data-bs-parent="#accordionExample2"
                                                                         >
-                                                                            {c.title}
-                                                                        </button>
-                                                                    </h6>
-                                                                    <div
-                                                                        id={`collapse-${c.variant_id}`}
-                                                                        className="accordion-collapse collapse show"
-                                                                        aria-labelledby="heading-1"
-                                                                        data-bs-parent="#accordionExample2"
-                                                                    >
-                                                                        <div className="accordion-body mt-3">
-                                                                            {/* Course lecture */}
-                                                                            {c.variant_items?.map((l, Index) => (
-                                                                                <>
-                                                                                    <div className="d-flex justify-content-between align-items-center">
-                                                                                        <div className="position-relative d-flex align-items-center">
-                                                                                            <a
-                                                                                                href="#"
-                                                                                                className="btn btn-danger-soft btn-round btn-sm mb-0 stretched-link position-static"
-                                                                                            >
-                                                                                                {l.preview === true ?
-                                                                                                    <i className="fas fa-play me-0" />
-                                                                                                    :
-                                                                                                    <i className="fas fa-lock me-0" />
-                                                                                                }
-                                                                                            </a>
-                                                                                            <span className="d-inline-block text-truncate ms-2 mb-0 h6 fw-light w-100px w-sm-200px w-md-400px">
-                                                                                                {l.title}
-                                                                                            </span>
+                                                                            <div className="accordion-body mt-3">
+                                                                                {/* Course lecture */}
+                                                                                {c.variant_items?.map((l, Index) => (
+                                                                                    <>
+                                                                                        <div className="d-flex justify-content-between align-items-center">
+                                                                                            <div className="position-relative d-flex align-items-center">
+                                                                                                <a
+                                                                                                    href="#"
+                                                                                                    className="btn btn-danger-soft btn-round btn-sm mb-0 stretched-link position-static"
+                                                                                                >
+                                                                                                    {l.preview === true ?
+                                                                                                        <i className="fas fa-play me-0" />
+                                                                                                        :
+                                                                                                        <i className="fas fa-lock me-0" />
+                                                                                                        
+                                                                                                    }
+                                                                                                    
+                                                                                                </a>
+                                                                                                
+                                                                                                <span className="d-inline-block text-truncate ms-2 mb-0 h6 fw-light w-100px w-sm-200px w-md-400px">
+                                                                                                    {l.title}
+                                                                                                </span>
+                                                                                            </div>
+                                                                                            <p className="mb-0">{c.content_duration}
+
+                                                                                            </p>
                                                                                         </div>
-                                                                                        <p className="mb-0">{c.content_duration}
+                                                                                        <hr />
+                                                                                    </>
 
-                                                                                        </p>
-                                                                                    </div>
-                                                                                    <hr />
-                                                                                </>
-
-                                                                            ))}
+                                                                                ))}
 
 
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                            ))}
+                                                                ))}
 
 
 
@@ -766,54 +725,6 @@ function CourseDetail() {
                                                     {/* Content END */}
                                                     {/* Content START */}
 
-                                                    <div className="tab-content p-4" id="course-pills-tabContent">
-            {/* Other tabs */}
-            <div
-                className="tab-pane fade"
-                id="course-pills-45"
-                role="tabpanel"
-                aria-labelledby="course-pills-tab-45"
-            >
-                <h5>Schedule a One-to-One Meeting</h5>
-                <p>Use this feature to request a personalized session with the instructor.</p>
-                <form onSubmit={handleMeetingRequest}>
-                    <div className="mb-3">
-                        <label htmlFor="meetingDate" className="form-label">Choose a Date</label>
-                        <input type="date" className="form-control" id="meetingDate" required />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="meetingTime" className="form-label">Choose a Time</label>
-                        <input type="time" className="form-control" id="meetingTime" required />
-                    </div>
-                    <button
-                        type="submit"
-                        className="btn btn-primary"
-                        disabled={isButtonDisabled} // Disable button conditionally
-                    >
-                        {isButtonDisabled ? "Submitted" : "Request Meeting"}
-                    </button>
-                </form>
-
-                {/* Success Message */}
-                {isMeetingSubmitted && (
-                    <div className="mt-3 alert alert-success" role="alert">
-                        Submitted for response!
-                    </div>
-                )}
-            </div>
-
-            {/* Reviews Tab */}
-            <div
-                className="tab-pane fade"
-                id="course-pills-4"
-                role="tabpanel"
-                aria-labelledby="course-pills-tab-4"
-            >
-                <h5>Reviews</h5>
-                <p>This is the reviews tab content.</p>
-            </div>
-        </div>
-
 
                                                     <div
                                                         className="tab-pane fade"
@@ -1128,7 +1039,7 @@ function CourseDetail() {
                                                             {addToCartBtn === "Adding To Cart" && (
 
                                                                 <button type="button"
-                                                                    className="btn btn-primary mb-0 w-100 me-2" onClick={() => addToCart(course.id, userId, course.price,country,cartId())}>
+                                                                    className="btn btn-primary mb-0 w-100 me-2" onClick={() => addToCart(course.id, userId, course.price, country, cartId())}>
 
                                                                     <i className='fas fa-spinner fa-spin'></i> Adding To Cart
                                                                 </button>

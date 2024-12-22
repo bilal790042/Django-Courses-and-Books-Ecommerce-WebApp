@@ -1,27 +1,82 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import BaseHeader from '../partials/BaseHeader'
-import BaseFooter from '../partials/BaseFooter'
-import Sidebar from './Partials/Sidebar'
-import Header from './Partials/Header'
-
 import ReactPlayer from 'react-player'
-
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
+
+import BaseFooter from '../partials/BaseFooter'
+import Sidebar from './Partials/Sidebar'
+import Header from './Partials/Header'
+import useAxios from '../../utils/useAxios';
+import UserData from '../plugin/UserData';
+import { useAuthStore } from '../../store/auth';
+
+
+
 function CourseDetail() {
 
+  const [course, setCourse] = useState([]);
+  const param = useParams();
+  const [variantItem, setVariantItem] = useState(null);
+  const [completionPercentage, setCompletionPercentage] = useState(0);
+  const [markAsCompletedStatus, setMarkAsCompletedStatus] = useState({});
+
+
+
+
+  //play lecture model
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => { setShow(true); }
+  const handleShow = (variant_item) => { 
+    setShow(true);
+    setVariantItem(variant_item);
+  };
+  
+  
 
   const [noteShow, setNoteShow] = useState(false);
   const handleNoteClose = () => setNoteShow(false);
-  const handleNoteShow = () => { setNoteShow(true); }
+  const handleNoteShow = () => {
+   setNoteShow(true); 
+   
+
+  };
 
   const [ConversationShow, setConversationShow] = useState(false);
   const handleConversationClose = () => setConversationShow(false);
   const handleConversationShow = () => { setConversationShow(true); }
+
+
+
+  const fetchCourseDetail = async () => {
+    useAxios().get(`student/course-detail/${UserData()?.user_id}/${param.enrollment_id}/`).then((res) => {
+      setCourse(res.data);
+      const percentageCompleted = (res.data.completed_lessons?.length / res.data.lectures?.length) *100;
+      setCompletionPercentage(percentageCompleted?.toFixed(0));
+      
+
+    });
+  };
+
+  useEffect(() => {
+    fetchCourseDetail();
+  }, []);
+
+  // const handleMarkLessonsAsCompleted = (variantItemId) =>{
+  //   const key = `lecture_${variantItemId}`;  //lecture_23423
+  //   setMarkAsCompletedStatus({
+  //     ...markAsCompletedStatus,
+  //     [key]:"Updating"
+  //   })
+
+    
+  //   const formdata = new FormData()
+  //   formdata.append("user_id")
+  // }
+
+
 
   return (
     <>
@@ -127,201 +182,71 @@ function CourseDetail() {
                                   <div
                                     className="progress-bar"
                                     role="progressbar"
-                                    style={{ width: `${25}%` }}
-                                    aria-valuenow={25}
+                                    style={{ width: `${completionPercentage}%` }}
+                                    aria-valuenow={completionPercentage}
                                     aria-valuemin={0}
                                     aria-valuemax={100}
                                   >
-                                    25%
+                                    {completionPercentage}%
                                   </div>
                                 </div>
                                 {/* Item */}
-                                <div className="accordion-item mb-3">
-                                  <h6 className="accordion-header font-base" id="heading-1">
-                                    <button
-                                      className="accordion-button fw-bold rounded d-sm-flex d-inline-block collapsed"
-                                      type="button"
-                                      data-bs-toggle="collapse"
-                                      data-bs-target="#collapse-1"
-                                      aria-expanded="true"
-                                      aria-controls="collapse-1"
-                                    >
-                                      Introduction of Digital Marketing
-                                      <span className="small ms-0 ms-sm-2">
-                                        (3 Lectures)
-                                      </span>
-                                    </button>
-                                  </h6>
-                                  <div
-                                    id="collapse-1"
-                                    className="accordion-collapse collapse show"
-                                    aria-labelledby="heading-1"
-                                    data-bs-parent="#accordionExample2"
-                                  >
-                                    <div className="accordion-body mt-3">
-                                      {/* Course lecture */}
-                                      <div className="d-flex justify-content-between align-items-center">
-                                        <div className="position-relative d-flex align-items-center">
-                                          <a
-                                            href="#"
-                                            className="btn btn-danger-soft btn-round btn-sm mb-0 stretched-link position-static"
-                                          >
-                                            <i className="fas fa-play me-0" />
-                                          </a>
-                                          <span className="d-inline-block text-truncate ms-2 mb-0 h6 fw-light w-100px w-sm-200px w-md-400px">
-                                            Introduction
-                                          </span>
-                                        </div>
-                                        <div className='d-flex'>
-                                          <p className="mb-0">3m 9s</p>
-                                          <input type="checkbox" className='form-check-input' name="" id="" />
-                                        </div>
-                                      </div>
-                                      <hr /> {/* Divider */}
-                                      {/* Course lecture */}
-                                      <div className="d-flex justify-content-between align-items-center">
-                                        <div className="position-relative d-flex align-items-center">
-                                          <a
-                                            href="#"
-                                            className="btn btn-danger-soft btn-round btn-sm mb-0 stretched-link position-static"
-                                          >
-                                            <i className="fas fa-play me-0" />
-                                          </a>
-                                          <span className="d-inline-block text-truncate ms-2 mb-0 h6 fw-light w-100px w-sm-200px w-md-400px">
 
-                                            What is Digital Marketing What is Digital
-                                            Marketing
-                                          </span>
-                                        </div>
-                                        <p className="mb-0 text-truncate">15m 10s</p>
-                                      </div>
-                                      <hr /> {/* Divider */}
-                                      {/* Course lecture */}
-                                      <div className="d-flex justify-content-between align-items-center">
-                                        <div className="position-relative d-flex align-items-center">
-                                          <a
-                                            href="#"
-                                            className="btn btn-danger-soft btn-round btn-sm mb-0 stretched-link position-static"
-                                          >
-                                            <i className="fas fa-lock me-0" />
-                                          </a>
-                                          <span className="d-inline-block text-truncate text-muted ms-2 mb-0 h6 fw-light w-100px w-sm-200px w-md-400px">
-                                            Type of Digital Marketing
-                                          </span>
-                                        </div>
-                                        <p className="mb-0">18m 10s</p>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                {/* Item */}
-                                <div className="accordion-item mb-3">
-                                  <h6 className="accordion-header font-base" id="heading-2">
-                                    <button
-                                      className="accordion-button fw-bold collapsed rounded d-sm-flex d-inline-block"
-                                      type="button"
-                                      data-bs-toggle="collapse"
-                                      data-bs-target="#collapse-2"
-                                      aria-expanded="false"
-                                      aria-controls="collapse-2"
+                                {course?.curriculum?.map((c, index) => (
+                                  <div className="accordion-item mb-3">
+                                    <h6 className="accordion-header font-base" id="heading-1">
+                                      <button
+                                        className="accordion-button p-3 w-100 bg-light btn border fw-bold rounded d-sm-flex d-inline-block collapsed"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target={`#collapse-${c.variant_id}`}
+                                        aria-expanded="true"
+                                        aria-controls={`collapse-${c.variant_id}`}
+                                      >
+                                        {c.title}
+                                        <span className="small ms-0 ms-sm-2">
+                                          (
+                                          {c.variant_items?.length} Lecture
+                                          {c.variant_items?.length > 1 && "s"})
+                                        </span>
+                                      </button>
+                                    </h6>
+                                    <div
+                                      id={`collapse-${c.variant_id}`}
+                                      className="accordion-collapse collapse show"
+                                      aria-labelledby="heading-1"
+                                      data-bs-parent="#accordionExample2"
                                     >
-                                      Customer Life cycle
-                                      <span className="small ms-0 ms-sm-2">
-                                        (4 Lectures)
-                                      </span>
-                                    </button>
-                                  </h6>
-                                  <div
-                                    id="collapse-2"
-                                    className="accordion-collapse collapse"
-                                    aria-labelledby="heading-2"
-                                    data-bs-parent="#accordionExample2"
-                                  >
-                                    {/* Accordion body START */}
-                                    <div className="accordion-body mt-3">
-                                      {/* Course lecture */}
-                                      <div className="d-flex justify-content-between align-items-center">
-                                        <div className="position-relative d-flex align-items-center">
-                                          <a
-                                            href="#"
-                                            className="btn btn-danger-soft btn-round btn-sm mb-0 stretched-link position-static"
-                                          >
-                                            <i className="fas fa-play me-0" />
-                                          </a>
-                                          <span className="d-inline-block text-truncate ms-2 mb-0 h6 fw-light w-100px w-sm-200px w-md-400px">
-                                            What is Digital Marketing
-                                          </span>
-                                        </div>
-                                        <p className="mb-0">11m 20s</p>
-                                      </div>
-                                      <hr /> {/* Divider */}
-                                      {/* Course lecture */}
-                                      <div className="d-flex justify-content-between align-items-center">
-                                        <div className="position-relative d-flex align-items-center">
-                                          <a
-                                            href="#"
-                                            className="btn btn-danger-soft btn-round btn-sm mb-0 stretched-link position-static"
-                                          >
-                                            <i className="fas fa-play me-0" />
-                                          </a>
-                                          <span className="d-inline-block text-truncate ms-2 mb-0 h6 fw-light w-100px w-sm-200px w-md-400px">
-                                            15 Tips for Writing Magnetic Headlines
-                                          </span>
-                                        </div>
-                                        <p className="mb-0 text-truncate">25m 20s</p>
-                                      </div>
-                                      <hr /> {/* Divider */}
-                                      {/* Course lecture */}
-                                      <div className="d-flex justify-content-between align-items-center">
-                                        <div className="position-relative d-flex align-items-center">
-                                          <a
-                                            href="#"
-                                            className="btn btn-danger-soft btn-round btn-sm mb-0 stretched-link position-static"
-                                          >
-                                            <i className="fas fa-play me-0" />
-                                          </a>
-                                          <span className="d-inline-block text-truncate ms-2 mb-0 h6 fw-light w-100px w-sm-200px w-md-400px">
-                                            How to Write Like Your Customers Talk
-                                          </span>
-                                        </div>
-                                        <p className="mb-0">11m 30s</p>
-                                      </div>
-                                      <hr /> {/* Divider */}
-                                      {/* Course lecture */}
-                                      <div className="d-flex justify-content-between align-items-center">
-                                        <div className="position-relative d-flex align-items-center">
-                                          <div>
-                                            <a
-                                              href="#"
-                                              className="btn btn-danger-soft btn-round btn-sm mb-0 stretched-link position-static"
-                                              data-bs-toggle="modal"
-                                              data-bs-target="#exampleModal"
-                                            >
-                                              <i className="fas fa-play me-0" />
-                                            </a>
-                                          </div>
-                                          <div className="row g-sm-0 align-items-center">
-                                            <div className="col-sm-6">
-                                              <span className="d-inline-block text-truncate ms-2 mb-0 h6 fw-light w-100px w-md-400px">
-                                                How to Flip Features Into Benefits
-                                              </span>
+                                      <div className="accordion-body mt-3">
+                                        {/* Course lecture */}
+                                        {c.variant_items?.map((l, index) => (
+                                          <>
+                                            <div className="d-flex justify-content-between align-items-center">
+                                              <div className="position-relative d-flex align-items-center">
+                                                <button
+                                                  onClick={() => handleShow(l)}
+                                                  className="btn btn-danger-soft btn-round btn-sm mb-0 stretched-link position-static"
+                                                >
+                                                  <i className="fas fa-play me-0" />
+                                                </button>
+                                                <span className="d-inline-block text-truncate ms-2 mb-0 h6 fw-light w-100px w-sm-200px w-md-400px">
+                                                  {l.title}
+                                                </span>
+                                              </div>
+                                              <div className='d-flex'>
+                                                <p className="mb-0">{l.content_duration || "0m 0s"}</p>
+                                                <input type="checkbox" className='form-check-input ms-2' name="" id="" />
+                                              </div>
                                             </div>
-                                            <div className="col-sm-6">
-                                              <span className="badge text-bg-orange ms-2 ms-md-0">
-                                                <i className="fas fa-lock fa-fw me-1" />
-                                                Premium
-                                              </span>
-                                            </div>
-                                          </div>
-                                        </div>
-                                        <p className="mb-0 d-inline-block text-truncate w-70px w-sm-60px">
-                                          35m 30s
-                                        </p>
+
+                                            <hr />
+                                          </>
+                                        ))}
+
                                       </div>
                                     </div>
-                                    {/* Accordion body END */}
                                   </div>
-                                </div>
+                                ))}
 
 
                               </div>
@@ -532,15 +457,21 @@ function CourseDetail() {
 
 
       {/* Lecture Modal */}
-      <Modal show={null} size='lg' onHide={null}>
+      <Modal show={show} size='lg' onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Lesson: Lesson Title</Modal.Title>
+          <Modal.Title>Lesson: {variantItem?.title}</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <ReactPlayer url={`url-here`} controls playing width={"100%"} height={"100%"} />
+        {/* React player  */}
+        <Modal.Body>  
+          <ReactPlayer 
+          url={variantItem?.file}
+          controls 
+          width={"100%"} 
+          height={"100%"} 
+          />
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={null}>Close</Button>
+          <Button variant="secondary" onClick={handleClose}>Close</Button>
         </Modal.Footer>
       </Modal>
 
