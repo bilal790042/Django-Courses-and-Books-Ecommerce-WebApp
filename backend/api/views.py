@@ -7,7 +7,8 @@ from django.contrib.auth.hashers import check_password
 from django.db import models
 from django.db.models.functions import ExtractMonth
 from django.core.files.uploadedfile import InMemoryUploadedFile
-
+from .models import MentoringSession
+from rest_framework.permissions import IsAuthenticated
 
 from api import serializer as api_serializer
 from api import models as api_models
@@ -125,9 +126,16 @@ class CategoryListAPIView(generics.ListAPIView):
 
 
 class CourseListAPIView(generics.ListAPIView):
-    queryset = api_models.Course.objects.filter(platform_status="Published", teacher_course_status= "Published")
+    queryset = api_models.Course.objects.filter(platform_status="Published", teacher_course_status="Published")
     serializer_class = api_serializer.CourseSerializer
-    permission_classes= [AllowAny]
+    permission_classes = [AllowAny]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        # Serialize the courses
+        serializer = self.serializer_class(queryset, many=True, context={"request": request})
+        return Response(serializer.data)
+
 
 
 class CourseDetailAPIView(generics.RetrieveAPIView):
@@ -552,84 +560,67 @@ class PaymentSuccessAPIView(generics.CreateAPIView):
     queryset = api_models.CartOrder.objects.all()
 
     def create(self, request, *args, **kwargs):
-        order_oid = request.data['order_oid']
-        session_id = request.data['session_id']
-        paypal_order_id = request.data['paypal_order_id']
+        # Extract parameters
+        order_oid = request.data.get('order_oid', None)
+        paypal_order_id = request.data.get('paypal_order_id', None)
+
+        # Validate parameters
+        if not order_oid or not paypal_order_id:
+            return Response({"message": "Missing required parameters"}, status=400)
 
         try:
-             order = api_models.CartOrder.objects.get(oid=order_oid)
+            order = api_models.CartOrder.objects.get(oid=order_oid)
         except api_models.CartOrder.DoesNotExist:
             return Response({"message": "Order does not exist"}, status=404)
-        order_items = api_models.CartOrderItem.objects.filter(order = order)
 
+        order_items = api_models.CartOrderItem.objects.filter(order=order)
 
+        # PayPal Payment Processing
         if paypal_order_id != "null":
             paypal_api_url = f"https://api-m.sandbox.paypal.com/v2/checkout/orders/{paypal_order_id}"
             headers = {
                 'Content-Type': 'application/json',
                 'Authorization': f"Bearer {get_access_token(PAYPAL_CLIENT_ID, PAYPAL_SECRET_ID)}"
             }
-            response = requests.get(paypal_api_url, headers=headers)
-            if response.status_code == 200:
+
+            try:
+                response = requests.get(paypal_api_url, headers=headers)
+                response.raise_for_status()
                 paypal_order_data = response.json()
                 paypal_payment_status = paypal_order_data['status']
-                if paypal_payment_status == "COMPLETED":
-                    if order.payment_status == "Processing":
-                        order.payment_status = "Paid"
-                        order.save()
-                        api_models.Notification.objects.create(user=order.student, order = order, type = "Course Enrollment Completed" )
-                        
-                        for i in order_items:
-                            api_models.Notification.objects.create(
-                                teacher = i.teacher,
-                                order = order,
-                                order_item = i,
-                                type = "New Order",
-                            )
+            except requests.exceptions.RequestException as e:
+                return Response({"message": f"An error occurred with PayPal API: {str(e)}"}, status=500)
 
-                            api_models.EnrolledCourse.objects.create(
-                                course = i.course,
-                                user = order.student,
-                                teacher = i.teacher,
-                                order_item = i,
-                            )
-                    else:
-                        return Response({"message": "You have already paid, Thanks"})
-                    
-                else:
-                    return Response({"message": "Payment Not Successfull"})
-            else:
-                return Response({"message": "An Api Error occured from paypal"})
-            
-
-        if session_id != 'null':
-            session = stripe.checkout.Session.retrieve(session_id)
-            if session.payment_status == "Paid":
+            # Check PayPal payment status
+            if paypal_payment_status == "COMPLETED":
                 if order.payment_status == "Processing":
                     order.payment_status = "Paid"
                     order.save()
-                    api_models.Notification.objects.create(user=order.student, order = order, type = "Course Enrollment Completed" )    
+
+                    api_models.Notification.objects.create(user=order.student, order=order, type="Course Enrollment Completed")
+
                     for i in order_items:
                         api_models.Notification.objects.create(
-                            teacher = i.teacher,
-                            order = order,
-                            order_item = i,
-                            type = "New Order",
+                            teacher=i.teacher,
+                            order=order,
+                            order_item=i,
+                            type="New Order",
                         )
-
                         api_models.EnrolledCourse.objects.create(
-                            course = i.course,
-                            user = order.student,
-                            teacher = i.teacher,
-                            order_item = i
+                            course=i.course,
+                            user=order.student,
+                            teacher=i.teacher,
+                            order_item=i,
                         )
-                    return Response({"message": "Payment Successfull"})
-                
+                    return Response({"message": "Payment Successful"})
                 else:
-                    return Response({"message": "Already paid"})
-                
+                    return Response({"message": "You have already paid, Thanks"})
             else:
-                return Response({"message": "Payment Failed"})
+                return Response({"message": "Payment Not Successful"})
+
+        # Return response for missing or invalid payment
+        return Response({"message": "Invalid PayPal Order ID"}, status=400)
+
             
 
 class SearchCourseAPIView(generics.ListAPIView):
@@ -792,31 +783,6 @@ class StudentWishListListCreateAPIView(generics.ListCreateAPIView):
                 user=user, course=course
             )
             return Response({"message": "Wishlist Created"}, status=status.HTTP_201_CREATED)
-
-
-class ScheduleMeetingView(APIView):
-    def post(self, request):
-        serializer = api_serializer.OneToOneMeetSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class oneToOneMeetingAPIView(generics.CreateAPIView):
-    queryset = api_models.OneToOneMeeting.objects.all()
-    permission_classes = [AllowAny]
-    serializer_class = api_serializer.OneToOneMeetSerializer()
-    
-    def do_create(self, request, *args, **kwargs):
-    #   student_id = request.data['student_id']
-    #   teacher_id = request.data['teacher_id']
-      requested_time = request.data['requested_time']
-    #   requested_date = request.data['requested_date']
-      topic = request.data['topic']
-      student_id = request.data['student_id']
-
-
 
 
 class StudentCourseDetailAPIView(generics.RetrieveAPIView):
@@ -1322,3 +1288,35 @@ class CourseVariantItemDeleteAPIVIew(generics.DestroyAPIView):
         course = api_models.Course.objects.get(teacher=teacher, course_id=course_id)
         variant = api_models.Variant.objects.get(variant_id=variant_id, course=course)
         return api_models.VariantItem.objects.get(variant=variant, variant_item_id=variant_item_id)
+    
+
+
+class MentoringSessionListCreateAPIView(generics.ListCreateAPIView):
+    queryset = MentoringSession.objects.all()
+    serializer_class = api_serializer.MentoringSessionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return MentoringSession.objects.filter(student=user)
+
+class MentoringSessionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = MentoringSession.objects.all()
+    serializer_class = api_serializer.MentoringSessionSerializer
+    permission_classes = [IsAuthenticated]
+
+class UpcomingSessionsAPIView(generics.ListAPIView):
+    serializer_class = api_serializer.MentoringSessionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return MentoringSession.objects.filter(student=user, status='upcoming')
+
+class PastSessionsAPIView(generics.ListAPIView):
+    serializer_class = api_serializer.MentoringSessionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return MentoringSession.objects.filter(student=user, status='completed')

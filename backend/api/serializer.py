@@ -55,11 +55,6 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
 
-class OneToOneMeetSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = api_models.OneToOneMeeting
-        fields = ['id', 'student_id', 'teacher_id', 'requested_time', 'status', 'meeting_link']
-        # field = '__all__'
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -99,8 +94,8 @@ class VariantItemSerializer(serializers.ModelSerializer):
 
 
 class VariantSerializer(serializers.ModelSerializer):
-    variant_items = VariantItemSerializer(many=True)
-    items = VariantItemSerializer(many=True)
+    variant_items = VariantItemSerializer(many=True, read_only=True)
+    # items = VariantItemSerializer(many=True)
     class Meta:
         fields = '__all__'
         model = api_models.Variant
@@ -266,7 +261,7 @@ class CountrySerializer(serializers.ModelSerializer):
 
 class EnrolledCourseSerializer(serializers.ModelSerializer):
     lectures = VariantItemSerializer(many=True, read_only=True)
-    completed_lesson = CompletedLessonSerializer(many=True, read_only=True)
+    completed_lessons = CompletedLessonSerializer(many=True, read_only=True)
     curriculum =  VariantSerializer(many=True, read_only=True)
     note = NoteSerializer(many=True, read_only=True)
     question_answer = Question_AnswerSerializer(many=True, read_only=True)
@@ -336,3 +331,12 @@ class StudentSummerySerializer(serializers.Serializer):
     completed_lessons = serializers.IntegerField(default=0)
     achieved_certificates = serializers.IntegerField(default=0)
 
+
+
+class MentoringSessionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = api_models.MentoringSession
+        fields = [
+            'id', 'title', 'mentor', 'student', 'date', 'time', 'status', 
+            'join_link', 'feedback', 'rating', 'goals', 'resources', 'slug'
+        ]

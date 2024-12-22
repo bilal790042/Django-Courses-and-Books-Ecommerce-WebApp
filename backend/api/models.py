@@ -111,7 +111,7 @@ class Category(models.Model):
             self.slug = slugify(self.title)
         if Course.objects.filter(slug=self.slug).exists():
             self.slug = f"{self.slug}-{self.id}"
-        super(Course, self).save(*args, **kwargs)
+        super(Category, self).save(*args, **kwargs)
 
 
 class Course(models.Model):
@@ -155,7 +155,7 @@ class Course(models.Model):
         return EnrolledCourse.objects.filter(course= self)
     
 
-    def curriculm(self):
+    def curriculum(self):
          return Variant.objects.filter(course=self)
     
 
@@ -378,7 +378,8 @@ class EnrolledCourse(models.Model):
         return CompletedLesson.objects.filter(course= self.course, user= self.user)
     
     def curriculum(self):
-        return Variant.objects.file(course= self.course)
+        return Variant.objects.filter(course=self.course)
+
     
     def note(self):
         return Note.objects.filter(course = self.course, user = self.user)
@@ -463,22 +464,43 @@ class Country(models.Model):
             self.slug = slugify(self.name)  # Use name for the slug
         super(Country, self).save(*args, **kwargs) 
 
-ONE_ON_ONE_STATUS = (
-    ("Pending", "Pending"),
-    ("Accepted", "Accepted"),
-    ("Declined", "Declined"),
-)
+from django.conf import settings  # Import settings to access AUTH_USER_MODEL
 
+class MentoringSession(models.Model):
+    STATUS_CHOICES = [
+        ('upcoming', 'Upcoming'),
+        ('completed', 'Completed'),
+        ('canceled', 'Canceled'),
+    ]
+    title = models.CharField(max_length=100)
+    mentor = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name="mentored_sessions"
+    )
+    student = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name="student_sessions"
+    )
+    date = models.DateField()
+    time = models.TimeField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='upcoming')
+    join_link = models.URLField(null=True, blank=True)
+    feedback = models.TextField(null=True, blank=True)
+    rating = models.PositiveIntegerField(null=True, blank=True)
+    goals = models.TextField(null=True, blank=True)
+    resources = models.JSONField(null=True, blank=True)
+    slug = models.SlugField(unique=True, null=True, blank=True)
 
-class OneToOneMeeting(models.Model):
-    request_id = ShortUUIDField(length=6, max_length=20, alphabet="1234567890")
-    student_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    teacher_id = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True)
-    requested_time = models.DateTimeField()
-    status = models.CharField(choices=ONE_ON_ONE_STATUS, default="Pending", max_length=100)
-    topic = models.CharField(max_length=100)
-    meeting_link = models.URLField()
+    class Meta:
+        verbose_name_plural = "Mentoring Sessions"
+        ordering = ['date', 'time']
 
     def __str__(self):
-        return str(self.status)
-    
+        return f"{self.title} - {self.mentor} (Student: {self.student})"
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(f"{self.title}-{self.mentor}-{self.date}-{self.time}")
+        super(MentoringSession, self).save(*args, **kwargs)
