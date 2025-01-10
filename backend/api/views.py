@@ -7,7 +7,8 @@ from django.contrib.auth.hashers import check_password
 from django.db import models
 from django.db.models.functions import ExtractMonth
 from django.core.files.uploadedfile import InMemoryUploadedFile
-
+from .models import MentoringSession
+from rest_framework.permissions import IsAuthenticated
 
 from api import serializer as api_serializer
 from api import models as api_models
@@ -784,31 +785,6 @@ class StudentWishListListCreateAPIView(generics.ListCreateAPIView):
             return Response({"message": "Wishlist Created"}, status=status.HTTP_201_CREATED)
 
 
-class ScheduleMeetingView(APIView):
-    def post(self, request):
-        serializer = api_serializer.OneToOneMeetSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class oneToOneMeetingAPIView(generics.CreateAPIView):
-    queryset = api_models.OneToOneMeeting.objects.all()
-    permission_classes = [AllowAny]
-    serializer_class = api_serializer.OneToOneMeetSerializer()
-    
-    def do_create(self, request, *args, **kwargs):
-    #   student_id = request.data['student_id']
-    #   teacher_id = request.data['teacher_id']
-      requested_time = request.data['requested_time']
-    #   requested_date = request.data['requested_date']
-      topic = request.data['topic']
-      student_id = request.data['student_id']
-
-
-
-
 class StudentCourseDetailAPIView(generics.RetrieveAPIView):
     serializer_class = api_serializer.EnrolledCourseSerializer
     permission_classes = [AllowAny]
@@ -1312,3 +1288,35 @@ class CourseVariantItemDeleteAPIVIew(generics.DestroyAPIView):
         course = api_models.Course.objects.get(teacher=teacher, course_id=course_id)
         variant = api_models.Variant.objects.get(variant_id=variant_id, course=course)
         return api_models.VariantItem.objects.get(variant=variant, variant_item_id=variant_item_id)
+    
+
+
+class MentoringSessionListCreateAPIView(generics.ListCreateAPIView):
+    queryset = MentoringSession.objects.all()
+    serializer_class = api_serializer.MentoringSessionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return MentoringSession.objects.filter(student=user)
+
+class MentoringSessionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = MentoringSession.objects.all()
+    serializer_class = api_serializer.MentoringSessionSerializer
+    permission_classes = [IsAuthenticated]
+
+class UpcomingSessionsAPIView(generics.ListAPIView):
+    serializer_class = api_serializer.MentoringSessionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return MentoringSession.objects.filter(student=user, status='upcoming')
+
+class PastSessionsAPIView(generics.ListAPIView):
+    serializer_class = api_serializer.MentoringSessionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return MentoringSession.objects.filter(student=user, status='completed')

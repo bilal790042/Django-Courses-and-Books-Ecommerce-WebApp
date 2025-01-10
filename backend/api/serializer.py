@@ -55,11 +55,6 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
 
-class OneToOneMeetSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = api_models.OneToOneMeeting
-        fields = ['id', 'student_id', 'teacher_id', 'requested_time', 'status', 'meeting_link']
-        # field = '__all__'
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -336,3 +331,12 @@ class StudentSummerySerializer(serializers.Serializer):
     completed_lessons = serializers.IntegerField(default=0)
     achieved_certificates = serializers.IntegerField(default=0)
 
+
+
+class MentoringSessionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = api_models.MentoringSession
+        fields = [
+            'id', 'title', 'mentor', 'student', 'date', 'time', 'status', 
+            'join_link', 'feedback', 'rating', 'goals', 'resources', 'slug'
+        ]

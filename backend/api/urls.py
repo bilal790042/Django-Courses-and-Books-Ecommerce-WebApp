@@ -43,8 +43,12 @@ urlpatterns = [
     path("student/question-answer-list-create/<course_id>/", api_views.QuestionAnswerListCreateAPIView.as_view()),
     path("student/question-answer-message-create/", api_views.QuestionAnswerMessageSendAPIView.as_view()),
 
-    path("student/one_to_one/", api_views.oneToOneMeetingAPIView.as_view()),
-    path('student/schedule-meeting/', api_views.ScheduleMeetingView.as_view(), name='schedule-meeting'),
+    # one to one monitering 
+    path('mentoring-sessions/', api_views.MentoringSessionListCreateAPIView.as_view(), name='mentoring-session-list-create'),
+    path('mentoring-sessions/<int:pk>/', api_views.MentoringSessionDetailAPIView.as_view(), name='mentoring-session-detail'),
+    path('mentoring-sessions/upcoming/', api_views.UpcomingSessionsAPIView.as_view(), name='upcoming-sessions'),
+    path('mentoring-sessions/past/', api_views.PastSessionsAPIView.as_view(), name='past-sessions'),
+
 
     # Teacher Routes
     path("teacher/summary/<teacher_id>/", api_views.TeacherSummaryAPIView.as_view()),

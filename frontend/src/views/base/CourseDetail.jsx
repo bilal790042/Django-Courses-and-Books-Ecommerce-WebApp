@@ -85,7 +85,7 @@ function CourseDetail() {
 
         }
     };
-    
+
 
     // const handleMeetingRequest = (event) => {
     //     event.preventDefault(); // Prevent page reload
@@ -94,38 +94,7 @@ function CourseDetail() {
     //         time: event.target.meetingTime.value,
     //     };
     
-    //     // Send data to the backend
-        // fetch('http://localhost:8000/api/v1/student/schedule-meeting/', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify(meetingData),
-        // })
-    //         .then((response) => response.json())
-    //         .then((data) => {
-    //             alert('Meeting Scheduled Successfully!');
-    //         })
-    //         .catch((error) => {
-    //             console.error('Error scheduling meeting:', error);
-    //         });
-    // };
-    const [isMeetingSubmitted, setIsMeetingSubmitted] = useState(false);
-    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
-    const handleMeetingRequest = (e) => {
-        e.preventDefault();
-        setIsMeetingSubmitted(true);
-        setIsButtonDisabled(true);
-
-        console.log("Meeting request submitted!");
-
-        // Redirect to "Reviews" tab after submission
-        const reviewsTab = document.getElementById("course-pills-tab-4"); // Assuming Reviews tab has this ID
-        if (reviewsTab) {
-            reviewsTab.click(); // Programmatically click the Reviews tab
-        }
-    };
 
     return (
         <>
@@ -219,12 +188,6 @@ function CourseDetail() {
                                                         </button>
                                                     </li>
 
-                                                    
-                                                    <li className="nav-item me-2 me-sm-4" role="presentation">
-                                                        <button className="nav-link mb-2 mb-md-0" id="course-pills-tab-45" data-bs-toggle="pill" data-bs-target="#course-pills-45" type="button" role="tab" aria-controls="course-pills-45" aria-selected="false" >
-                                                            One to One Meeting
-                                                        </button>
-                                                    </li>
                                                     
                                                     {/* Tab item */}
                                                     <li className="nav-item me-2 me-sm-4 d-none" role="presentation">
@@ -769,54 +732,6 @@ function CourseDetail() {
                                                     </div>
                                                     {/* Content END */}
                                                     {/* Content START */}
-
-                                                    <div className="tab-content p-4" id="course-pills-tabContent">
-            {/* Other tabs */}
-            <div
-                className="tab-pane fade"
-                id="course-pills-45"
-                role="tabpanel"
-                aria-labelledby="course-pills-tab-45"
-            >
-                <h5>Schedule a One-to-One Meeting</h5>
-                <p>Use this feature to request a personalized session with the instructor.</p>
-                <form onSubmit={handleMeetingRequest}>
-                    <div className="mb-3">
-                        <label htmlFor="meetingDate" className="form-label">Choose a Date</label>
-                        <input type="date" className="form-control" id="meetingDate" required />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="meetingTime" className="form-label">Choose a Time</label>
-                        <input type="time" className="form-control" id="meetingTime" required />
-                    </div>
-                    <button
-                        type="submit"
-                        className="btn btn-primary"
-                        disabled={isButtonDisabled} // Disable button conditionally
-                    >
-                        {isButtonDisabled ? "Submitted" : "Request Meeting"}
-                    </button>
-                </form>
-
-                {/* Success Message */}
-                {isMeetingSubmitted && (
-                    <div className="mt-3 alert alert-success" role="alert">
-                        Submitted for response!
-                    </div>
-                )}
-            </div>
-
-            {/* Reviews Tab */}
-            <div
-                className="tab-pane fade"
-                id="course-pills-4"
-                role="tabpanel"
-                aria-labelledby="course-pills-tab-4"
-            >
-                <h5>Reviews</h5>
-                <p>This is the reviews tab content.</p>
-            </div>
-        </div>
 
 
                                                     <div
