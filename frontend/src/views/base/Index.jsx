@@ -350,79 +350,8 @@ function Index() {
             </nav>
         </div>
     </div>
-
-    {/* Books Section */}
-    <h3 className="mt-5 mb-4">Books</h3>
-    <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-        {/* {books?.map((b, index) => (
-            <div className="col" key={index}>
-                <div className="card">
-                    <img
-                        src={b.image}
-                        alt={b.title}
-                        className="card-img-top"
-                        style={{
-                            width: "100%",
-                            height: "200px",
-                            objectFit: "cover",
-                        }}
-                    />
-                    <div className="card-body">
-                        <h5 className="card-title">{b.title}</h5>
-                        <p className="card-text">By: {b.author}</p>
-                        <p className="card-text">
-                            <strong>Price:</strong> ${b.price}
-                        </p>
-                        <a href="#" className="btn btn-secondary">
-                            Buy Now
-                        </a>
-                    </div>
-                </div>
-            </div>
-        ))} */}
-
-<div>
-    <img
-        src="https://media.springernature.com/full/springer-static/cover-hires/book/978-1-4302-0072-7"
-        alt="Beginning Python From Novice to Professional"
-        style={{ width: "200px", height: "300px", objectFit: "cover" }}
-    />
-    <p>Beginning Python From Novice to Professional</p>
-
-    
+                                            
 </div>
-
-<div>
-    <img
-        src="https://static-01.daraz.pk/p/d20543add3bdbc13f71188c0bb9f31d0.jpg"
-        alt="The One Minute Manager"
-        style={{ width: "200px", height: "300px", objectFit: "cover" }}
-    />
-    <p>The One Minute Manager</p>
-
-    
-</div>
-
-
-
-<div>
-    <img
-        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBPQE4Fasfkbp_u00xeNjwEGVkM5pXbAC5-w&s"
-        alt="Machine Learning Yearning"
-        style={{ width: "200px", height: "300px", objectFit: "cover" }}
-    />
-    <p>Machine Learning Yearning</p>
-
-    
-</div>
-
-
-    </div>
-</div>
-
-
-
-
 
                 </div>
             </section>
