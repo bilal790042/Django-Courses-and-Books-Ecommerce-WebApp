@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import BaseHeader from '../partials/BaseHeader';
+import BaseFooter from '../partials/BaseFooter';
 
 const Books = () => {
   const [books, setBooks] = useState([]); // State to store books
@@ -44,6 +46,8 @@ const Books = () => {
   const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
 
   return (
+    <>
+            <BaseHeader />
     <section className='mb-5'>
       <div className="container mb-lg-8">
         <div className="row mb-5 mt-3">
@@ -175,6 +179,8 @@ const Books = () => {
         </div>
       </div>
     </section>
+    <BaseFooter />
+    </>
   );
 };
 

@@ -27,7 +27,7 @@ urlpatterns = [
     path("order/checkout/<oid>/", api_views.CheckoutAPIView.as_view()),
     path("order/coupon/", api_views.CouponApplyAPIView.as_view()),
     path("payment/stripe-checkout/<order_oid>/", api_views.StripeCheckoutAPIView.as_view()),
-    path("payment/payment-sucess/", api_views.PaymentSuccessAPIView.as_view()),
+    path("payment/payment-success/", api_views.PaymentSuccessAPIView.as_view()),
 
 
     # Student API Endpoints
@@ -43,7 +43,7 @@ urlpatterns = [
     path("student/question-answer-list-create/<course_id>/", api_views.QuestionAnswerListCreateAPIView.as_view()),
     path("student/question-answer-message-create/", api_views.QuestionAnswerMessageSendAPIView.as_view()),
 
-    # one to one monitering 
+    # one to one mentoring
     path('mentoring-sessions/', api_views.MentoringSessionListCreateAPIView.as_view(), name='mentoring-session-list-create'),
     path('mentoring-sessions/<int:pk>/', api_views.MentoringSessionDetailAPIView.as_view(), name='mentoring-session-detail'),
     path('mentoring-sessions/upcoming/', api_views.UpcomingSessionsAPIView.as_view(), name='upcoming-sessions'),

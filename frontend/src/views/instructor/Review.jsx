@@ -71,7 +71,7 @@ function Review() {
                                         <li className="list-group-item p-4 shadow rounded-3">
                                             <div className="d-flex">
                                                 <img
-                                                    src="https://geeksui.codescandy.com/geeks/assets/images/avatar/avatar-1.jpg"
+                                                    src="https://th.bing.com/th/id/R.19fa7497013a87bd77f7adb96beaf768?rik=144XvMigWWj2bw&riu=http%3a%2f%2fwww.pngall.com%2fwp-content%2fuploads%2f5%2fUser-Profile-PNG-High-Quality-Image.png&ehk=%2bat%2brmqQuJrWL609bAlrUPYgzj%2b%2f7L1ErXRTN6ZyxR0%3d&risl=&pid=ImgRaw&r=0"
                                                     alt="avatar"
                                                     className="rounded-circle avatar-lg"
                                                     style={{ width: "70px", height: "70px", borderRadius: "50%", objectFit: "cover" }}
@@ -79,7 +79,7 @@ function Review() {
                                                 <div className="ms-3 mt-2">
                                                     <div className="d-flex align-items-center justify-content-between">
                                                         <div>
-                                                            <h4 className="mb-0">Eleanor Pena</h4>
+                                                            <h4 className="mb-0">Ali Ahmad</h4>
                                                             <span>2 hour ago</span>
                                                         </div>
                                                         <div>

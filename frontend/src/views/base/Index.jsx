@@ -16,6 +16,11 @@ import useAxios from '../../utils/useAxios';
 import { userId } from '../../utils/constants';
 
 import { CartContext } from '../plugin/Context';
+import Books from './books';
+
+import nomanImage from '../../assets/images/noman.jpg';
+import teacherImage from '../../assets/images/th.jpeg';
+import sirImage from '../../assets/images/teacher.jpeg';
 
 
 function Index() {
@@ -187,7 +192,7 @@ function Index() {
                             {/* icon */}
                             <div className="py-7 text-center">
                                 <div className="mb-3">
-                                    <i className="fe fe-tv fs-2 text-primary"  />
+                                    <i className="fe fe-tv fs-2 text-primary" />
                                 </div>
                                 {/* text */}
                                 <div className="lh-1">
@@ -229,132 +234,282 @@ function Index() {
 
 
                     <div className="container mt-4">
-    {/* Courses Section */}
-    <h3 className="mb-4">Courses</h3>
-    <div className="row">
-        <div className="col-md-12">
-            <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-                {courses?.map((c, index) => (
-                    <div className="col" key={index}>
-                        {/* Card */}
-                        <div className="card card-hover">
-                            <Link to={`/course-detail/${c.slug}/`}>
-                                <img
-                                    src={c.image}
-                                    alt="course"
-                                    className="card-img-top"
-                                    style={{
-                                        width: "100%",
-                                        height: "200px",
-                                        objectFit: "cover",
-                                    }}
-                                />
-                            </Link>
-                            {/* Card Body */}
-                            <div className="card-body">
-                                <div className="d-flex justify-content-between align-items-center mb-3">
-                                    <div>
-                                        <span className="badge bg-info">{c.level}</span>
-                                        <span className="badge bg-success ms-2">{c.language}</span>
-                                    </div>
-                                    <a href="#" className="fs-5">
-                                        <i className="fas fa-heart text-danger align-middle" />
-                                    </a>
+                        {/* Courses Section */}
+                        <h3 className="mb-4">Courses</h3>
+                        <div className="row">
+                            <div className="col-md-12">
+                                <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                                    {courses?.map((c, index) => (
+                                        <div className="col" key={index}>
+                                            {/* Card */}
+                                            <div className="card card-hover">
+                                                <Link to={`/course-detail/${c.slug}/`}>
+                                                    <img
+                                                        src={c.image}
+                                                        alt="course"
+                                                        className="card-img-top"
+                                                        style={{
+                                                            width: "100%",
+                                                            height: "200px",
+                                                            objectFit: "cover",
+                                                        }}
+                                                    />
+                                                </Link>
+                                                {/* Card Body */}
+                                                <div className="card-body">
+                                                    <div className="d-flex justify-content-between align-items-center mb-3">
+                                                        <div>
+                                                            <span className="badge bg-info">{c.level}</span>
+                                                            <span className="badge bg-success ms-2">{c.language}</span>
+                                                        </div>
+                                                        <a href="#" className="fs-5">
+                                                            <i className="fas fa-heart text-danger align-middle" />
+                                                        </a>
+                                                    </div>
+                                                    <h4 className="mb-2 text-truncate-line-2">
+                                                        <Link
+                                                            to={`/course-detail/${c.slug}/`}
+                                                            className="text-inherit text-decoration-none text-dark fs-5"
+                                                        >
+                                                            {c.title}
+                                                        </Link>
+                                                    </h4>
+                                                    <small>By: {c.teacher.full_name}</small> <br />
+                                                    <small>
+                                                        {c.students?.length} student
+                                                        {c.students?.length > 1 && "s"}
+                                                    </small>
+                                                    <br />
+                                                    <div className="lh-1 mt-3 d-flex">
+                                                        <span className="align-text-top">
+                                                            <span className="fs-6">
+                                                                <Rater total={5} rating={c.average_rating || 0} />
+                                                            </span>
+                                                        </span>
+                                                        <span className="text-warning">3</span>
+                                                        <span className="fs-6 ms-2">
+                                                            ({c.reviews?.length} Reviews)
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                {/* Card Footer */}
+                                                <div className="card-footer">
+                                                    <div className="row align-items-center g-0">
+                                                        <div className="col">
+                                                            <h5 className="mb-0">${c.price}</h5>
+                                                        </div>
+                                                        <div className="col-auto">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() =>
+                                                                    addToCart(
+                                                                        c.id,
+                                                                        userId,
+                                                                        c.price,
+                                                                        country,
+                                                                        cartId
+                                                                    )
+                                                                }
+                                                                className="text-inherit text-decoration-none btn btn-primary me-2"
+                                                            >
+                                                                <i className="fas fa-shopping-cart text-primary text-white" />
+                                                            </button>
+                                                            <Link
+                                                                to=""
+                                                                className="text-inherit text-decoration-none btn btn-primary"
+                                                            >
+                                                                Enroll Now{" "}
+                                                                <i className="fas fa-arrow-right text-primary align-middle me-2 text-white" />
+                                                            </Link>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
-                                <h4 className="mb-2 text-truncate-line-2">
-                                    <Link
-                                        to={`/course-detail/${c.slug}/`}
-                                        className="text-inherit text-decoration-none text-dark fs-5"
-                                    >
-                                        {c.title}
-                                    </Link>
-                                </h4>
-                                <small>By: {c.teacher.full_name}</small> <br />
-                                <small>
-                                    {c.students?.length} student
-                                    {c.students?.length > 1 && "s"}
-                                </small>
-                                <br />
-                                <div className="lh-1 mt-3 d-flex">
-                                    <span className="align-text-top">
-                                        <span className="fs-6">
-                                            <Rater total={5} rating={c.average_rating || 0} />
-                                        </span>
-                                    </span>
-                                    <span className="text-warning">3</span>
-                                    <span className="fs-6 ms-2">
-                                        ({c.reviews?.length} Reviews)
-                                    </span>
-                                </div>
-                            </div>
-                            {/* Card Footer */}
-                            <div className="card-footer">
-                                <div className="row align-items-center g-0">
-                                    <div className="col">
-                                        <h5 className="mb-0">${c.price}</h5>
-                                    </div>
-                                    <div className="col-auto">
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                addToCart(
-                                                    c.id,
-                                                    userId,
-                                                    c.price,
-                                                    country,
-                                                    cartId
-                                                )
-                                            }
-                                            className="text-inherit text-decoration-none btn btn-primary me-2"
-                                        >
-                                            <i className="fas fa-shopping-cart text-primary text-white" />
-                                        </button>
-                                        <Link
-                                            to=""
-                                            className="text-inherit text-decoration-none btn btn-primary"
-                                        >
-                                            Enroll Now{" "}
-                                            <i className="fas fa-arrow-right text-primary align-middle me-2 text-white" />
-                                        </Link>
-                                    </div>
-                                </div>
+
+                                {/* Pagination */}
+                                <nav className="d-flex mt-5">
+                                    <ul className="pagination">
+                                        <li>
+                                            <button className="page-link me-1">
+                                                <i className="ci-arrow-left me-2" />
+                                                Previous
+                                            </button>
+                                        </li>
+                                    </ul>
+                                    <ul className="pagination">
+                                        <li key={1} className="active">
+                                            <button className="page-link">1</button>
+                                        </li>
+                                    </ul>
+                                    <ul className="pagination">
+                                        <li className={`totalPages`}>
+                                            <button className="page-link ms-1">
+                                                Next
+                                                <i className="ci-arrow-right ms-3" />
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
-                    </div>
-                ))}
-            </div>
 
-            {/* Pagination */}
-            <nav className="d-flex mt-5">
-                <ul className="pagination">
-                    <li>
-                        <button className="page-link me-1">
-                            <i className="ci-arrow-left me-2" />
-                            Previous
-                        </button>
-                    </li>
-                </ul>
-                <ul className="pagination">
-                    <li key={1} className="active">
-                        <button className="page-link">1</button>
-                    </li>
-                </ul>
-                <ul className="pagination">
-                    <li className={`totalPages`}>
-                        <button className="page-link ms-1">
-                            Next
-                            <i className="ci-arrow-right ms-3" />
-                        </button>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    </div>
-                                            
-</div>
+                    </div>
 
                 </div>
             </section>
+
+            {/* books  */}
+
+            <section className='mb-5'>
+                <div className="container mb-lg-8 ">
+                    <div className="row mb-5 mt-3">
+                        {/* col */}
+                        <div className="col-12">
+                            <div className="mb-6">
+                                <h2 className="mb-1 h1">📚 Explore Our Books</h2>
+                                <p>
+                                    Discover the best books in various categories to expand your knowledge.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-md-12">
+                            <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                                {/* Hardcoded static data for books */}
+                                <div className="col">
+                                    {/* Card */}
+                                    <div className="card card-hover">
+                                        <Link to="/book-detail/the-great-adventure/">
+                                            <img
+                                                src="path_to_image.jpg"
+                                                alt="book"
+                                                className="card-img-top"
+                                                style={{ width: "100%", height: "200px", objectFit: "cover" }}
+                                            />
+                                        </Link>
+                                        {/* Card Body */}
+                                        <div className="card-body">
+                                            <div className="d-flex justify-content-between align-items-center mb-3">
+                                                <div>
+                                                    <span className="badge bg-info">Adventure</span>
+                                                    <span className="badge bg-success ms-2">John Doe</span>
+                                                </div>
+                                                <a href="#" className="fs-5">
+                                                    <i className="fas fa-heart text-danger align-middle" />
+                                                </a>
+                                            </div>
+                                            <h4 className="mb-2 text-truncate-line-2 ">
+                                                <Link to="/book-detail/the-great-adventure/" className="text-inherit text-decoration-none text-dark fs-5">
+                                                    The Great Adventure
+                                                </Link>
+                                            </h4>
+                                            <small>By: John Doe</small> <br />
+                                            <small>3 Reviews</small>
+                                            <br />
+                                            <div className="lh-1 mt-3 d-flex">
+                                                <span className="align-text-top">
+                                                    <span className="fs-6">
+                                                        {/* Rater component */}
+                                                        <span className="text-warning">4.5</span>
+                                                    </span>
+                                                </span>
+                                                <span className="fs-6 ms-2">3 Reviews</span>
+                                            </div>
+                                        </div>
+                                        {/* Card Footer */}
+                                        <div className="card-footer">
+                                            <div className="row align-items-center g-0">
+                                                <div className="col">
+                                                    <h5 className="mb-0">$19.99</h5>
+                                                </div>
+                                                <div className="col-auto">
+                                                    <button type="button" className="text-inherit text-decoration-none btn btn-primary me-2">
+                                                        <i className="fas fa-shopping-cart text-primary text-white" />
+                                                    </button>
+                                                    <Link to="/book-detail/the-great-adventure/" className="text-inherit text-decoration-none btn btn-primary">
+                                                        View Details <i className="fas fa-arrow-right text-primary align-middle me-2 text-white" />
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="col">
+                                    {/* Card */}
+                                    <div className="card card-hover">
+                                        <Link to="/book-detail/understanding-react/">
+                                            <img
+                                                src="path_to_image.jpg"
+                                                alt="book"
+                                                className="card-img-top"
+                                                style={{ width: "100%", height: "200px", objectFit: "cover" }}
+                                            />
+                                        </Link>
+                                        {/* Card Body */}
+                                        <div className="card-body">
+                                            <div className="d-flex justify-content-between align-items-center mb-3">
+                                                <div>
+                                                    <span className="badge bg-info">Technology</span>
+                                                    <span className="badge bg-success ms-2">Jane Smith</span>
+                                                </div>
+                                                <a href="#" className="fs-5">
+                                                    <i className="fas fa-heart text-danger align-middle" />
+                                                </a>
+                                            </div>
+                                            <h4 className="mb-2 text-truncate-line-2 ">
+                                                <Link to="/book-detail/understanding-react/" className="text-inherit text-decoration-none text-dark fs-5">
+                                                    Understanding React
+                                                </Link>
+                                            </h4>
+                                            <small>By: Jane Smith</small> <br />
+                                            <small>4 Reviews</small>
+                                            <br />
+                                            <div className="lh-1 mt-3 d-flex">
+                                                <span className="align-text-top">
+                                                    <span className="fs-6">
+                                                        {/* Rater component */}
+                                                        <span className="text-warning">4.7</span>
+                                                    </span>
+                                                </span>
+                                                <span className="fs-6 ms-2">4 Reviews</span>
+                                            </div>
+                                        </div>
+                                        {/* Card Footer */}
+                                        <div className="card-footer">
+                                            <div className="row align-items-center g-0">
+                                                <div className="col">
+                                                    <h5 className="mb-0">$29.99</h5>
+                                                </div>
+                                                <div className="col-auto">
+                                                    <button type="button" className="text-inherit text-decoration-none btn btn-primary me-2">
+                                                        <i className="fas fa-shopping-cart text-primary text-white" />
+                                                    </button>
+                                                    <Link to="/book-detail/understanding-react/" className="text-inherit text-decoration-none btn btn-primary">
+                                                        View Details <i className="fas fa-arrow-right text-primary align-middle me-2 text-white" />
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Link to navigate to /books */}
+                            <div className="d-flex justify-content-center mt-4">
+                                <Link to="/books" className="btn btn-primary">
+                                    See All Books
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
 
             <section className="my-8 py-lg-8">
                 {/* container */}
@@ -458,87 +613,10 @@ function Index() {
                                                     <div className="card-body text-center p-6">
                                                         {/* img */}
                                                         <img
-                                                            src="../../assets/images/avatar/avatar-1.jpg"
+                                                            src={nomanImage}
                                                             alt="avatar"
                                                             className="avatar avatar-lg rounded-circle"
-                                                        />
-                                                        <p className="mb-0 mt-3">
-                                                            “The generated lorem Ipsum is therefore always free from
-                                                            repetition, injected humour, or words etc generate lorem
-                                                            Ipsum which looks racteristic reasonable.”
-                                                        </p>
-                                                        {/* rating */}
-                                                        <div className="lh-1 mb-3 mt-4">
-                                                            <span className="fs-6 align-top">
-                                                                <svg
-                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                    width={11}
-                                                                    height={11}
-                                                                    fill="currentColor"
-                                                                    className="bi bi-star-fill text-warning"
-                                                                    viewBox="0 0 16 16"
-                                                                >
-                                                                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
-                                                                </svg>
-                                                                <svg
-                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                    width={11}
-                                                                    height={11}
-                                                                    fill="currentColor"
-                                                                    className="bi bi-star-fill text-warning"
-                                                                    viewBox="0 0 16 16"
-                                                                >
-                                                                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
-                                                                </svg>
-                                                                <svg
-                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                    width={11}
-                                                                    height={11}
-                                                                    fill="currentColor"
-                                                                    className="bi bi-star-fill text-warning"
-                                                                    viewBox="0 0 16 16"
-                                                                >
-                                                                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
-                                                                </svg>
-                                                                <svg
-                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                    width={11}
-                                                                    height={11}
-                                                                    fill="currentColor"
-                                                                    className="bi bi-star-fill text-warning"
-                                                                    viewBox="0 0 16 16"
-                                                                >
-                                                                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
-                                                                </svg>
-                                                                <svg
-                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                    width={11}
-                                                                    height={11}
-                                                                    fill="currentColor"
-                                                                    className="bi bi-star-fill text-warning"
-                                                                    viewBox="0 0 16 16"
-                                                                >
-                                                                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
-                                                                </svg>
-                                                            </span>
-                                                            <span className="text-warning">5</span>
-                                                            {/* text */}
-                                                        </div>
-                                                        <h3 className="mb-0 h4">Bilal Ahmad</h3>
-                                                        <span>Software Engineer at UET</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-lg-4">
-                                            <div className="item">
-                                                <div className="card">
-                                                    <div className="card-body text-center p-6">
-                                                        {/* img */}
-                                                        <img
-                                                            src="../../assets/images/avatar/avatar-1.jpg"
-                                                            alt="avatar"
-                                                            className="avatar avatar-lg rounded-circle"
+                                                            style={{ width: '200px', height: '200px', objectFit: 'cover' }}
                                                         />
                                                         <p className="mb-0 mt-3">
                                                             “The generated lorem Ipsum is therefore always free from
@@ -603,7 +681,7 @@ function Index() {
                                                             {/* text */}
                                                         </div>
                                                         <h3 className="mb-0 h4">Noman Wahdat</h3>
-                                                        <span>Software Engineer at JHK</span>
+                                                        <span>Software Engineer at UET</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -614,9 +692,10 @@ function Index() {
                                                     <div className="card-body text-center p-6">
                                                         {/* img */}
                                                         <img
-                                                            src="../../assets/images/avatar/avatar-1.jpg"
+                                                            src={teacherImage}
                                                             alt="avatar"
                                                             className="avatar avatar-lg rounded-circle"
+                                                            style={{ width: '200px', height: '200px', objectFit: 'cover' }}
                                                         />
                                                         <p className="mb-0 mt-3">
                                                             “The generated lorem Ipsum is therefore always free from
@@ -680,7 +759,87 @@ function Index() {
                                                             <span className="text-warning">5</span>
                                                             {/* text */}
                                                         </div>
-                                                        <h3 className="mb-0 h4">Jakson</h3>
+                                                        <h3 className="mb-0 h4">Dr. Laeeq</h3>
+                                                        <span>Software Engineer at JHK</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col-lg-4">
+                                            <div className="item">
+                                                <div className="card">
+                                                    <div className="card-body text-center p-6">
+                                                        {/* img */}
+                                                        <img
+                                                            src={sirImage}
+                                                            alt="avatar"
+                                                            className="avatar avatar-lg rounded-circle"
+                                                            style={{ width: '200px', height: '200px', objectFit: 'cover' }}
+                                                        />
+
+                                                        <p className="mb-0 mt-3">
+                                                            “The generated lorem Ipsum is therefore always free from
+                                                            repetition, injected humour, or words etc generate lorem
+                                                            Ipsum which looks racteristic reasonable.”
+                                                        </p>
+                                                        {/* rating */}
+                                                        <div className="lh-1 mb-3 mt-4">
+                                                            <span className="fs-6 align-top">
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    width={11}
+                                                                    height={11}
+                                                                    fill="currentColor"
+                                                                    className="bi bi-star-fill text-warning"
+                                                                    viewBox="0 0 16 16"
+                                                                >
+                                                                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
+                                                                </svg>
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    width={11}
+                                                                    height={11}
+                                                                    fill="currentColor"
+                                                                    className="bi bi-star-fill text-warning"
+                                                                    viewBox="0 0 16 16"
+                                                                >
+                                                                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
+                                                                </svg>
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    width={11}
+                                                                    height={11}
+                                                                    fill="currentColor"
+                                                                    className="bi bi-star-fill text-warning"
+                                                                    viewBox="0 0 16 16"
+                                                                >
+                                                                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
+                                                                </svg>
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    width={11}
+                                                                    height={11}
+                                                                    fill="currentColor"
+                                                                    className="bi bi-star-fill text-warning"
+                                                                    viewBox="0 0 16 16"
+                                                                >
+                                                                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
+                                                                </svg>
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    width={11}
+                                                                    height={11}
+                                                                    fill="currentColor"
+                                                                    className="bi bi-star-fill text-warning"
+                                                                    viewBox="0 0 16 16"
+                                                                >
+                                                                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
+                                                                </svg>
+                                                            </span>
+                                                            <span className="text-warning">5</span>
+                                                            {/* text */}
+                                                        </div>
+                                                        <h3 className="mb-0 h4">Mr. Nazeef</h3>
                                                         <span>Software Engineer </span>
                                                     </div>
                                                 </div>

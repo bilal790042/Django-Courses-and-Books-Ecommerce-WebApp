@@ -31,7 +31,7 @@ function Profile() {
                                     <div className="d-lg-flex align-items-center justify-content-between">
                                         <div className="d-flex align-items-center mb-4 mb-lg-0">
                                             <img
-                                                src="https://eduport.webestica.com/assets/images/avatar/09.jpg"
+                                                src="https://th.bing.com/th?id=OIP.Z306v3XdxhOaxBFGfHku7wHaHw&w=244&h=255&c=8&rs=1&qlt=90&r=0&o=6&dpr=1.5&pid=3.1&rm=2"
                                                 id="img-uploaded"
                                                 className="avatar-xl rounded-circle"
                                                 alt="avatar"

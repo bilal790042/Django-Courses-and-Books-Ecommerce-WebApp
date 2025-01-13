@@ -44,10 +44,10 @@ function Students() {
                           }}
                           alt="avatar"
                         />
-                        <h4 className="mb-1">Flourish Franks</h4>
+                        <h4 className="mb-1">Ayesha</h4>
                         <p className="mb-0">
                           {" "}
-                          <i className="fas fa-map-pin me-1" /> United States{" "}
+                          <i className="fas fa-map-pin me-1" /> Pakistan{" "}
                         </p>
                       </div>
                       <div className="d-flex justify-content-between py-2 mt-4 fs-6">

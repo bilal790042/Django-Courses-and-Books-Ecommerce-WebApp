@@ -1,7 +1,7 @@
 import { Route, Routes, BrowserRouter, Navigate } from 'react-router-dom';
 import MainWrapper from './layouts/MainWrapper';
-import { useState, useEffect } from 'react';
-import { useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
+
 
 import Register from '../src/views/auth/Register';
 import Login from '../src/views/auth/Login';
@@ -21,6 +21,25 @@ import StudentDashboard from './views/student/Dashboard';
 import StudentCourses from './views/student/Courses';
 import StudentCourseDetail from "./views/student/CourseDetail"
 import MentoringSessions from "./views/student/MentoringSessions";
+import Books from './views/base/books';
+import Wishlist from "./views/student/Wishlist";
+import StudentProfile from "./views/student/Profile";
+import useAxios from "./utils/useAxios";
+import UserData from "./views/plugin/UserData";
+import StudentChangePassword from "./views/student/ChangePassword";
+import Dashboard from "./views/instructor/Dashboard";
+import Courses from "./views/instructor/Courses";
+import Review from "./views/instructor/Review";
+import Students from "./views/instructor/Students";
+import Earning from "./views/instructor/Earning";
+import Orders from "./views/instructor/Orders";
+import Coupon from "./views/instructor/Coupon";
+import TeacherNotification from "./views/instructor/TeacherNotification";
+import QA from "./views/instructor/QA";
+import ChangePassword from "./views/instructor/ChangePassword";
+import Profile from "./views/instructor/Profile";
+import CourseCreate from "./views/instructor/CourseCreate";
+import CourseEdit from "./views/instructor/CourseEdit";
 
 
 function App() {
@@ -66,8 +85,44 @@ function App() {
             <Route path = "/student/courses/" element = {<StudentCourses/>}/>
             <Route path = "/student/courses/:enrollment_id" element = {<StudentCourseDetail/>}/>
 
+            <Route path="/student/wishlist/" element={<Wishlist />} />
+              <Route path="/student/profile/" element={<StudentProfile />} />
+              <Route
+                path="/student/change-password/"
+                element={<StudentChangePassword />}
+              />
             {/* Student mentoring sessions */}
             <Route path="/student/mentoring-sessions" element={<MentoringSessions />} />
+            <Route path="/books" element={<Books />} />
+
+            {/* Teacher Routes */}
+            <Route path="/instructor/dashboard/" element={<Dashboard />} />
+              <Route path="/instructor/courses/" element={<Courses />} />
+              <Route path="/instructor/reviews/" element={<Review />} />
+              <Route path="/instructor/students/" element={<Students />} />
+              <Route path="/instructor/earning/" element={<Earning />} />
+              <Route path="/instructor/orders/" element={<Orders />} />
+              <Route path="/instructor/coupon/" element={<Coupon />} />
+              <Route
+                path="/instructor/notifications/"
+                element={<TeacherNotification />}
+              />
+              <Route path="/instructor/question-answer/" element={<QA />} />
+              <Route
+                path="/instructor/change-password/"
+                element={<ChangePassword />}
+              />
+              <Route path="/instructor/profile/" element={<Profile />} />
+              <Route
+                path="/instructor/create-course/"
+                element={<CourseCreate />}
+              />
+              <Route
+                path="/instructor/edit-course/:course_id/"
+                element={<CourseEdit />}
+              />
+
+
 
 
 

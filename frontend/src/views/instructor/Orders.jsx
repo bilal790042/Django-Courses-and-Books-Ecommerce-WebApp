@@ -43,11 +43,11 @@ function Orders() {
                                                 <td>
                                                     <h5 className="mb-0">
                                                         <a href="#" className="text-inherit text-decoration-none text-dark">
-                                                            Building Scalable APIs with GraphQL
+                                                            Python master class
                                                         </a>
                                                     </h5>
                                                 </td>
-                                                <td>$89</td>
+                                                <td>$85</td>
                                                 <td>#100233</td>
                                                 <td>June 9, 2020</td>
                                             </tr>

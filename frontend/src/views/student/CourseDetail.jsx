@@ -12,18 +12,19 @@ import Header from './Partials/Header'
 import useAxios from '../../utils/useAxios';
 import UserData from '../plugin/UserData';
 import { useAuthStore } from '../../store/auth';
+import toast from '../plugin/toast';
 
 
 
 function CourseDetail() {
 
   const [course, setCourse] = useState([]);
-  const param = useParams();
   const [variantItem, setVariantItem] = useState(null);
   const [completionPercentage, setCompletionPercentage] = useState(0);
   const [markAsCompletedStatus, setMarkAsCompletedStatus] = useState({});
-
-
+  const [createNote, setCreateNote] = useState({title: "", note: ""});
+  
+  const param = useParams();
 
 
   //play lecture model
@@ -33,6 +34,7 @@ function CourseDetail() {
     setShow(true);
     setVariantItem(variant_item);
   };
+  console.log(variantItem);
   
   
 
@@ -59,23 +61,69 @@ function CourseDetail() {
 
     });
   };
+  
 
   useEffect(() => {
     fetchCourseDetail();
   }, []);
 
-  // const handleMarkLessonsAsCompleted = (variantItemId) =>{
-  //   const key = `lecture_${variantItemId}`;  //lecture_23423
-  //   setMarkAsCompletedStatus({
-  //     ...markAsCompletedStatus,
-  //     [key]:"Updating"
-  //   })
+  const handleMarkLessonsAsCompleted = (variantItemId) =>{
+    const key = `lecture_${variantItemId}`;  //lecture_23423
+    setMarkAsCompletedStatus({
+      ...markAsCompletedStatus,
+      [key]:"Updating"
+    })
 
     
-  //   const formdata = new FormData()
-  //   formdata.append("user_id")
-  // }
+    const formdata = new FormData()
+    formdata.append("user_id",UserData()?.user_id || 0)
+    formdata.append("course_id", course.course?.id)
+    formdata.append("variant_item_id", variantItemId)
 
+    useAxios().post(`student/course-completed/`,formdata).then((res) =>{
+      fetchCourseDetail()
+      setMarkAsCompletedStatus({
+        ...markAsCompletedStatus,
+        [key]:"Updated"
+      });
+    })
+   
+  }
+
+  const handleNoteChange = (event) =>{
+    setCreateNote({
+      ...createNote,
+      [event.target.name]: event.target.value
+    })
+  }
+  const handleSubmitCreateNote = async(e) =>{
+    e.preventDefault()
+    const formdata = new FormData()
+
+    formdata.append("user_id", UserData?.user_id || 0);
+    formdata.append("enrollment_id", param.enrollment_id);
+    formdata.append("title", createNote.title);
+    formdata.append("note",  createNote.note);
+
+    try {
+      await useAxios().post(`student/course-note/${UserData?.user_id}/${param.enrollment_id}/`, formdata
+    ).then((res)=>{
+      fetchCourseDetail();
+      console.log(res.data);
+
+      toast().fire({
+        icon:"success",
+        title: "Note Created"
+      })
+      
+    })
+    } catch (error) {
+      console.log(error);
+      
+    }
+    
+  }
+  
 
 
   return (
@@ -235,7 +283,15 @@ function CourseDetail() {
                                               </div>
                                               <div className='d-flex'>
                                                 <p className="mb-0">{l.content_duration || "0m 0s"}</p>
-                                                <input type="checkbox" className='form-check-input ms-2' name="" id="" />
+                                                <input type="checkbox"
+                                                className='form-check-input ms-2' 
+                                                name="" 
+                                                id="" 
+                                                onChange={() =>
+                                                  handleMarkLessonsAsCompleted(l.variant_item_id)
+                                                }
+                                                checked = {course.completed_lessons?.some((cl) => cl.variant_item.id === l.id)}
+                                                />
                                               </div>
                                             </div>
 
@@ -277,21 +333,45 @@ function CourseDetail() {
                                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
                                           </div>
                                           <div className="modal-body">
-                                            <form>
+                                            <form 
+                                              onSubmit={handleSubmitCreateNote}
+                                            >
                                               <div className="mb-3">
                                                 <label htmlFor="exampleInputEmail1" className="form-label">
                                                   Note Title
                                                 </label>
-                                                <input type="text" className="form-control" />
+                                                <input type="text" 
+                                                className="form-control"
+                                                name ="title"
+                                                onChange={handleNoteChange}
+                                                
+                                                />
                                               </div>
                                               <div className="mb-3">
                                                 <label htmlFor="exampleInputPassword1" className="form-label">
                                                   Note Content
                                                 </label>
-                                                <textarea className='form-control' name="" id="" cols="30" rows="10"></textarea>
+                                                <textarea className='form-control'
+                                                
+                                                id="" 
+                                                cols="30" 
+                                                rows="10"
+                                                name ="note"
+                                                onChange={handleNoteChange}
+                                                ></textarea>
                                               </div>
-                                              <button type="button" className="btn btn-secondary me-2" data-bs-dismiss="modal" ><i className='fas fa-arrow-left'></i> Close</button>
-                                              <button type="submit" className="btn btn-primary">Save Note <i className='fas fa-check-circle'></i></button>
+                                              <button type="button" 
+                                              className="btn btn-secondary me-2" 
+                                              data-bs-dismiss="modal" 
+                                              >
+                                                <i className='fas fa-arrow-left'></i> 
+                                                Close
+                                                </button>
+                                              <button type="submit" 
+                                              className="btn btn-primary">
+                                                Save Note 
+                                              <i className='fas fa-check-circle'></i>
+                                              </button>
                                             </form>
                                           </div>
                                         </div>
@@ -303,17 +383,10 @@ function CourseDetail() {
                                   {/* Note item start */}
                                   <div className="row g-4 p-3">
                                     <div className="col-sm-11 col-xl-11 shadow p-3 m-3 rounded">
-                                      <h5> What is Digital Marketing What is Digital Marketing</h5>
+                                      <h5>What is Function</h5>
                                       <p>
-                                        Arranging rapturous did believe him all had supported.
-                                        Supposing so be resolving breakfast am or perfectly.
-                                        It drew a hill from me. Valley by oh twenty direct me
-                                        so. Departure defective arranging rapturous did
-                                        believe him all had supported. Family months lasted
-                                        simple set nature vulgar him. Picture for attempt joy
-                                        excited ten carried manners talking how. Family months
-                                        lasted simple set nature vulgar him. Picture for
-                                        attempt joy excited ten carried manners talking how.
+                                          How function works How function works How function works How function works 
+                                          How function works
                                       </p>
                                       {/* Buttons */}
                                       <div className="hstack gap-3 flex-wrap">
@@ -380,7 +453,7 @@ function CourseDetail() {
                                           </div>
                                           <div className="ms-2">
                                             <h6 className="mb-0">
-                                              <a href="#" className='text-decoration-none text-dark'>Angelina Poi</a>
+                                              <a href="#" className='text-decoration-none text-dark'>Angela</a>
                                             </h6>
                                             <small>Asked 10 Hours ago</small>
                                           </div>
@@ -521,7 +594,7 @@ function CourseDetail() {
                             <a href="#!" className='text-decoration-none text-dark'> Louis Ferguson </a><br />
                             <span style={{ fontSize: "12px", color: "gray" }}>5hrs Ago</span>
                           </h6>
-                          <p className="mb-0 mt-3  ">Removed demands expense account
+                          <p className="mb-0 mt-3  ">How to fix a bug
                           </p>
                         </div>
                       </div>
@@ -547,7 +620,7 @@ function CourseDetail() {
                             <a href="#!" className='text-decoration-none text-dark'> Louis Ferguson </a><br />
                             <span style={{ fontSize: "12px", color: "gray" }}>5hrs Ago</span>
                           </h6>
-                          <p className="mb-0 mt-3  ">Removed demands expense account from the debby building in a hall  town tak with
+                          <p className="mb-0 mt-3  ">How to fix a bug
                           </p>
                         </div>
                       </div>
@@ -573,7 +646,7 @@ function CourseDetail() {
                             <a href="#!" className='text-decoration-none text-dark'> Louis Ferguson </a><br />
                             <span style={{ fontSize: "12px", color: "gray" }}>5hrs Ago</span>
                           </h6>
-                          <p className="mb-0 mt-3  ">Removed demands expense account
+                          <p className="mb-0 mt-3  ">How to fix a bug
                           </p>
                         </div>
                       </div>
@@ -599,7 +672,7 @@ function CourseDetail() {
                             <a href="#!" className='text-decoration-none text-dark'> Louis Ferguson </a><br />
                             <span style={{ fontSize: "12px", color: "gray" }}>5hrs Ago</span>
                           </h6>
-                          <p className="mb-0 mt-3  ">Removed demands expense account
+                          <p className="mb-0 mt-3  ">How to fix a bug
                           </p>
                         </div>
                       </div>

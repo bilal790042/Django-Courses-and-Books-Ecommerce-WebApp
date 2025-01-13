@@ -8,11 +8,11 @@ function Header() {
                     <div className="d-flex align-items-end justify-content-between">
                         <div className="d-flex align-items-center">
                             <div className="me-2 position-relative d-flex justify-content-end align-items-end mt-n5">
-                                <img src="https://geeksui.codescandy.com/geeks/assets/images/avatar/avatar-4.jpg" className="avatar-xl rounded-circle border border-4 border-white" alt="avatar" style={{ width: "70px", height: "70px", borderRadius: "50%", objectFit: "cover" }} />
+                                <img src="https://th.bing.com/th?id=OIP.Z306v3XdxhOaxBFGfHku7wHaHw&w=244&h=255&c=8&rs=1&qlt=90&r=0&o=6&dpr=1.5&pid=3.1&rm=2" className="avatar-xl rounded-circle border border-4 border-white" alt="avatar" style={{ width: "70px", height: "70px", borderRadius: "50%", objectFit: "cover" }} />
                             </div>
                             <div className="lh-1">
-                                <h2 className="mb-0"> Destiny Franks</h2>
-                                <p className="mb-0 d-block">@desphixs</p>
+                                <h2 className="mb-0"> Noman Wahdat</h2>
+                                <p className="mb-0 d-block">@Skillz</p>
                             </div>
                         </div>
                         <div>

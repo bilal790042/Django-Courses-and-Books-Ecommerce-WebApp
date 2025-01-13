@@ -99,13 +99,13 @@ function Earning() {
                                                     <a href="#" className='text-decoration-none text-dark'>
                                                         <div className="d-flex align-items-center">
                                                             <img
-                                                                src="https://geeksui.codescandy.com/geeks/assets/images/course/course-laravel.jpg"
+                                                                src="https://th.bing.com/th/id/R.428f4a1752d5b19906c71da56cc3a9ef?rik=9pZq%2fUbl4Zt%2bxw&pid=ImgRaw&r=0"
                                                                 alt="course"
                                                                 style={{ width: "100px", height: "70px", borderRadius: "50%", objectFit: "cover" }}
                                                                 className="rounded img-4by3-lg"
                                                             />
                                                             <h5 className="mb-0 ms-3 ">
-                                                                Building Scalable APIs with GraphQL
+                                                                Python Master Class
                                                             </h5>
                                                         </div>
                                                     </a>

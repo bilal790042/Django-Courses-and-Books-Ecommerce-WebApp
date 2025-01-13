@@ -54,7 +54,7 @@ function QA() {
                           <div className="avatar avatar-sm flex-shrink-0">
                             <img
                               src={
-                                "https://geeksui.codescandy.com/geeks/assets/images/avatar/avatar-4.jpg"
+                                "https://tse3.mm.bing.net/th?id=OIP.ePTBsw0y7DRxaM6p0bw1HQHaHa&rs=1&pid=ImgDetMain"
                               }
                               className="avatar-img rounded-circle"
                               alt="avatar"
@@ -72,7 +72,7 @@ function QA() {
                                 href="#"
                                 className="text-decoration-none text-dark"
                               >
-                                Angelina Fernado
+                                Rabia Khan
                               </a>
                             </h6>
                             <small>Asked 10 Hours ago</small>
