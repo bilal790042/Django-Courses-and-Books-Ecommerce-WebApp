@@ -9,6 +9,7 @@ from django.db.models.functions import ExtractMonth
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from .models import MentoringSession
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import permissions
 
 from api import serializer as api_serializer
 from api import models as api_models
@@ -1320,3 +1321,32 @@ class PastSessionsAPIView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return MentoringSession.objects.filter(student=user, status='completed')
+
+
+
+
+# Books
+
+# List and Create Books
+class BookListCreateView(generics.ListCreateAPIView):
+    queryset = api_models.Book.objects.all()
+    serializer_class = api_serializer.BookSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(uploaded_by=self.request.user)
+
+# Retrieve, Update, and Delete Book
+class BookDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = api_models.Book.objects.all()
+    serializer_class = api_serializer.BookSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+# Purchase a Book
+class BookPurchaseView(generics.CreateAPIView):
+    queryset = api_models.BookPurchase.objects.all()
+    serializer_class = api_serializer.BookPurchaseSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

@@ -340,3 +340,20 @@ class MentoringSessionSerializer(serializers.ModelSerializer):
             'id', 'title', 'mentor', 'student', 'date', 'time', 'status', 
             'join_link', 'feedback', 'rating', 'goals', 'resources', 'slug'
         ]
+
+
+
+
+
+
+# Books 
+
+class BookSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = api_models.Book
+        fields = '__all__'
+
+class BookPurchaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = api_models.BookPurchase
+        fields = '__all__'

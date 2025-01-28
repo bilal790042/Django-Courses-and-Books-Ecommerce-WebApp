@@ -504,3 +504,35 @@ class MentoringSession(models.Model):
         if not self.slug:
             self.slug = slugify(f"{self.title}-{self.mentor}-{self.date}-{self.time}")
         super(MentoringSession, self).save(*args, **kwargs)
+
+
+
+
+# Books Backend
+
+class Book(models.Model):
+    CATEGORY_CHOICES = [
+        ('Technology', 'Technology'),
+        ('Adventure', 'Adventure'),
+        ('Science', 'Science'),
+        ('History', 'History'),
+    ]
+    
+    title = models.CharField(max_length=255)
+    author = models.CharField(max_length=255)
+    description = models.TextField()
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
+    price = models.DecimalField(max_digits=6, decimal_places=2)
+    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+    
+class BookPurchase(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    purchased_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.book.title}"
