@@ -71,6 +71,11 @@ urlpatterns = [
     path("teacher/course/variant-item-delete/<variant_id>/<variant_item_id>/<teacher_id>/<course_id>/", api_views.CourseVariantItemDeleteAPIVIew.as_view()),
 
 
+    # Books
+    path('books/', api_views.BookListCreateView.as_view(), name='book-list'),
+    path('books/<int:pk>/', api_views.BookDetailView.as_view(), name='book-detail'),
+    path('books/purchase/', api_views.BookPurchaseView.as_view(), name='book-purchase'),
+
 
 ]
 
