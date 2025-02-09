@@ -1,9 +1,30 @@
+import { useState, useEffect} from "react";
+import moment from "moment"
+import Rater from "react-rater"
+import "react-rater/lib/react-rater.css"
+
+
 import Sidebar from "./Partials/Sidebar";
 import Header from "./Partials/Header";
 import BaseHeader from "../partials/BaseHeader";
 import BaseFooter from "../partials/BaseFooter";
 
+import useAxios from "../../utils/useAxios";
+import UserData from "../plugin/UserData";
+import { teacherId } from '../../utils/constants'
+
 function Students() {
+
+  const [student, setStudents] = useState([])
+   
+  useEffect(() =>{
+    useAxios().get(`teacher/student-lists/${teacherId}/`).then((res) =>{
+      console.log(res.data);
+      setStudents(res.data);
+
+      
+    })
+  },[])
   return (
     <>
       <BaseHeader />
@@ -28,13 +49,17 @@ function Students() {
                 </div>
               </div>
               {/* Tab content */}
+
               <div className="row">
+                {student?.map((s,index) =>(
+
+                
                 <div className="col-lg-4 col-md-6 col-12">
                   <div className="card mb-4">
                     <div className="card-body">
                       <div className="text-center">
                         <img
-                          src="https://geeksui.codescandy.com/geeks/assets/images/avatar/avatar-3.jpg"
+                          src={`http://127.0.0.1:8000${s.image}`}
                           className="rounded-circle avatar-xl mb-3"
                           style={{
                             width: "70px",
@@ -44,19 +69,20 @@ function Students() {
                           }}
                           alt="avatar"
                         />
-                        <h4 className="mb-1">Ayesha</h4>
+                        <h4 className="mb-1">{s.full_name}</h4>
                         <p className="mb-0">
                           {" "}
-                          <i className="fas fa-map-pin me-1" /> Pakistan{" "}
+                          <i className="fas fa-map-pin me-1" /> {s.country}{" "}
                         </p>
                       </div>
                       <div className="d-flex justify-content-between py-2 mt-4 fs-6">
                         <span>Enrolled</span>
-                        <span className="text-dark">3/12/2020</span>
+                        <span className="text-dark">{moment(s.date).format("DD MMM, YYYY")}</span>
                       </div>
                     </div>
                   </div>
                 </div>
+                ))}
               </div>
             </div>
           </div>

@@ -63,7 +63,7 @@ function Login() {
                       id="email"
                       className="form-control"
                       name="email"
-                      placeholder="johndoe@gmail.com"
+                      placeholder="example@gmail.com"
                       required=""
                       onChange={(e) => setEmail(e.target.value)}
                     />

@@ -22,7 +22,7 @@ LANGUAGE = (
 LEVEL = (
     ("Beginner", "Beginner"),
     ("Intermediate", "Intermediate"),
-    ("Advance", "Advance"),
+    ("Advanced", "Advanced"),
 )
 
 RATING = (
@@ -122,6 +122,7 @@ class Course(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)
     price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    active = models.BooleanField(default=True)
 
     # language = models.CharField(choices=LANGUAGE, default="English",max_length=200)
     # level = models.CharField(choices=LEVEL, default="Beginner", max_length=200)
@@ -408,7 +409,7 @@ class Review(models.Model):
     review = models.TextField()
     date = models.DateTimeField(default=timezone.now)
     rating = models.IntegerField(choices=RATING, default=None)
-    repy = models.CharField(null=True, blank=True, max_length=1000)
+    reply = models.CharField(null=True, blank=True, max_length=1000)
     active =  models.BooleanField(default=False)
 
     def __str__(self):
@@ -448,7 +449,7 @@ class WishList(models.Model):
     Course = models.ForeignKey(Course, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.code    
+        return f"{self.user.email} - {self.Course.title}"  # Example: "user@example.com - Course Title"    
     
 class Country(models.Model):
     name = models.CharField(max_length=100)

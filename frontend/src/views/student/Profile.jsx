@@ -1,10 +1,115 @@
-import React from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import BaseHeader from '../partials/BaseHeader'
 import BaseFooter from '../partials/BaseFooter'
 import Sidebar from './Partials/Sidebar'
 import Header from './Partials/Header'
+import { ProfileContext } from '../plugin/Context'
+
+import useAxios from '../../utils/useAxios';
+import UserData from '../plugin/UserData';
+import toast from '../plugin/toast';
+
 
 function Profile() {
+
+  const [profile, setProfile] = useContext(ProfileContext)
+  const [profileData, setProfileData] = useState({
+    image: "",
+    full_name: "",
+    about: "",
+    country: "",
+  })
+
+  const [imagePreview, setImagePreview] = useState("")
+
+  const fetchProfile = () => {
+    useAxios().get(`user/profile/${UserData()?.user_id}/`).then((res) => {
+      console.log(res.data);
+      setProfile(res.data);
+      setProfileData(res.data);
+      setImagePreview(res.data.image)
+
+    })
+  }
+
+  useEffect(() => {
+    fetchProfile();
+  }, [])
+
+  const handleProfileChange = (event) =>{
+    setProfileData({
+      ...profileData,
+      [event.target.name]: event.target.value
+    })
+  }
+
+  const handleFileChange = (event) =>{
+    const selectedFile = event.target.files[0]
+    setProfileData({
+      ...profileData,
+      [event.target.name]: selectedFile
+    })
+
+    const reader = new FileReader()
+    reader.onloadend = () =>{
+      setImagePreview(reader.result)
+    }
+
+    if(selectedFile){
+      reader.readAsDataURL(selectedFile)
+    }
+
+  }
+
+
+  const handelFormSubmit = async (e) => {
+    e.preventDefault();
+  
+    try {
+      const formdata = new FormData();
+  
+      // Append image only if it's a File object (new image selected)
+      if (profileData.image instanceof File) {
+        formdata.append("image", profileData.image);
+      }
+  
+      // Append other fields
+      formdata.append("full_name", profileData.full_name);
+      formdata.append("about", profileData.about);
+      formdata.append("country", profileData.country);
+  
+      // Send PATCH request
+      const response = await useAxios().patch(
+        `user/profile/${UserData()?.user_id}/`,
+        formdata,
+        {
+          headers: {
+            "content-type": "multipart/form-data",
+          },
+        }
+      );
+  
+      console.log("Update Response:", response.data);
+  
+      // Update state with the new data
+      setProfileData(response.data);
+      setImagePreview(response.data.image);
+  
+      // Show success message
+      toast().fire({
+        title: "Profile updated successfully!",
+        icon: "success",
+      });
+    } catch (error) {
+      console.error("Error updating profile:", error);
+  
+      // Show error message
+      toast().fire({
+        title: "Failed to update profile. Please try again.",
+        icon: "error",
+      });
+    }
+  };
   return (
     <>
       <BaseHeader />
@@ -27,11 +132,11 @@ function Profile() {
                   </p>
                 </div>
                 {/* Card body */}
-                <form className="card-body">
+                <form className="card-body" onSubmit={handelFormSubmit}>
                   <div className="d-lg-flex align-items-center justify-content-between">
                     <div className="d-flex align-items-center mb-4 mb-lg-0">
                       <img
-                        src="https://eduport.webestica.com/assets/images/avatar/09.jpg"
+                        src={imagePreview}
                         id="img-uploaded"
                         className="avatar-xl rounded-circle"
                         alt="avatar"
@@ -42,7 +147,12 @@ function Profile() {
                         <p className="mb-0">
                           PNG or JPG no bigger than 800px wide and tall.
                         </p>
-                        <input type="file" className='form-control mt-3' name="" id="" />
+                        <input type="file" 
+                        className='form-control mt-3' 
+                        name="image" 
+                        id="" 
+                        onChange={handleFileChange}
+                        />
                       </div>
                     </div>
                   </div>
@@ -63,16 +173,28 @@ function Profile() {
                           className="form-control"
                           placeholder="First Name"
                           required=""
+                          value={profileData.full_name}
+                          onChange={handleProfileChange}
+                          name = "full_name"
                         />
                         <div className="invalid-feedback">Please enter first name.</div>
                       </div>
                       {/* Last name */}
                       <div className="mb-3 col-12 col-md-12">
-                        <label className="form-label" htmlFor="lname">
+                        <label className="form-label" htmlFor="about">
                           About Me
                         </label>
-                        <textarea name="" id="" cols="30" rows="5" className='form-control'></textarea>
-                        <div className="invalid-feedback">Please enter last name.</div>
+                        <textarea
+                        onChange={handleProfileChange}
+                          name="about"
+                          id="about"
+                          cols="30"
+                          rows="5"
+                          className="form-control"
+                          value={profileData.about} // Correctly pass `value` as a prop
+                          
+                        />
+                        <div className="invalid-feedback">Please enter about me.</div>
                       </div>
 
                       {/* Country */}
@@ -86,6 +208,9 @@ function Profile() {
                           className="form-control"
                           placeholder="Country"
                           required=""
+                          value={profileData.country}
+                          onChange={handleProfileChange}
+                          name = "country"
                         />
                         <div className="invalid-feedback">Please choose country.</div>
                       </div>

@@ -13,10 +13,10 @@ const Books = () => {
   const fetchBooks = () => {
     // Example books data (Replace this with API data)
     const dummyBooks = [
-        { id: 1, title: "JavaScript Essentials", author: "John Doe", price: 19.99, image: "https://images.unsplash.com/photo-1542744095-ec74d8f1cd2f", reviews: 120, rating: 4.5 },
-  { id: 2, title: "React for Beginners", author: "Jane Smith", price: 25.99, image: "https://images.unsplash.com/photo-1573496761370-90972ccbd1ae", reviews: 90, rating: 4.8 },
-  { id: 3, title: "Advanced Node.js", author: "Alex Green", price: 30.99, image: "https://images.unsplash.com/photo-1505917694262-6dbb354d72eb", reviews: 70, rating: 4.3 },
-  { id: 4, title: "Understanding React Hooks", author: "Lily Brown", price: 22.99, image: "https://images.unsplash.com/photo-1593642532973-d31b6557fa68", reviews: 110, rating: 4.7 },
+    { id: 1, title: "JavaScript Essentials", author: "John Doe", price: 19.99, image: "https://www.porchlightbooks.com/globalassets/book-covers/9781914028069.jpg?w=1000&scale=both&mode=crop&u=637406797560370000",  reviews: 120, rating: 4.5 },
+  { id: 2, title: "React for Beginners", author: "Jane Smith", price: 25.99, image: "https://tse1.mm.bing.net/th?id=OIP.0SVXKq-Qcx4Bev7QH56wDAAAAA&rs=1&pid=ImgDetMain", reviews: 90, rating: 4.8 },
+  { id: 3, title: "Advanced Node.js", author: "Alex Green", price: 30.99, image: "https://tse4.mm.bing.net/th?id=OIP.lu_pCdWD3_RYBbgCJLD43wAAAA&rs=1&pid=ImgDetMain", reviews: 70, rating: 4.3 },
+  { id: 4, title: "Understanding React Hooks", author: "Lily Brown", price: 22.99, image: "https://wsvincent.com/assets/images/bestdjangobooks/dfb_cover.jpg", reviews: 110, rating: 4.7 },
   { id: 5, title: "Mastering Python", author: "Mark White", price: 19.99, image: "https://images.unsplash.com/photo-1585900133303-3a7de54c1847", reviews: 150, rating: 5 },
   { id: 6, title: "Data Science with R", author: "Sophia Blue", price: 24.99, image: "https://images.unsplash.com/photo-1573497602064-b7b14e5d60ef", reviews: 80, rating: 4.4 },
   { id: 7, title: "The Full Stack Developer", author: "James Black", price: 35.99, image: "https://images.unsplash.com/photo-1604585487343-4c1ac39cfc87", reviews: 65, rating: 4.2 },

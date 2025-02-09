@@ -1042,7 +1042,7 @@ function CourseDetail() {
                                             <h2 className="mb-1 h1">Related Courses</h2>
                                             <p>
                                                 These are the most popular courses among Geeks Courses learners
-                                                worldwide in year 2022
+                                                worldwide in year 2024
                                             </p>
                                         </div>
                                     </div>

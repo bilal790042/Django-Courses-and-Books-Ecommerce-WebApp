@@ -208,13 +208,14 @@ class NoteSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer(many=False)
+    profile = ProfileSerializer(source='Profile', many=False, read_only=True)
 
     class Meta:
         fields = '__all__'
         model = api_models.Review
+        depth = 3  # Set default depth here
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):   
         super(ReviewSerializer, self).__init__(*args, **kwargs)
         request = self.context.get("request")
         if request and request.method == "POST":
