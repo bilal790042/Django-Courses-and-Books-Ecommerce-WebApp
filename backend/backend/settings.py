@@ -38,7 +38,7 @@ AUTH_USER_MODEL = 'userauths.User'
 INSTALLED_APPS = [
     'jazzmin',
     "django.contrib.admin",
-    
+    # "corsheaders",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -53,6 +53,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
 	'corsheaders',
     'anymail',
+    "rest_framework.authtoken",  # Ensure this is included
+    
     'drf_yasg',
     
 ]
@@ -72,7 +74,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = "backend.urls"
 
 from datetime import timedelta
-
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -259,3 +261,18 @@ SIMPLE_JWT = {
 CORS_ALLOW_ALL_ORIGINS = True
 
 
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Allow requests from your frontend
+]
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+}

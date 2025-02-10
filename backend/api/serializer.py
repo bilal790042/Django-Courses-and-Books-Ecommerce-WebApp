@@ -310,6 +310,11 @@ class TeacherSummarySerializer(serializers.Serializer):
     total_revenue = serializers.IntegerField(default=0)
     monthly_revenue = serializers.IntegerField(default=0)
 
+class TeacherSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = api_models.Teacher
+        fields = ['full_name', 'expertise']
+
 
 
 class WishlistSerializer(serializers.ModelSerializer):

@@ -20,7 +20,8 @@ import Search from './views/base/Search';
 import StudentDashboard from './views/student/Dashboard';
 import StudentCourses from './views/student/Courses';
 import StudentCourseDetail from "./views/student/CourseDetail"
-import MentoringSessions from "./views/student/MentoringSessions";
+// import MentoringSessions from "./views/student/MentoringSessions";
+import MentoringSessions from "./views/student/MentoringSessions"
 import Books from './views/base/books';
 import Wishlist from "./views/student/Wishlist";
 import StudentProfile from "./views/student/Profile";

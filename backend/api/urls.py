@@ -45,12 +45,16 @@ urlpatterns = [
 
     # one to one mentoring
     path('mentoring-sessions/', api_views.MentoringSessionListCreateAPIView.as_view(), name='mentoring-session-list-create'),
+
     path('mentoring-sessions/<int:pk>/', api_views.MentoringSessionDetailAPIView.as_view(), name='mentoring-session-detail'),
     path('mentoring-sessions/upcoming/', api_views.UpcomingSessionsAPIView.as_view(), name='upcoming-sessions'),
     path('mentoring-sessions/past/', api_views.PastSessionsAPIView.as_view(), name='past-sessions'),
 
 
     # Teacher Routes
+    path("teachers/", api_views.TeacherListView.as_view()),
+
+
     path("teacher/summary/<teacher_id>/", api_views.TeacherSummaryAPIView.as_view()),
     path("teacher/course-lists/<teacher_id>/", api_views.TeacherCourseListAPIView.as_view()),
     path("teacher/review-lists/<teacher_id>/", api_views.TeacherReviewListAPIView.as_view()),

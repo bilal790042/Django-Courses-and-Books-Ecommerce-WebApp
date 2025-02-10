@@ -859,6 +859,10 @@ class QuestionAnswerMessageSendAPIView(generics.CreateAPIView):
         return Response({"messgae": "Message Sent", "question": question_serializer.data})
 
 
+class TeacherListView(generics.ListAPIView):
+    queryset = api_models.Teacher.objects.all()
+    serializer_class = api_serializer.TeacherSerializer
+    permission_classes = [AllowAny]
 
 
 class TeacherSummaryAPIView(generics.ListAPIView):
@@ -1292,10 +1296,14 @@ class CourseVariantItemDeleteAPIVIew(generics.DestroyAPIView):
     
 
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 class MentoringSessionListCreateAPIView(generics.ListCreateAPIView):
     queryset = MentoringSession.objects.all()
     serializer_class = api_serializer.MentoringSessionSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         user = self.request.user
@@ -1304,11 +1312,11 @@ class MentoringSessionListCreateAPIView(generics.ListCreateAPIView):
 class MentoringSessionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MentoringSession.objects.all()
     serializer_class = api_serializer.MentoringSessionSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 class UpcomingSessionsAPIView(generics.ListAPIView):
     serializer_class = api_serializer.MentoringSessionSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         user = self.request.user
@@ -1316,7 +1324,7 @@ class UpcomingSessionsAPIView(generics.ListAPIView):
 
 class PastSessionsAPIView(generics.ListAPIView):
     serializer_class = api_serializer.MentoringSessionSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         user = self.request.user

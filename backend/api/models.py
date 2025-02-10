@@ -74,6 +74,8 @@ class Teacher(models.Model):
     linkedin = models.URLField(null=True, blank=True)
     about = models.TextField(null=True, blank=True)
     country = models.CharField(blank=True, null=True, max_length=100)
+    expertise = models.CharField(max_length=255, null=True, blank=True)  # New field
+
 
 
     def __str__(self):
