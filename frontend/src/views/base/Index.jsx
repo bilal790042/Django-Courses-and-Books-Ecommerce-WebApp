@@ -385,10 +385,10 @@ function Index() {
                                     <div className="card card-hover">
                                         <Link to="/book-detail/the-great-adventure/">
                                             <img
-                                                src="path_to_image.jpg"
+                                                src="https://tse2.mm.bing.net/th?id=OIP.IIIPIPZYMBOJgxFfWGRtBAHaHa&w=1181&h=1181&rs=1&pid=ImgDetMain"
                                                 alt="book"
                                                 className="card-img-top"
-                                                style={{ width: "100%", height: "200px", objectFit: "cover" }}
+                                                style={{ width: "100%", height: "250px", objectFit: "cover" }}
                                             />
                                         </Link>
                                         {/* Card Body */}
@@ -444,10 +444,10 @@ function Index() {
                                     <div className="card card-hover">
                                         <Link to="/book-detail/understanding-react/">
                                             <img
-                                                src="path_to_image.jpg"
+                                                src="https://th.bing.com/th/id/OIP.y2h_NqT3jnkvvqKYww_WewAAAA?rs=1&pid=ImgDetMain"
                                                 alt="book"
                                                 className="card-img-top"
-                                                style={{ width: "100%", height: "200px", objectFit: "cover" }}
+                                                style={{ width: "100%", height: "250px", objectFit: "cover" }}
                                             />
                                         </Link>
                                         {/* Card Body */}

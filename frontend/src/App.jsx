@@ -11,7 +11,7 @@ import CreateNewPassword from './views/auth/CreateNewPassword';
 import Index from './views/base/Index'; // Note uppercase
 import CourseDetail from './views/base/CourseDetail';
 import Cart from './views/base/Cart';
-import { CartContext } from './views/plugin/Context';
+import { CartContext, ProfileContext } from './views/plugin/Context';
 import CartId from './views/plugin/cartId';
 import apiInstance from './utils/axios';
 import Checkout from './views/base/Checkout';
@@ -55,15 +55,18 @@ function App() {
     console.log(cartCount);
 
 
-    // useAxios()
-    //   .get(`user/profile/${UserData()?.user_id}/`)
-    //   .then((res) => {
-    //     setProfile(res.data);
-    //   });
+    useAxios().get(`user/profile/${UserData()?.user_id}/`)
+    .then((res) => {
+      setProfile(res.data);
+      
+
+    })
   }, []);
 
   return (
     <CartContext.Provider value={[cartCount, setCartCount]}>
+      <ProfileContext.Provider value ={[profile, setProfile]}>
+      
       <BrowserRouter>
         <MainWrapper>
           <Routes>
@@ -130,6 +133,7 @@ function App() {
           </Routes>
         </MainWrapper>
       </BrowserRouter>
+      </ProfileContext.Provider>
     </CartContext.Provider>
   );
 }

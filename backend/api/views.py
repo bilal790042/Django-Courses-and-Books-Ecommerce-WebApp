@@ -53,49 +53,59 @@ def generate_random_otp (length=7):
     return otp
 
 class PasswordResetEmailVerifyAPIView(generics.RetrieveAPIView):
-   permission_classes = [AllowAny]
-   serializer_class = api_serializer.UserSerializer
+    permission_classes = [AllowAny]
+    serializer_class = api_serializer.UserSerializer
 
-   def get_object(self):
-       email = self.kwargs['email']
+    def get_object(self):
+        email = self.kwargs['email']
 
-       user = User.objects.filter(email = email).first()
-       
-       if user: 
-           uuidb64 = user.pk
-           refresh = RefreshToken.for_user(user)
-           refresh_token = str(refresh.access_token)
-           
-           user.refresh_token = refresh_token
-           user.otp = generate_random_otp()
-           user.save() 
+        user = User.objects.filter(email=email).first()
+        
+        if user: 
+            uuidb64 = user.pk
+            refresh = RefreshToken.for_user(user)
+            refresh_token = str(refresh.access_token)
+            
+            user.refresh_token = refresh_token
+            user.otp = generate_random_otp()
+            user.save() 
 
-           link = f"http://localhost:5173/create-new-password/?otp={user.otp}&uuidb64= {uuidb64}&refresh_token={refresh_token}"
-           merge_data = {
-               "link": link,
-               "username": user.username
-           }
-           context = {
-            "user": user,
-            "reset_url": "http://127.0.0.1:8000/api/v1/user/password-reset/<email>/",  # Replace with your actual reset URL
-        }
+            link = f"http://localhost:5173/create-new-password/?otp={user.otp}&uuidb64={uuidb64}&refresh_token={refresh_token}"
+            merge_data = {
+                "link": link,
+                "username": user.username
+            }
+            context = {
+                "user": user,
+                "reset_url": link,  # Use the actual reset link
+            }
 
-           subject = "Password Rest Email"
-           text_body = render_to_string("email/password_reset.txt", context)
-           html_body = render_to_string("email/password_reset.html", context)
+            subject = "Password Reset Email"
+            text_body = render_to_string("email/password_reset.txt", context)
+            html_body = render_to_string("email/password_reset.html", context)
 
-           msg = EmailMultiAlternatives(
-               subject= subject,
-               from_email = settings.FROM_EMAIL,
-               to = [user.email],
-               body=text_body
-           )
+            print(f"Sending email to: {user.email}")
+            print(f"Email subject: {subject}")
+            print(f"Email text body: {text_body}")
+            print(f"Email HTML body: {html_body}")
 
-           msg.attach_alternative(html_body, "text/html")
-           msg.send()
+            msg = EmailMultiAlternatives(
+                subject=subject,
+                from_email=settings.FROM_EMAIL,
+                to=[user.email],
+                body=text_body
+            )
 
-           print("link ======", link)
-           return user
+            msg.attach_alternative(html_body, "text/html")
+            
+            try:
+                msg.send()
+                print("Email sent successfully")
+            except Exception as e:
+                print(f"Failed to send email: {e}")
+
+            print("link ======", link)
+            return user
 
 
 
@@ -119,6 +129,35 @@ class PasswordChangeAPIView(generics.CreateAPIView):
         else:
             return Response({"message": "User Does Not Exists"}, status= status.HTTP_404_NOT_FOUND)
             
+class ChangePasswordAPIView(generics.CreateAPIView):
+    serializer_class = api_serializer.UserSerializer
+    permission_classes =[AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        user_id = request.data['user_id']
+        old_password = request.date['old_password']
+        new_password = request.date['new_password']
+
+
+        user = User.objects.get(id = user_id)
+        if user is not None:
+            if check_password(old_password, user.password):
+                user.set_password(new_password)
+                user.save()
+                return Response({"message": "Password changed successfully", "icon":"success"})
+            else:
+                return Response({"message": "Old password is incorrect", "icon":"warning"})
+        else: 
+            return Response({"message": "User does not exist", "icon":"error"})
+
+class ProfileAPIView(generics.RetrieveUpdateAPIView):
+    serializer_class = api_serializer.ProfileSerializer
+    permission_classes = [AllowAny]
+
+    def get_object(self):
+        user_id = self.kwargs['user_id']
+        user = User.objects.get(id = user_id) 
+        return Profile.objects.get(user = user)
 
 class CategoryListAPIView(generics.ListAPIView):
     queryset = api_models.Category.objects.filter(active=True)
@@ -533,6 +572,7 @@ class StudentCourseCompletedCreateAPIView(generics.CreateAPIView):
 class StudentNoteCreateAPIView(generics.ListCreateAPIView):
     serializer_class = api_serializer.NoteSerializer
     permission_classes = [AllowAny]
+    
 
     def get_queryset(self):
         user_id = self.kwargs['user_id']
@@ -544,17 +584,25 @@ class StudentNoteCreateAPIView(generics.ListCreateAPIView):
         return api_models.Note.objects.filter(user=user, course=enrolled.course)
 
     def create(self, request, *args, **kwargs):
-        user_id = request.data['user_id']
-        enrollment_id = request.data['enrollment_id']
-        title = request.data['title']
-        note = request.data['note']
+        user_id = request.data.get('user_id')
+        enrollment_id = request.data.get('enrollment_id')
 
-        user = User.objects.get(id=user_id)
-        enrolled = api_models.EnrolledCourse.objects.get(enrollment_id=enrollment_id)
+        if not user_id or user_id == "0":
+            return Response({"error": "Invalid user ID"}, status=400)
         
-        api_models.Note.objects.create(user=user, course=enrolled.course, note=note, title=title)
 
-        return Response({"message": "Note created successfullly"}, status=status.HTTP_201_CREATED)
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response({"error": "User does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+        enrolled = api_models.EnrolledCourse.objects.get(enrollment_id=enrollment_id)
+        title = request.data.get('title', '')
+        note = request.data.get('note', '')
+
+        api_models.Note.objects.create(user=user, course=enrolled.course, note=note, title=title)
+        return Response({"message": "Note created successfully"}, status=status.HTTP_201_CREATED)
+
      
 class PaymentSuccessAPIView(generics.CreateAPIView):
     serializer_class = api_serializer.CartOrderSerializer
@@ -766,7 +814,7 @@ class StudentWishListListCreateAPIView(generics.ListCreateAPIView):
     def get_queryset(self):
         user_id = self.kwargs['user_id']
         user = User.objects.get(id=user_id)
-        return api_models.Wishlist.objects.filter(user=user)
+        return api_models.WishList.objects.filter(user=user)
     
     def create(self, request, *args, **kwargs):
         user_id = request.data['user_id']
@@ -775,14 +823,12 @@ class StudentWishListListCreateAPIView(generics.ListCreateAPIView):
         user = User.objects.get(id=user_id)
         course = api_models.Course.objects.get(id=course_id)
 
-        wishlist = api_models.Wishlist.objects.filter(user=user, course=course).first()
+        wishlist = api_models.WishList.objects.filter(user=user, course=course).first()  
         if wishlist:
             wishlist.delete()
             return Response({"message": "Wishlist Deleted"}, status=status.HTTP_200_OK)
         else:
-            api_models.Wishlist.objects.create(
-                user=user, course=course
-            )
+            api_models.WishList.objects.create(user=user, course=course)  # Correct model name `WishList`
             return Response({"message": "Wishlist Created"}, status=status.HTTP_201_CREATED)
 
 
@@ -876,8 +922,8 @@ class TeacherSummaryAPIView(generics.ListAPIView):
         one_month_ago = datetime.today() - timedelta(days=28)
 
         total_courses = api_models.Course.objects.filter(teacher=teacher).count()
-        total_revenue = api_models.CartOrderItem.objects.filter(teacher=teacher, order__payment_status="Paid").aggregate(total_revenue=models.Sum("price"))['total_revenue'] or 0
-        monthly_revenue = api_models.CartOrderItem.objects.filter(teacher=teacher, order__payment_status="Paid", date__gte=one_month_ago).aggregate(total_revenue=models.Sum("price"))['total_revenue'] or 0
+        total_revenue = api_models.CartOrderItem.objects.filter(teacher=teacher, order__payment_status="Paid").aggregate(total_revenue=models.Sum("total"))['total_revenue'] or 0
+        monthly_revenue = api_models.CartOrderItem.objects.filter(teacher=teacher, order__payment_status="Paid", date__gte=one_month_ago).aggregate(total_revenue=models.Sum("total"))['total_revenue'] or 0
 
         enrolled_courses = api_models.EnrolledCourse.objects.filter(teacher=teacher)
         unique_student_ids = set()
@@ -968,19 +1014,36 @@ class TeacherStudentsListAPIVIew(viewsets.ViewSet):
 @api_view(("GET", ))
 def TeacherAllMonthEarningAPIView(request, teacher_id):
     teacher = api_models.Teacher.objects.get(id=teacher_id)
+    
+    print("Checking teacher:", teacher)
+
+    # Fetch all order items for the teacher
+    orders = api_models.CartOrderItem.objects.filter(teacher=teacher)
+    print("Total orders for teacher:", orders.count())
+
+    # Fetch only paid orders
+    paid_orders = orders.filter(order__payment_status="Paid")
+    print("Paid orders:", paid_orders.count())
+
+    # Ensure total is not NULL or 0
+    valid_orders = paid_orders.exclude(total=None).exclude(total=0)
+    print("Valid orders with total:", valid_orders.count())
+
+    # Now, apply aggregation
     monthly_earning_tracker = (
-        api_models.CartOrderItem.objects
-        .filter(teacher=teacher, order__payment_status="Paid")
-        .annotate(
-            month=ExtractMonth("date")
-        )
+        valid_orders
+        .annotate(month=ExtractMonth("date"))
         .values("month")
-        .annotate(
-            total_earning=models.Sum("price")
-        )
+        .annotate(total_earning=models.Sum("total"))
         .order_by("month")
     )
 
+    print("Final API Response:", list(monthly_earning_tracker))
+    
+    return Response(monthly_earning_tracker)
+
+
+    print(list(monthly_earning_tracker))
     return Response(monthly_earning_tracker)
 
 class TeacherBestSellingCourseAPIView(viewsets.ViewSet):
@@ -991,7 +1054,8 @@ class TeacherBestSellingCourseAPIView(viewsets.ViewSet):
         courses = api_models.Course.objects.filter(teacher=teacher)
 
         for course in courses:
-            revenue = course.enrolledcourse_set.aggregate(total_price=models.Sum('order_item__price'))['total_price'] or 0
+            revenue = course.enrolledcourse_set.aggregate(total_price=models.Sum('order_item__total'))['total_price'] or 0
+
             sales = course.enrolledcourse_set.count()
 
             courses_with_total_price.append({

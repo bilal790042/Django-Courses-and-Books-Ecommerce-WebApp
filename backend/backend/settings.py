@@ -132,6 +132,18 @@ FROM_EMAIL = env("FROM_EMAIL")
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = "no-reply@bilalcompany.com"
 
+
+
+# Email Configuration (SMTP)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Replace with your SMTP server
+EMAIL_PORT = 587  # Replace with your SMTP port
+EMAIL_USE_TLS = True  # Use TLS for security
+EMAIL_HOST_USER = 'nomanwahdat@gmail.com'  # Replace with your email
+EMAIL_HOST_PASSWORD = 'wdqm wblz tlxi dklo'  # Replace with your email password
+DEFAULT_FROM_EMAIL = 'nomanwahdat@gmail.com'  # Replace with your email
+FROM_EMAIL = 'nomanwahdat@gmail.com'  # Replace with your email
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 

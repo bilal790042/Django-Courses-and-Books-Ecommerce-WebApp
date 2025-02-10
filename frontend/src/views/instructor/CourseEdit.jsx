@@ -1,11 +1,65 @@
+import { useState, useEffect } from 'react'
+import moment from "moment";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+
+
+
 import Sidebar from './Partials/Sidebar'
 import Header from './Partials/Header'
 import BaseHeader from '../partials/BaseHeader'
 import BaseFooter from '../partials/BaseFooter'
-import { Link } from 'react-router-dom';
+import { Link,useParams } from 'react-router-dom';
 
+import useAxios from '../../utils/useAxios';
+import UserData from '../plugin/UserData';
+import { object } from 'prop-types';
+import Swal from 'sweetalert2';
 
 function CourseEdit() {
+
+  const [course, setCourse] = useState({
+    category: "",
+    file: "",
+    image: "",
+    title: "",
+    description: "",
+    price: "",
+    level: "",
+    language: "",
+    teacher_course_status: "",
+
+  })
+
+  const [category, setCategory] = useState([]);
+  const [progress, setProgress] = useState(0);
+  const [cKEditorData, setCKEditorData] = useState("");
+
+  const param = useParams()
+
+  const [variants, SetVariants] = useState([
+    {
+      title: "",
+      description: "",
+      items: [{ title: "", description: "", file: "", preview: false }]
+    }
+  ]);
+
+  const fetchCourseDetails =() =>{
+    useAxios().get(`course/category/`).then((res) => {
+      setCategory(res.data)
+    })
+
+    useAxios().get(`teacher/course-detail/${param.course_id}/`).then((res) => {
+      setCourse(res.data)
+      SetVariants(res.data.variants)
+      setCKEditorData(res.data.description)
+    })
+  };
+
+  useEffect(() =>{
+    fetchCourseDetails()
+  },[])
   return (
     <>
       <BaseHeader />

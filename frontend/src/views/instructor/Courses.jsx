@@ -4,6 +4,7 @@ import Header from './Partials/Header'
 
 import BaseHeader from '../partials/BaseHeader'
 import BaseFooter from '../partials/BaseFooter'
+import { Link } from 'react-router-dom'
 
 function Courses() {
     return (
@@ -140,7 +141,7 @@ function Courses() {
                                                 <td><p className='mt-3 badge bg-warning text-dark' >Intermediate</p></td>
                                                 <td><p className='mt-3'>07 Aug, 2025</p></td>
                                                 <td>
-                                                    <button className='btn btn-primary btn-sm mt-3 me-1'><i className='fas fa-edit'></i></button>
+                                                    <Link to={`/instructor/edit-course/${c.course_id}/`} className='btn btn-primary btn-sm mt-3 me-1'><i className='fas fa-edit'></i></Link>
                                                     <button className='btn btn-danger btn-sm mt-3 me-1'><i className='fas fa-trash'></i></button>
                                                     <button className='btn btn-secondary btn-sm mt-3 me-1'><i className='fas fa-eye'></i></button>
                                                 </td>
