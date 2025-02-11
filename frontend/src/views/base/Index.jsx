@@ -28,10 +28,28 @@ function Index() {
     const [courses, setCourses] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [cartCount, setCartCount] = useContext(CartContext);
+    const [books, setBooks] = useState([]);
 
     const country = GetCurrentAddress().country;
     // const userId = UserData()?.user_id; // user_id is not defined 
     const cartId = CartId();
+
+
+    const fetchBooks = async () => {
+        setIsLoading(true);
+        try {
+            await useAxios().get(`/books/`).then((res) => {
+                setBooks(res.data);
+                setIsLoading(false);
+            });
+        } catch (error) {
+            console.error("Error fetching books:", error.response?.data || error.message);
+        }
+    };
+
+    useEffect(() => {
+        fetchBooks();
+    }, []);
 
 
     const fetchCourse = async () => {
@@ -46,6 +64,7 @@ function Index() {
 
 
         }
+        
 
     }
 
@@ -364,151 +383,95 @@ function Index() {
             {/* books  */}
 
             <section className='mb-5'>
-                <div className="container mb-lg-8 ">
-                    <div className="row mb-5 mt-3">
-                        {/* col */}
-                        <div className="col-12">
-                            <div className="mb-6">
-                                <h2 className="mb-1 h1">📚 Explore Our Books</h2>
-                                <p>
-                                    Discover the best books in various categories to expand your knowledge.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-md-12">
-                            <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-                                {/* Hardcoded static data for books */}
-                                <div className="col">
-                                    {/* Card */}
-                                    <div className="card card-hover">
-                                        <Link to="/book-detail/the-great-adventure/">
-                                            <img
-                                                src="https://tse2.mm.bing.net/th?id=OIP.IIIPIPZYMBOJgxFfWGRtBAHaHa&w=1181&h=1181&rs=1&pid=ImgDetMain"
-                                                alt="book"
-                                                className="card-img-top"
-                                                style={{ width: "100%", height: "250px", objectFit: "cover" }}
-                                            />
-                                        </Link>
-                                        {/* Card Body */}
-                                        <div className="card-body">
-                                            <div className="d-flex justify-content-between align-items-center mb-3">
-                                                <div>
-                                                    <span className="badge bg-info">Adventure</span>
-                                                    <span className="badge bg-success ms-2">John Doe</span>
-                                                </div>
-                                                <a href="#" className="fs-5">
-                                                    <i className="fas fa-heart text-danger align-middle" />
-                                                </a>
-                                            </div>
-                                            <h4 className="mb-2 text-truncate-line-2 ">
-                                                <Link to="/book-detail/the-great-adventure/" className="text-inherit text-decoration-none text-dark fs-5">
-                                                    The Great Adventure
-                                                </Link>
-                                            </h4>
-                                            <small>By: John Doe</small> <br />
-                                            <small>3 Reviews</small>
-                                            <br />
-                                            <div className="lh-1 mt-3 d-flex">
-                                                <span className="align-text-top">
-                                                    <span className="fs-6">
-                                                        {/* Rater component */}
-                                                        <span className="text-warning">4.5</span>
-                                                    </span>
-                                                </span>
-                                                <span className="fs-6 ms-2">3 Reviews</span>
-                                            </div>
-                                        </div>
-                                        {/* Card Footer */}
-                                        <div className="card-footer">
-                                            <div className="row align-items-center g-0">
-                                                <div className="col">
-                                                    <h5 className="mb-0">$19.99</h5>
-                                                </div>
-                                                <div className="col-auto">
-                                                    <button type="button" className="text-inherit text-decoration-none btn btn-primary me-2">
-                                                        <i className="fas fa-shopping-cart text-primary text-white" />
-                                                    </button>
-                                                    <Link to="/book-detail/the-great-adventure/" className="text-inherit text-decoration-none btn btn-primary">
-                                                        View Details <i className="fas fa-arrow-right text-primary align-middle me-2 text-white" />
-                                                    </Link>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="col">
-                                    {/* Card */}
-                                    <div className="card card-hover">
-                                        <Link to="/book-detail/understanding-react/">
-                                            <img
-                                                src="https://th.bing.com/th/id/OIP.y2h_NqT3jnkvvqKYww_WewAAAA?rs=1&pid=ImgDetMain"
-                                                alt="book"
-                                                className="card-img-top"
-                                                style={{ width: "100%", height: "250px", objectFit: "cover" }}
-                                            />
-                                        </Link>
-                                        {/* Card Body */}
-                                        <div className="card-body">
-                                            <div className="d-flex justify-content-between align-items-center mb-3">
-                                                <div>
-                                                    <span className="badge bg-info">Technology</span>
-                                                    <span className="badge bg-success ms-2">Jane Smith</span>
-                                                </div>
-                                                <a href="#" className="fs-5">
-                                                    <i className="fas fa-heart text-danger align-middle" />
-                                                </a>
-                                            </div>
-                                            <h4 className="mb-2 text-truncate-line-2 ">
-                                                <Link to="/book-detail/understanding-react/" className="text-inherit text-decoration-none text-dark fs-5">
-                                                    Understanding React
-                                                </Link>
-                                            </h4>
-                                            <small>By: Jane Smith</small> <br />
-                                            <small>4 Reviews</small>
-                                            <br />
-                                            <div className="lh-1 mt-3 d-flex">
-                                                <span className="align-text-top">
-                                                    <span className="fs-6">
-                                                        {/* Rater component */}
-                                                        <span className="text-warning">4.7</span>
-                                                    </span>
-                                                </span>
-                                                <span className="fs-6 ms-2">4 Reviews</span>
-                                            </div>
-                                        </div>
-                                        {/* Card Footer */}
-                                        <div className="card-footer">
-                                            <div className="row align-items-center g-0">
-                                                <div className="col">
-                                                    <h5 className="mb-0">$29.99</h5>
-                                                </div>
-                                                <div className="col-auto">
-                                                    <button type="button" className="text-inherit text-decoration-none btn btn-primary me-2">
-                                                        <i className="fas fa-shopping-cart text-primary text-white" />
-                                                    </button>
-                                                    <Link to="/book-detail/understanding-react/" className="text-inherit text-decoration-none btn btn-primary">
-                                                        View Details <i className="fas fa-arrow-right text-primary align-middle me-2 text-white" />
-                                                    </Link>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Link to navigate to /books */}
-                            <div className="d-flex justify-content-center mt-4">
-                                <Link to="/books" className="btn btn-primary">
-                                    See All Books
-                                </Link>
-                            </div>
-                        </div>
+            <div className="container mb-lg-8">
+            <div className="row mb-5 mt-3">
+                <div className="col-12">
+                    <div className="mb-6">
+                        <h2 className="mb-1 h1">📚 Explore Our Books</h2>
+                        <p>Discover the best books in various categories to expand your knowledge.</p>
                     </div>
                 </div>
+            </div>
+
+            <div className="row">
+                <div className="col-md-12">
+                    <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                        {isLoading ? (
+                            <p>Loading books...</p>
+                        ) : (
+                            books.map((book) => (
+                                <div key={book.id} className="col">
+                                    <div className="card card-hover">
+                                        <Link to={`/books/books-detail/${book.id}/`}>
+                                            <img
+                                                src={book.image} // Fetching Image from Backend
+                                                alt={book.title}
+                                                className="card-img-top"
+                                                style={{ width: "100%", height: "250px", objectFit: "cover" }}
+                                            />
+                                        </Link>
+
+                                        <div className="card-body">
+                                            <div className="d-flex justify-content-between align-items-center mb-3">
+                                                <div>
+                                                    <span className="badge bg-info">{book.category}</span>
+                                                    <span className="badge bg-success ms-2">{book.author}</span>
+                                                </div>
+                                                <a href="#" className="fs-5">
+                                                    <i className="fas fa-heart text-danger align-middle" />
+                                                </a>
+                                            </div>
+
+                                            <h4 className="mb-2 text-truncate-line-2">
+                                                <Link to={`/books/books-detail/${book.id}/`} className="text-inherit text-decoration-none text-dark fs-5">
+                                                    {book.title}
+                                                </Link>
+                                            </h4>
+                                            <small>By: {book.author}</small> <br />
+                                            <small>{book.reviews_count || 0} Reviews</small>
+                                            <br />
+
+                                            <div className="lh-1 mt-3 d-flex">
+                                                <span className="align-text-top">
+                                                    <span className="fs-6">
+                                                        <span className="text-warning">{book.rating || "N/A"}</span>
+                                                    </span>
+                                                </span>
+                                                <span className="fs-6 ms-2">{book.reviews_count || 0} Reviews</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="card-footer">
+                                            <div className="row align-items-center g-0">
+                                                <div className="col">
+                                                    <h5 className="mb-0">${book.price}</h5>
+                                                </div>
+                                                <div className="col-auto">
+                                                    {/* <button type="button" className="text-inherit text-decoration-none btn btn-primary me-2">
+                                                        <i className="fas fa-shopping-cart text-primary text-white" />
+                                                    </button> */}
+                                                    <Link to={`/books/books-detail/${book.id}/`} className="text-inherit text-decoration-none btn btn-primary">
+                                                        View Details <i className="fas fa-arrow-right text-primary align-middle me-2 text-white" />
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+
+                    <div className="d-flex justify-content-center mt-4">
+                        <Link to="/books" className="btn btn-primary">See All Books</Link>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+                
             </section>
+
 
 
             <section className="my-8 py-lg-8">

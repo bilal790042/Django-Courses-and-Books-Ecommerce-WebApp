@@ -1,28 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import BaseHeader from '../partials/BaseHeader';
-import BaseFooter from '../partials/BaseFooter';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import BaseHeader from "../partials/BaseHeader";
+import BaseFooter from "../partials/BaseFooter";
 
 const Books = () => {
   const [books, setBooks] = useState([]); // State to store books
   const [currentPage, setCurrentPage] = useState(1); // Pagination state
   const [booksPerPage] = useState(4); // Number of books per page
   const [searchQuery, setSearchQuery] = useState(""); // Search state
+  const [recommendedBooks, setRecommendedBooks] = useState([]);
 
+  
   // Placeholder for fetching books data from backend
   const fetchBooks = () => {
     // Example books data (Replace this with API data)
-    const dummyBooks = [
-    { id: 1, title: "JavaScript Essentials", author: "John Doe", price: 19.99, image: "https://www.porchlightbooks.com/globalassets/book-covers/9781914028069.jpg?w=1000&scale=both&mode=crop&u=637406797560370000",  reviews: 120, rating: 4.5 },
-  { id: 2, title: "React for Beginners", author: "Jane Smith", price: 25.99, image: "https://tse1.mm.bing.net/th?id=OIP.0SVXKq-Qcx4Bev7QH56wDAAAAA&rs=1&pid=ImgDetMain", reviews: 90, rating: 4.8 },
-  { id: 3, title: "Advanced Node.js", author: "Alex Green", price: 30.99, image: "https://tse4.mm.bing.net/th?id=OIP.lu_pCdWD3_RYBbgCJLD43wAAAA&rs=1&pid=ImgDetMain", reviews: 70, rating: 4.3 },
-  { id: 4, title: "Understanding React Hooks", author: "Lily Brown", price: 22.99, image: "https://wsvincent.com/assets/images/bestdjangobooks/dfb_cover.jpg", reviews: 110, rating: 4.7 },
-  { id: 5, title: "Mastering Python", author: "Mark White", price: 19.99, image: "https://images.unsplash.com/photo-1585900133303-3a7de54c1847", reviews: 150, rating: 5 },
-  { id: 6, title: "Data Science with R", author: "Sophia Blue", price: 24.99, image: "https://images.unsplash.com/photo-1573497602064-b7b14e5d60ef", reviews: 80, rating: 4.4 },
-  { id: 7, title: "The Full Stack Developer", author: "James Black", price: 35.99, image: "https://images.unsplash.com/photo-1604585487343-4c1ac39cfc87", reviews: 65, rating: 4.2 },
-  { id: 8, title: "Machine Learning Essentials", author: "Emily Pink", price: 27.99, image: "https://images.unsplash.com/photo-1593642532754-0bb6f2f5c2f0", reviews: 130, rating: 4.9 },
-    ];
-    setBooks(dummyBooks);
+    
   };
 
   useEffect(() => {
@@ -33,6 +25,41 @@ const Books = () => {
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
   };
+  // const addToCart = async (courseId, userId, price, country, cartId) => {
+  //   const formdata = new FormData();
+
+  //   formdata.append("title", title);
+  //   formdata.append("author", author);
+  //   formdata.append("description", description);
+  //   formdata.append("category", category);
+  //   formdata.append("price", price);
+  //   formdata.append("uploaded_by", uploaded_by);
+  //   formdata.append("created_at", created_at);
+  //   formdata.append("image", image);
+  //   formdata.append("preview_url", preview_url);
+  //   console.log("uploaded_by", userId); // Verify if `userId` is undefined here
+
+  //   try {
+  //     await useAxios()
+  //       .post(`books/cart/`, formdata)
+  //       .then((res) => {
+  //         console.log(res.data);
+
+  //         toast().fire({
+  //           title: "Added To Cart",
+  //           icon: "success",
+  //         });
+  //         //set cart count after adding to cart
+  //         apiInstance()
+  //           .get(`course/cart-list/${CartId()}/`)
+  //           .then((res) => {
+  //             setCartCount(res.data?.length);
+  //           });
+  //       });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const filteredBooks = books.filter((book) =>
     book.title.toLowerCase().includes(searchQuery)
@@ -47,139 +74,171 @@ const Books = () => {
 
   return (
     <>
-            <BaseHeader />
-    <section className='mb-5'>
-      <div className="container mb-lg-8">
-        <div className="row mb-5 mt-3">
-          <div className="col-12">
-            <div className="mb-6">
-              <h2 className="mb-1 h1">📚 Explore Our Books</h2>
-              <p>Discover the best books in various categories to expand your knowledge.</p>
+      <BaseHeader />
+      <section className="mb-5">
+        <div className="container mb-lg-8">
+          <div className="row mb-5 mt-3">
+            <div className="col-12">
+              <div className="mb-6">
+                <h2 className="mb-1 h1">📚 Explore Our Books</h2>
+                <p>
+                  Discover the best books in various categories to expand your
+                  knowledge.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Search Bar */}
-        <div className="mb-4">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Search for books..."
-            value={searchQuery}
-            onChange={handleSearch}
-          />
-        </div>
+          {/* Search Bar */}
+          <div className="mb-4">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search for books..."
+              value={searchQuery}
+              onChange={handleSearch}
+            />
+          </div>
 
-        <div className="row">
-          <div className="col-md-12">
-            <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-              {/* Hardcoded static data for books */}
-              {currentBooks.map((book) => (
-                <div className="col" key={book.id}>
-                  <div className="card card-hover">
-                    <Link to={`/book-detail/${book.title.replace(/\s+/g, '-').toLowerCase()}/`}>
-                      <img
-                        src={book.image}
-                        alt="book"
-                        className="card-img-top"
-                        style={{ width: "100%", height: "200px", objectFit: "cover" }}
-                      />
-                    </Link>
-                    <div className="card-body">
-                      <div className="d-flex justify-content-between align-items-center mb-3">
-                        <div>
-                          <span className="badge bg-info">Technology</span>
-                          <span className="badge bg-success ms-2">{book.author}</span>
+          <div className="row">
+            <div className="col-md-12">
+              <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                {/* Hardcoded static data for books */}
+                {currentBooks.map((book) => (
+                  <div className="col" key={book.id}>
+                    <div className="card card-hover">
+                      <Link
+                        to={`/book-detail/${book.title.replace(/\s+/g, "-").toLowerCase()}/`}
+                      >
+                        <img
+                          src={book.image}
+                          alt="book"
+                          className="card-img-top"
+                          style={{
+                            width: "100%",
+                            height: "200px",
+                            objectFit: "cover",
+                          }}
+                        />
+                      </Link>
+                      <div className="card-body">
+                        <div className="d-flex justify-content-between align-items-center mb-3">
+                          <div>
+                            <span className="badge bg-info">Technology</span>
+                            <span className="badge bg-success ms-2">
+                              {book.author}
+                            </span>
+                          </div>
+                          <a href="#" className="fs-5">
+                            <i className="fas fa-heart text-danger align-middle" />
+                          </a>
                         </div>
-                        <a href="#" className="fs-5">
-                          <i className="fas fa-heart text-danger align-middle" />
-                        </a>
-                      </div>
-                      <h4 className="mb-2 text-truncate-line-2">
-                        <Link
-                          to={`/book-detail/${book.title.replace(/\s+/g, '-').toLowerCase()}/`}
-                          className="text-inherit text-decoration-none text-dark fs-5"
-                        >
-                          {book.title}
-                        </Link>
-                      </h4>
-                      <small>By: {book.author}</small> <br />
-                      <small>{book.reviews} Reviews</small>
-                      <br />
-                      <div className="lh-1 mt-3 d-flex">
-                        <span className="align-text-top">
-                          <span className="fs-6">
-                            <span className="text-warning">{book.rating}</span>
-                          </span>
-                        </span>
-                        <span className="fs-6 ms-2">{book.reviews} Reviews</span>
-                      </div>
-                    </div>
-                    <div className="card-footer">
-                      <div className="row align-items-center g-0">
-                        <div className="col">
-                          <h5 className="mb-0">${book.price}</h5>
-                        </div>
-                        <div className="col-auto">
-                          <button type="button" className="text-inherit text-decoration-none btn btn-primary me-2">
-                            <i className="fas fa-shopping-cart text-primary text-white" />
-                          </button>
+                        <h4 className="mb-2 text-truncate-line-2">
                           <Link
-                            to={`/book-detail/${book.title.replace(/\s+/g, '-').toLowerCase()}/`}
-                            className="text-inherit text-decoration-none btn btn-primary"
+                            to={`/book-detail/${book.title.replace(/\s+/g, "-").toLowerCase()}/`}
+                            className="text-inherit text-decoration-none text-dark fs-5"
                           >
-                            View Details <i className="fas fa-arrow-right text-primary align-middle me-2 text-white" />
+                            {book.title}
                           </Link>
+                        </h4>
+                        <small>By: {book.author}</small> <br />
+                        <small>{book.reviews} Reviews</small>
+                        <br />
+                        <div className="lh-1 mt-3 d-flex">
+                          <span className="align-text-top">
+                            <span className="fs-6">
+                              <span className="text-warning">
+                                {book.rating}
+                              </span>
+                            </span>
+                          </span>
+                          <span className="fs-6 ms-2">
+                            {book.reviews} Reviews
+                          </span>
+                        </div>
+                      </div>
+                      <div className="card-footer">
+                        <div className="row align-items-center g-0">
+                          <div className="col">
+                            <h5 className="mb-0">${book.price}</h5>
+                          </div>
+                          <div className="col-auto">
+                            <button
+                              type="button"
+                              className="text-inherit text-decoration-none btn btn-primary me-2"
+                              onClick={() =>
+                                addToCart(
+                                  c.id,
+                                  userId,
+                                  c.price,
+                                  country,
+                                  cartId
+                                )
+                              }
+                            >
+                              <i className="fas fa-shopping-cart text-primary text-white" />
+                            </button>
+                            <Link
+                              to={`/book-detail/${book.title.replace(/\s+/g, "-").toLowerCase()}/`}
+                              className="text-inherit text-decoration-none btn btn-primary"
+                            >
+                              View Details{" "}
+                              <i className="fas fa-arrow-right text-primary align-middle me-2 text-white" />
+                            </Link>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              
+              </div>
 
-            {/* Pagination */}
-            <nav className="mt-4">
-              <ul className="pagination justify-content-center">
-                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                  <button
-                    className="page-link"
-                    onClick={() => setCurrentPage(currentPage - 1)}
-                  >
-                    Previous
-                  </button>
-                </li>
-
-                {Array.from({ length: totalPages }, (_, index) => (
+              {/* Pagination */}
+              <nav className="mt-4">
+                <ul className="pagination justify-content-center">
                   <li
-                    key={index + 1}
-                    className={`page-item ${currentPage === index + 1 ? "active" : ""}`}
+                    className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
                   >
                     <button
                       className="page-link"
-                      onClick={() => setCurrentPage(index + 1)}
+                      onClick={() => setCurrentPage(currentPage - 1)}
                     >
-                      {index + 1}
+                      Previous
                     </button>
                   </li>
-                ))}
 
-                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                  <button
-                    className="page-link"
-                    onClick={() => setCurrentPage(currentPage + 1)}
+                  {Array.from({ length: totalPages }, (_, index) => (
+                    <li
+                      key={index + 1}
+                      className={`page-item ${currentPage === index + 1 ? "active" : ""}`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => setCurrentPage(index + 1)}
+                      >
+                        {index + 1}
+                      </button>
+                    </li>
+                  ))}
+
+                  <li
+                    className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
                   >
-                    Next
-                  </button>
-                </li>
-              </ul>
-            </nav>
-
+                    <button
+                      className="page-link"
+                      onClick={() => setCurrentPage(currentPage + 1)}
+                    >
+                      Next
+                    </button>
+                  </li>
+                </ul>
+              </nav>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
-    <BaseFooter />
+      </section>
+      <BaseFooter />
     </>
   );
 };
