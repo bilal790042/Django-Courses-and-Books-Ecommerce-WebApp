@@ -355,11 +355,26 @@ class MentoringSessionSerializer(serializers.ModelSerializer):
 # Books 
 
 class BookSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
     class Meta:
         model = api_models.Book
         fields = '__all__'
 
+    def get_image_url(self, obj):
+        request = self.context.get('request')
+        if obj.image:
+            return request.build_absolute_uri(obj.image.url)  # Full URL for React
+        return None
+    
+    def get_image(self, obj):
+        request = self.context.get("request")
+        if obj.image:
+            return request.build_absolute_uri(obj.image.url)
+        return None
+    
 class BookPurchaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = api_models.BookPurchase
         fields = '__all__'
+

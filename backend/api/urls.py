@@ -1,3 +1,4 @@
+from django.conf import settings
 from api import views as api_views
 from django.urls import path
 
@@ -20,6 +21,9 @@ urlpatterns = [
     path("course/search/", api_views.SearchCourseAPIView.as_view()),
     path("course/course-detail/<slug>/", api_views.CourseDetailAPIView.as_view()),
     path("course/cart/", api_views.CartAPIView.as_view()),
+
+    # path("book/cart/", api_views.BookCartAPIView.as_view()),
+    
     path("course/cart-list/<cart_id>/", api_views.CartListAPIView.as_view()),
     path("cart/stats/<cart_id>/", api_views.CartStatsAPIView.as_view()),
     path("course/cart-item-delete/<cart_id>/<item_id>/", api_views.CartItemDeleteAPIView.as_view()),
@@ -77,10 +81,20 @@ urlpatterns = [
 
     # Books
     path('books/', api_views.BookListCreateView.as_view(), name='book-list'),
+    path('books/create/', api_views.BookCreateAPIView.as_view(), name='book-create'),
+
     path('books/<int:pk>/', api_views.BookDetailView.as_view(), name='book-detail'),
     path('books/purchase/', api_views.BookPurchaseView.as_view(), name='book-purchase'),
+    
+    path("books/books-detail/<int:id>/", api_views.BookDetailView.as_view()),
+    path('books/create/', api_views.BookCreateAPIView.as_view(), name='book-create'),
+
+    path('recommend-courses/<int:course_id>/', api_views.recommend_courses, name='recommend_courses'),
+    
+    path('books/<int:book_id>/preview/', api_views.preview_book, name='preview_book'),
+    path('books/<int:book_id>/recommendations/', api_views.category_based_recommendations, name='category_recommendations'),
+    # path("recommended-books/<int:book_id>/", api_views.recommended_books, name="recommended-books"),
+
 
 
 ]
-
-
