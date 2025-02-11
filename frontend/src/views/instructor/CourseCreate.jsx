@@ -17,6 +17,7 @@ import { object } from 'prop-types';
 import Swal from 'sweetalert2';
 
 const MyEditor = ({ onChange, value }) => {
+  const api = useAxios();
   return (
     <CKEditor
       editor={ClassicEditor}
@@ -60,11 +61,13 @@ function CourseCreate() {
     }
   ]);
 
+  const api = useAxios();
   useEffect(() => {
-    useAxios().get(`course/category/`).then((res) => {
-      setCategory(res.data)
-    })
-  }, [])
+    api.get(`course/category/`).then((res) => {
+      setCategory(res.data);
+    }).catch(err => console.error(err));
+  }, []);
+  
   console.log(category);
 
   const handleCourseInputChange = (event) => {

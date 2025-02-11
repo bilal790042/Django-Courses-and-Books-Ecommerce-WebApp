@@ -40,6 +40,8 @@ import ChangePassword from "./views/instructor/ChangePassword";
 import Profile from "./views/instructor/Profile";
 import CourseCreate from "./views/instructor/CourseCreate";
 import CourseEdit from "./views/instructor/CourseEdit";
+import TeachOnSkillz from './views/base/TeachOnSkillz';
+import ApplyInstructor from './views/base/ApplyInstructor';
 
 
 function App() {
@@ -125,6 +127,11 @@ function App() {
                 element={<CourseEdit />}
               />
 
+
+            {/* new routs */}
+
+            <Route path="/teach-on-skillz/" element={<TeachOnSkillz />} />
+            <Route path="/apply-instructor/" element={<ApplyInstructor />} />
 
 
 

@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import moment from "moment"
+
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
@@ -7,7 +9,20 @@ import Header from "./Partials/Header";
 import BaseHeader from "../partials/BaseHeader";
 import BaseFooter from "../partials/BaseFooter";
 
+
+
+
+import useAxios from "../../utils/useAxios";
+import UserData from "../plugin/UserData";
+import { teacherId } from '../../utils/constants'
+import toast from "../plugin/toast";
+
 function Coupon() {
+  const api = useAxios() 
+
+  const [coupons, setCoupons] = useState([])
+  const [createCoupon, setCreateCoupon] = useState({code: "", discount: 0})
+
   const [show, setShow] = useState(false);
   const [showAddCoupon, setShowAddCoupon] = useState(false);
 
@@ -16,6 +31,69 @@ function Coupon() {
 
   const handleAddCouponClose = () => setShowAddCoupon(false);
   const handleAddCouponShow = () => setShowAddCoupon(true);
+
+
+  const fetchCoupons = () => {
+    const teacherId = UserData()?.teacher_id;
+
+    if (!teacherId) {
+      console.error("Error: teacher_id is missing or invalid");
+      return;
+    }
+
+    console.log("Fetching coupons for teacher ID:", teacherId);
+
+    api.get(`teacher/coupon-list/${teacherId}/`)
+      .then((res) => {
+        console.log("Coupons API Response:", res.data);
+        setCoupons(res.data);
+      })
+      .catch((error) => console.error("Error fetching coupons:", error));
+  };
+  useEffect(() => {
+    fetchCoupons()
+  }, [])
+
+
+
+  const handleCreateCouponChange = (event) =>{
+    setCreateCoupon({
+      ...createCoupon,
+      [event.target.name]:event.target.value
+    })
+  }
+  
+  const handleCouponSubmit = (e) => {
+    e.preventDefault();
+  
+    const teacherId = UserData()?.teacher_id;
+    if (!teacherId) {
+      console.error("Error: Teacher ID is missing.");
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append("teacher", teacherId);
+    formData.append("code", createCoupon.code);
+    formData.append("discount", createCoupon.discount);
+  
+    api
+      .post(`teacher/coupon-list/${teacherId}/`, formData)
+      .then((res) => {
+        console.log("Coupon Created:", res.data);
+        fetchCoupons();
+        toast().fire({
+          icon:"success",
+          title:"Coupon created successfully"
+        })
+        handleAddCouponClose(); // ✅ Close modal
+      })
+      .catch((error) => console.error("Error creating coupon:", error));
+  };
+  
+  
+
+  
 
   return (
     <>
@@ -49,48 +127,53 @@ function Coupon() {
                   {/* List group */}
                   <ul className="list-group list-group-flush">
                     {/* List group item */}
-                    <li className="list-group-item p-4 shadow rounded-3">
-                      <div className="d-flex">
-                        <div className="ms-3 mt-2">
-                          <div className="d-flex align-items-center justify-content-between">
-                            <div>
-                              <h4 className="mb-0">CODE1</h4>
-                              <span>3 Student</span>
-                            </div>
-                          </div>
-                          <div className="mt-2">
-                            <p className="mt-2">
-                              <span className="me-2 fw-bold">
-                                Discount:{" "}
-                                <span className="fw-light">20% Discount</span>
-                              </span>
-                            </p>
-                            <p className="mt-1">
-                              <span className="me-2 fw-bold">
-                                Date Created:{" "}
-                                <span className="fw-light">30/11/24</span>
-                              </span>
-                            </p>
-                            <p>
-                              <button
-                                class="btn btn-outline-secondary"
-                                type="button"
-                                onClick={handleShow}
-                              >
-                                Update Coupon
-                              </button>
+                    {coupons.map((c, index) => (
 
-                              <button
+
+                      <li className="list-group-item p-4 shadow rounded-3">
+                        <div className="d-flex">
+                          <div className="ms-3 mt-2">
+                            <div className="d-flex align-items-center justify-content-between">
+                              <div>
+                                <h4 className="mb-0">{c.code}</h4>
+                                <span>{c.used_by}  Student</span>
+                              </div>
+                            </div>
+                            <div className="mt-2">
+                              <p className="mt-2">
+                                <span className="me-2 fw-bold">
+                                  Discount:{" "}
+                                  <span className="fw-light">
+                                    {c.discount}% Discount</span>
+                                </span>
+                              </p>
+                              <p className="mt-1">
+                                <span className="me-2 fw-bold">
+                                  Date Created:{" "}
+                                  <span className="fw-light">{moment(c.date).format("DD MMM,YYYY")}</span>
+                                </span>
+                              </p>
+                              <p>
+                                <button
+                                  class="btn btn-outline-secondary"
+                                  type="button"
+                                  onClick={handleShow}
+                                >
+                                  Update Coupon
+                                </button>
+
+                                <button
                                   class="btn btn-danger ms-2"
                                   type="button"
                                 >
                                   <i className="fas fa-trash"></i>
                                 </button>
-                            </p>
+                              </p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </li>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               </div>
@@ -114,9 +197,10 @@ function Coupon() {
               <input
                 type="text"
                 placeholder="Code"
-                value={"CODE1"}
+                value={createCoupon.code}
                 className="form-control"
-                name=""
+                name="code"
+                onChange={handleCreateCouponChange}
                 id=""
               />
               <label for="exampleInputEmail1" class="form-label mt-3">
@@ -125,9 +209,10 @@ function Coupon() {
               <input
                 type="text"
                 placeholder="Discount"
-                value={"20%"}
+                value={createCoupon.discount}
                 className="form-control"
-                name=""
+                name="discount"
+                onChange={handleCreateCouponChange}
                 id=""
               />
             </div>
@@ -148,17 +233,18 @@ function Coupon() {
           <Modal.Title>Create New Coupon</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <form>
+          <form onSubmit={handleCouponSubmit}>
             <div class="mb-3">
-              <label for="exampleInputEmail1" class="form-label">
+            <label for="exampleInputEmail1" class="form-label">
                 Code
               </label>
               <input
                 type="text"
                 placeholder="Code"
-                value={"CODE1"}
+                value={createCoupon.code}
                 className="form-control"
-                name=""
+                name="code"
+                onChange={handleCreateCouponChange}
                 id=""
               />
               <label for="exampleInputEmail1" class="form-label mt-3">
@@ -167,9 +253,10 @@ function Coupon() {
               <input
                 type="text"
                 placeholder="Discount"
-                value={"20%"}
+                value={createCoupon.discount}
                 className="form-control"
-                name=""
+                name="discount"
+                onChange={handleCreateCouponChange}
                 id=""
               />
             </div>

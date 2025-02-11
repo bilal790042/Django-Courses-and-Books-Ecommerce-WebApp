@@ -1,5 +1,7 @@
 from api import views as api_views
 from django.urls import path
+# from .views import RegisterView, VerifyEmailView, ResendVerificationView
+from .views import LearningModuleCreateView, LearningModuleApprovalView, check_approval_status
 
 from rest_framework_simplejwt.views import TokenRefreshView
 
@@ -10,6 +12,8 @@ urlpatterns = [
     path("user/token/refresh/", TokenRefreshView.as_view()),
     path("user/register/", api_views.RegisterView.as_view()),
     path("user/password-reset/<email>/", api_views.PasswordResetEmailVerifyAPIView.as_view()),
+    #  path('verify-email/<str:token>/', VerifyEmailView.as_view(), name='verify-email'),
+    # path('resend-verification/', ResendVerificationView.as_view(), name='resend-verification'),
     path("user/password-change/", api_views.PasswordChangeAPIView.as_view()),
     path("user/profile/<user_id>/", api_views.ProfileAPIView.as_view()),
     path("user/change-password/", api_views.ChangePasswordAPIView.as_view()),
@@ -70,6 +74,10 @@ urlpatterns = [
     path("teacher/course/variant-delete/<variant_id>/<teacher_id>/<course_id>/", api_views.CourseVariantDeleteAPIView.as_view()),
     path("teacher/course/variant-item-delete/<variant_id>/<variant_item_id>/<teacher_id>/<course_id>/", api_views.CourseVariantItemDeleteAPIVIew.as_view()),
 
+    # Teacher application 
+    path("learning-modules/", LearningModuleCreateView.as_view(), name="learning-module-create"),
+    path("learning-modules/<int:pk>/approve/", LearningModuleApprovalView.as_view(), name="learning-module-approve"),
+    path("learning-modules/<int:module_id>/status/", check_approval_status, name="learning-module-status"),
 
     # Books
     path('books/', api_views.BookListCreateView.as_view(), name='book-list'),

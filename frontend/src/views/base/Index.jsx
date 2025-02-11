@@ -544,9 +544,11 @@ function Index() {
                                     Instructors from around the world teach millions of students on
                                     Geeks. We provide the tools and skills to teach what you love.
                                 </p>
-                                <a href="#" className="btn bg-white text-dark fw-bold mt-4">
-                                    Start Teaching Today <i className='fas fa-arrow-right'></i>
-                                </a>
+
+                                <Link to="/apply-instructor/" className="btn bg-white text-dark fw-bold mt-4">
+                                Start Teaching Today <i className="fas fa-arrow-right"></i> 
+                                </Link>
+                           
                             </div>
                         </div>
                     </div>

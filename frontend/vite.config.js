@@ -1,10 +1,13 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vite';
+import path from 'path';
+import react from '@vitejs/plugin-react';
 
-import react from '@vitejs/plugin-react'
-
-
-
-// https://vite.dev/config/
+// Corrected single export
 export default defineConfig({
-  plugins: [react()],
-})
+  plugins: [react()],  // Moved plugins inside the single export
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+});

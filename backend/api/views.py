@@ -11,6 +11,12 @@ from .models import MentoringSession
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import permissions
 
+from django.core.mail import send_mail
+
+
+
+
+
 from api import serializer as api_serializer
 from api import models as api_models
 from userauths.models import User, Profile
@@ -21,6 +27,10 @@ from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from .models import LearningModule
+from .serializer import LearningModuleSerializer, LearningModuleAdminSerializer
+
 
 
 import random
@@ -1063,15 +1073,22 @@ class TeacherBestSellingCourseAPIView(viewsets.ViewSet):
 
         return Response(courses_with_total_price)
     
+
+
 class TeacherCourseOrdersListAPIView(generics.ListAPIView):
     serializer_class = api_serializer.CartOrderItemSerializer
     permission_classes = [AllowAny]
 
     def get_queryset(self):
         teacher_id = self.kwargs['teacher_id']
-        teacher = api_models.Teacher.objects.get(id=teacher_id)
-
+        
+        try:
+            teacher = api_models.Teacher.objects.get(id=teacher_id)
+        except api_models.Teacher.DoesNotExist:
+            raise Http404("Teacher not found")
+        
         return api_models.CartOrderItem.objects.filter(teacher=teacher)
+
 
 class TeacherQuestionAnswerListAPIView(generics.ListAPIView):
     serializer_class = api_serializer.Question_AnswerSerializer
@@ -1087,9 +1104,9 @@ class TeacherCouponListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = [AllowAny]
     
     def get_queryset(self):
-        teacher_id = self.kwargs['teacher_id']
-        teacher = api_models.Teacher.objects.get(id=teacher_id)
-        return api_models.Coupon.objects.filter(teacher=teacher)
+        teacher_id = self.kwargs.get("teacher_id")
+        return api_models.Coupon.objects.filter(teacher_id=teacher_id, active=True)
+
     
 
 class TeacherCouponDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -1385,8 +1402,55 @@ class PastSessionsAPIView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return MentoringSession.objects.filter(student=user, status='completed')
+    
+
+# Teacher application 
+class LearningModuleCreateView(generics.CreateAPIView):
+    queryset = LearningModule.objects.all()
+    serializer_class = LearningModuleSerializer
 
 
+# ✅ Admin Approval View
+
+
+class LearningModuleApprovalView(generics.UpdateAPIView):
+    queryset = LearningModule.objects.all()
+    serializer_class = LearningModuleAdminSerializer
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.is_approved = request.data.get("is_approved", instance.is_approved)
+        instance.feedback = request.data.get("feedback", instance.feedback)
+        instance.save()
+
+        # ✅ Send email notification to the user
+        if instance.is_approved and instance.user.email:
+            send_mail(
+                "Your Learning Module is Approved ✅",
+                f"Hello {instance.user.username},\n\n"
+                f"Your learning module '{instance.title}' has been approved!\n"
+                f"Feedback: {instance.feedback}\n\n"
+                "Best regards,\nYour Team",
+                settings.DEFAULT_FROM_EMAIL,
+                [instance.user.email],
+                fail_silently=False,
+            )
+
+        return Response({
+            "message": "Approval status updated",
+            "is_approved": instance.is_approved,
+            "feedback": instance.feedback
+        })
+
+
+@api_view(["GET"])
+def check_approval_status(request, module_id):
+    try:
+        module = LearningModule.objects.get(id=module_id, user=request.user)
+        return Response({"is_approved": module.is_approved, "feedback": module.feedback})
+    except LearningModule.DoesNotExist:
+        return Response({"error": "Module not found"}, status=404)
 
 
 # Books
