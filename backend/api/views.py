@@ -915,6 +915,10 @@ class QuestionAnswerMessageSendAPIView(generics.CreateAPIView):
         return Response({"messgae": "Message Sent", "question": question_serializer.data})
 
 
+class TeacherListView(generics.ListAPIView):
+    queryset = api_models.Teacher.objects.all()
+    serializer_class = api_serializer.TeacherSerializer
+    permission_classes = [AllowAny]
 
 
 class TeacherSummaryAPIView(generics.ListAPIView):
@@ -1373,10 +1377,14 @@ class CourseVariantItemDeleteAPIVIew(generics.DestroyAPIView):
     
 
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 class MentoringSessionListCreateAPIView(generics.ListCreateAPIView):
     queryset = MentoringSession.objects.all()
     serializer_class = api_serializer.MentoringSessionSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         user = self.request.user
@@ -1385,11 +1393,11 @@ class MentoringSessionListCreateAPIView(generics.ListCreateAPIView):
 class MentoringSessionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MentoringSession.objects.all()
     serializer_class = api_serializer.MentoringSessionSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 class UpcomingSessionsAPIView(generics.ListAPIView):
     serializer_class = api_serializer.MentoringSessionSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         user = self.request.user
@@ -1397,7 +1405,7 @@ class UpcomingSessionsAPIView(generics.ListAPIView):
 
 class PastSessionsAPIView(generics.ListAPIView):
     serializer_class = api_serializer.MentoringSessionSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         user = self.request.user
@@ -1470,6 +1478,16 @@ class BookDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = api_serializer.BookSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+
+    def get_object(self):
+        id = self.kwargs['id']
+        book = api_models.Book.objects.get(id= id)
+        return book
+
+
 # Purchase a Book
 class BookPurchaseView(generics.CreateAPIView):
     queryset = api_models.BookPurchase.objects.all()
@@ -1478,3 +1496,131 @@ class BookPurchaseView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
+from .models import Book
+
+# views.py
+class BookCreateAPIView(generics.CreateAPIView):
+    queryset = Book.objects.all()
+    serializer_class = api_serializer.BookSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        print("Authenticated User:", self.request.user)  # Debugging
+        serializer.save(uploaded_by=self.request.user)
+
+        
+from django.http import JsonResponse
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import TfidfVectorizer
+import numpy as np
+from .models import Course
+
+def recommend_courses(request, course_id):
+    try:
+        # Fetch all courses
+        courses = Course.objects.all()
+        course_data = [{"id": course.id, "title": course.title, "description": course.description, "tags": course.tags} for course in courses]
+
+        # Combine features into a single text field
+        for course in course_data:
+            course["combined_features"] = f"{course['title']} {course['description']} {course['tags']}"
+
+        # Vectorize the combined features
+        vectorizer = TfidfVectorizer(stop_words='english')
+        tfidf_matrix = vectorizer.fit_transform([course["combined_features"] for course in course_data])
+
+        # Compute cosine similarity matrix
+        cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
+
+        # Get the index of the course for which recommendations are needed
+        course_index = next((i for i, course in enumerate(course_data) if course["id"] == course_id), None)
+        if course_index is None:
+            return JsonResponse({"error": "Course not found."}, status=404)
+
+        # Get similarity scores for the course
+        sim_scores = list(enumerate(cosine_sim[course_index]))
+
+        # Sort courses by similarity score
+        sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+
+        # Exclude the course itself
+        sim_scores = sim_scores[1:]
+
+        # Get the top N recommendations
+        top_indices = [i[0] for i in sim_scores[:4]]  # Top 5 recommendations
+        top_indices = [int(i) for i in top_indices]  # Convert to Python integers
+
+        # Fetch recommended courses
+        recommended_courses = [courses[i] for i in top_indices]
+
+        # Serialize the recommended courses
+        recommended_courses_data = [{"id": course.id, "title": course.title, "description": course.description} for course in recommended_courses]
+
+        return JsonResponse({"recommended_courses": recommended_courses_data}, status=200)
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+    
+
+import PyPDF2
+from django.http import FileResponse, HttpResponse
+from django.shortcuts import get_object_or_404
+from io import BytesIO
+from .models import Book
+
+def preview_book(request, book_id):
+    book = get_object_or_404(Book, id=book_id)
+
+    if not book.pdf_file:
+        return HttpResponse("No PDF available", status=404)
+
+    # Open the book PDF
+    pdf_reader = PyPDF2.PdfReader(book.pdf_file)
+    preview_pages = min(book.preview_pages, len(pdf_reader.pages))  # Limit preview pages
+
+    output_pdf = PyPDF2.PdfWriter()
+    
+    # Add only the allowed preview pages
+    for i in range(preview_pages):
+        output_pdf.add_page(pdf_reader.pages[i])
+
+    # Save to memory
+    output_stream = BytesIO()
+    output_pdf.write(output_stream)
+    output_stream.seek(0)
+
+    # Return as a response
+    return FileResponse(output_stream, content_type='application/pdf')
+
+
+
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from .models import Book
+
+from django.conf import settings
+from django.urls import reverse
+
+def category_based_recommendations(request, book_id):
+    book = get_object_or_404(Book, id=book_id)
+    
+    # Get books from the same category, excluding the current book
+    recommended_books = Book.objects.filter(category=book.category).exclude(id=book.id)[:5]
+
+    # Convert books to JSON format
+    data = [
+        {
+            "id": b.id,
+            "title": b.title,
+            "author": b.author,
+            "price": str(b.price),
+            "image": request.build_absolute_uri(b.image.url) if b.image else None,
+        }
+        for b in recommended_books
+    ]
+    
+    return JsonResponse(data, safe=False)

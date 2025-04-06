@@ -38,7 +38,7 @@ AUTH_USER_MODEL = 'userauths.User'
 INSTALLED_APPS = [
     'jazzmin',
     "django.contrib.admin",
-    
+    # "corsheaders",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -53,6 +53,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
 	'corsheaders',
     'anymail',
+    "rest_framework.authtoken",  # Ensure this is included
+    
     'drf_yasg',
     
 ]
@@ -72,7 +74,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = "backend.urls"
 
 from datetime import timedelta
-
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -184,7 +186,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR/ 'media'
+# MEDIA_ROOT = BASE_DIR/ 'media'
 
 # STATIC_URL = "/static/"
 
@@ -205,7 +207,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "templates")
 
 # # Media files configuration
 # MEDIA_URL = "/media/"
-# MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -272,3 +274,18 @@ SIMPLE_JWT = {
 CORS_ALLOW_ALL_ORIGINS = True
 
 
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Allow requests from your frontend
+]
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+}

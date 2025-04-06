@@ -74,6 +74,8 @@ class Teacher(models.Model):
     linkedin = models.URLField(null=True, blank=True)
     about = models.TextField(null=True, blank=True)
     country = models.CharField(blank=True, null=True, max_length=100)
+    expertise = models.CharField(max_length=255, null=True, blank=True)  # New field
+
 
 
     def __str__(self):
@@ -122,59 +124,43 @@ class Course(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)
     price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
-    active = models.BooleanField(default=True)
-
-    # language = models.CharField(choices=LANGUAGE, default="English",max_length=200)
-    # level = models.CharField(choices=LEVEL, default="Beginner", max_length=200)
-    # platform_status = models.CharField(choices=PLATFORM_STATUS, default="Published",max_length=200)
-    # teacher_course_status = models.CharField(choices=TEACHER_STATUS, default="Published", max_length=200)
-    # featured = models.BooleanField(default=False)
-    # course_id = ShortUUIDField(unique= True, length = 6, max_length= 20, alphabet = "1234567890")
-
-    language = models.CharField(choices=LANGUAGE, default="English", max_length=50)  # Added max_length
-    level = models.CharField(choices=LEVEL, default="Beginner", max_length=50)  # Added max_length
-    platform_status = models.CharField(choices=PLATFORM_STATUS, default="Published", max_length=50)  # Added max_length
-    teacher_course_status = models.CharField(choices=TEACHER_STATUS, default="Published", max_length=50)  # Added max_length
+    language = models.CharField(choices=LANGUAGE, default="English", max_length=100)
+    level = models.CharField(choices=LEVEL, default="Beginner", max_length=100)
+    platform_status = models.CharField(choices=PLATFORM_STATUS, default="Published", max_length=100)
+    teacher_course_status = models.CharField(choices=TEACHER_STATUS, default="Published", max_length=100)
     featured = models.BooleanField(default=False)
     course_id = ShortUUIDField(unique=True, length=6, max_length=20, alphabet="1234567890")
-
     slug = models.SlugField(unique=True, null=True, blank=True)
     date = models.DateTimeField(default=timezone.now)
+    tags = models.TextField(default="Programming")
 
     def __str__(self):
         return self.title
-
+    
     def save(self, *args, **kwargs):
-
-      if not self.slug:
-        self.slug = slugify(self.title or "default-title")
-        
-
-      super().save(*args, **kwargs)
+        if self.slug == "" or self.slug == None:
+            self.slug = slugify(self.title) + str(self.pk)
+        super(Course, self).save(*args, **kwargs)
 
     def students(self):
-        return EnrolledCourse.objects.filter(course= self)
+        return EnrolledCourse.objects.filter(course=self)
     
-
     def curriculum(self):
-         return Variant.objects.filter(course=self)
+        return Variant.objects.filter(course=self)
     
-
     def lectures(self):
         return VariantItem.objects.filter(variant__course=self)
     
-    
     def average_rating(self):
-     return Review.objects.filter(course=self).aggregate(Avg('rating'))['rating__avg'] or 0
-
-
-
+        average_rating = Review.objects.filter(course=self, active=True).aggregate(avg_rating=models.Avg('rating'))
+        return average_rating['avg_rating']
+    
     def rating_count(self):
-        return Review.objects.filter(course= self, active = True).count()
+        return Review.objects.filter(course=self, active=True).count()
     
-    def review(self):
-        return Review.objects.filter(course= self, active=True)
-    
+    def reviews(self):
+        return Review.objects.filter(course=self, active=True)
+
 
 class Variant(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -266,7 +252,7 @@ class Question_Answer_Message(models.Model):
 
     
 class Cart(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null = True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     price = models.DecimalField(max_digits=12, default=0.00, decimal_places=2)
     tax_fee = models.DecimalField(max_digits=12, default=0.00, decimal_places=2)
@@ -404,20 +390,21 @@ class Note(models.Model):
         return self.title
     
 class Review(models.Model):
-    course= models.ForeignKey(Course, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     review = models.TextField()
-    date = models.DateTimeField(default=timezone.now)
     rating = models.IntegerField(choices=RATING, default=None)
-    reply = models.CharField(null=True, blank=True, max_length=1000)
-    active =  models.BooleanField(default=False)
+    active = models.BooleanField(default=False)
+    date = models.DateTimeField(default=timezone.now)   
+    reply = models.TextField(null=True, blank=True, max_length=1000)
 
     def __str__(self):
-        return self.course.title    
+        return self.course.title
     
-    def Profile(self):
-        return Profile.objects.get(user= self.user)
-    
+    def profile(self):
+        return Profile.objects.get(user=self.user)
+
+
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True, blank=True)
@@ -533,6 +520,14 @@ class Book(models.Model):
         ('Adventure', 'Adventure'),
         ('Science', 'Science'),
         ('History', 'History'),
+        ('Web Development', 'Web Development'),
+        ('AI', 'AI'),
+        ('ML', 'ML'),
+        ('Python', 'Python'),
+        ('Mobile App', 'Mobile App'),
+        ('Deep Learning', 'Deep Learning'),
+
+
     ]
     
     title = models.CharField(max_length=255)
@@ -542,6 +537,11 @@ class Book(models.Model):
     price = models.DecimalField(max_digits=6, decimal_places=2)
     uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    image = models.FileField(upload_to="book_images/", blank=True, null=True)
+    preview_url = models.URLField(blank=True, null=True)
+    total_pages = models.IntegerField(null=True)
+    preview_pages = models.IntegerField(default=5)  # Allow preview of first 5 pages
+    pdf_file = models.FileField(upload_to='books/', null=True, blank=True)
 
     def __str__(self):
         return self.title

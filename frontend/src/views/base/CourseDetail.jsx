@@ -23,6 +23,7 @@ function CourseDetail() {
     const [isLoading, setIsLoading] = useState(true);
     const [addToCartBtn, setAddToCartBtn] = useState("Add To Cart");
     const [cartCount, setCartCount] = useContext(CartContext);
+    const [recommendedCourses, setRecommendedCourses] = useState([]);
 
     const param = useParams();
     console.log(GetCurrentAddress().country);
@@ -39,11 +40,23 @@ function CourseDetail() {
                 console.log(res.data);
                 setCourse(res.data); // Update course state with response data
                 setIsLoading(false);
+                fetchRecommendedCourses(res.data.id);
             })
             .catch((err) => {
                 console.error(err); // Handle errors gracefully
                 setIsLoading(false);
             });
+    };
+    
+    const fetchRecommendedCourses = (courseId) => {
+        if (!courseId) return;  // Ensure course ID exists
+
+        useAxios()
+            .get(`recommend-courses/${courseId}/`)
+            .then((res) => {
+                setRecommendedCourses(res.data.recommended_courses);
+            })
+            .catch((err) => console.error("Error fetching recommendations:", err));
     };
 
 
@@ -1047,238 +1060,76 @@ function CourseDetail() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="row">
-                                    <div className="col-md-12">
-                                        <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-                                            <div className="col">
-                                                {/* Card */}
-                                                <div className="card card-hover">
-                                                    <Link to={`/course-detail/slug/`}>
-                                                        <img
-                                                            src="https://geeksui.codescandy.com/geeks/assets/images/course/course-css.jpg"
-                                                            alt="course"
-                                                            className="card-img-top"
-                                                        />
-                                                    </Link>
-                                                    {/* Card Body */}
-                                                    <div className="card-body">
-                                                        <div className="d-flex justify-content-between align-items-center mb-3">
-                                                            <span className="badge bg-info">Intermediate</span>
-                                                            <a href="#" className="fs-5">
-                                                                <i className="fas fa-heart text-danger align-middle" />
-                                                            </a>
-                                                        </div>
-                                                        <h4 className="mb-2 text-truncate-line-2 ">
-                                                            <Link to={`/course-detail/slug/`} className="text-inherit text-decoration-none text-dark fs-5">
-                                                                How to easily create a website with JavaScript
-                                                            </Link>
-                                                        </h4>
-                                                        <small>By: Claire Evans</small> <br />
-                                                        <small>16k Students</small> <br />
-                                                        <div className="lh-1 mt-3 d-flex">
-                                                            <span className="align-text-top">
-                                                                <span className="fs-6">
-                                                                    <i className='fas fa-star text-warning'></i>
-                                                                    <i className='fas fa-star text-warning'></i>
-                                                                    <i className='fas fa-star text-warning'></i>
-                                                                    <i className='fas fa-star text-warning'></i>
-                                                                    <i className='fas fa-star-half text-warning'></i>
-                                                                </span>
-                                                            </span>
-                                                            <span className="text-warning">4.5</span>
-                                                            <span className="fs-6 ms-2">(9,300)</span>
-                                                        </div>
-                                                    </div>
-                                                    {/* Card Footer */}
-                                                    <div className="card-footer">
-                                                        <div className="row align-items-center g-0">
-                                                            <div className="col">
-                                                                <h5 className="mb-0">$39.00</h5>
-                                                            </div>
-                                                            <div className="col-auto">
-                                                                <a href="#" className="text-inherit text-decoration-none btn btn-primary">
-                                                                    <i className="fas fa-shopping-cart text-primary align-middle me-2 text-white" />
-                                                                    Enroll Now
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+
+
+{/* Recommended Courses Section */}
+<h2 className="mt-5">Recommended Courses</h2>
+            {recommendedCourses.length > 0 ? (
+                <div className="row">
+                    <div className="col-md-12">
+                        <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                            {recommendedCourses.map((recCourse) => (
+                                <div key={recCourse.id} className="col">
+                                    {/* Course Card */}
+                                    <div className="card card-hover">
+                                        <Link to={`/course-detail/${recCourse.slug}/`}>
+                                            <img
+                                                src={recCourse.image || "https://via.placeholder.com/300"} 
+                                                alt="course"
+                                                className="card-img-top"
+                                            />
+                                        </Link>
+                                        {/* Card Body */}
+                                        <div className="card-body">
+                                            <div className="d-flex justify-content-between align-items-center mb-3">
+                                                <span className="badge bg-info">{recCourse.level || "Intermediate"}</span>
+                                                <a href="#" className="fs-5">
+                                                    <i className="fas fa-heart text-danger align-middle" />
+                                                </a>
                                             </div>
-
-                                            <div className="col">
-                                                {/* Card */}
-                                                <div className="card card-hover">
-                                                    <Link to={`/course-detail/slug/`}>
-                                                        <img
-                                                            src="https://geeksui.codescandy.com/geeks/assets/images/course/course-angular.jpg"
-                                                            alt="course"
-                                                            className="card-img-top"
-                                                        />
-                                                    </Link>
-                                                    {/* Card Body */}
-                                                    <div className="card-body">
-                                                        <div className="d-flex justify-content-between align-items-center mb-3">
-                                                            <span className="badge bg-info">Intermediate</span>
-                                                            <a href="#" className="fs-5">
-                                                                <i className="fas fa-heart text-danger align-middle" />
-                                                            </a>
-                                                        </div>
-                                                        <h4 className="mb-2 text-truncate-line-2 ">
-                                                            <Link to={`/course-detail/slug/`} className="text-inherit text-decoration-none text-dark fs-5">
-                                                                How to easily create a website with JavaScript
-                                                            </Link>
-                                                        </h4>
-                                                        <small>By: Claire Evans</small> <br />
-                                                        <small>16k Students</small> <br />
-                                                        <div className="lh-1 mt-3 d-flex">
-                                                            <span className="align-text-top">
-                                                                <span className="fs-6">
-                                                                    <i className='fas fa-star text-warning'></i>
-                                                                    <i className='fas fa-star text-warning'></i>
-                                                                    <i className='fas fa-star text-warning'></i>
-                                                                    <i className='fas fa-star text-warning'></i>
-                                                                    <i className='fas fa-star-half text-warning'></i>
-                                                                </span>
-                                                            </span>
-                                                            <span className="text-warning">4.5</span>
-                                                            <span className="fs-6 ms-2">(9,300)</span>
-                                                        </div>
-                                                    </div>
-                                                    {/* Card Footer */}
-                                                    <div className="card-footer">
-                                                        <div className="row align-items-center g-0">
-                                                            <div className="col">
-                                                                <h5 className="mb-0">$39.00</h5>
-                                                            </div>
-                                                            <div className="col-auto">
-                                                                <a href="#" className="text-inherit text-decoration-none btn btn-primary">
-                                                                    <i className="fas fa-shopping-cart text-primary align-middle me-2 text-white" />
-                                                                    Enroll Now
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            <h4 className="mb-2 text-truncate-line-2">
+                                                <Link to={`/course-detail/${recCourse.slug}/`} className="text-inherit text-decoration-none text-dark fs-5">
+                                                    {recCourse.title}
+                                                </Link>
+                                            </h4>
+                                            <small>By: {recCourse.instructor || "Unknown"}</small> <br />
+                                            <small>{recCourse.students || "0"} Students</small> <br />
+                                            <div className="lh-1 mt-3 d-flex">
+                                                <span className="align-text-top">
+                                                    <span className="fs-6">
+                                                        {[...Array(5)].map((_, i) => (
+                                                            <i key={i} className={`fas fa-star ${i < Math.round(recCourse.rating) ? "text-warning" : "text-muted"}`}></i>
+                                                        ))}
+                                                    </span>
+                                                </span>
+                                                <span className="text-warning">{recCourse.rating}</span>
+                                                <span className="fs-6 ms-2">({recCourse.reviews || 0})</span>
                                             </div>
-
-                                            <div className="col">
-                                                {/* Card */}
-                                                <div className="card card-hover">
-                                                    <Link to={`/course-detail/slug/`}>
-                                                        <img
-                                                            src="https://geeksui.codescandy.com/geeks/assets/images/course/course-react.jpg"
-                                                            alt="course"
-                                                            className="card-img-top"
-                                                        />
-                                                    </Link>
-                                                    {/* Card Body */}
-                                                    <div className="card-body">
-                                                        <div className="d-flex justify-content-between align-items-center mb-3">
-                                                            <span className="badge bg-info">Intermediate</span>
-                                                            <a href="#" className="fs-5">
-                                                                <i className="fas fa-heart text-danger align-middle" />
-                                                            </a>
-                                                        </div>
-                                                        <h4 className="mb-2 text-truncate-line-2 ">
-                                                            <Link to={`/course-detail/slug/`} className="text-inherit text-decoration-none text-dark fs-5">
-                                                                Learn React.Js for Beginners from Start to Finish
-                                                            </Link>
-                                                        </h4>
-                                                        <small>By: Claire Evans</small> <br />
-                                                        <small>16k Students</small> <br />
-                                                        <div className="lh-1 mt-3 d-flex">
-                                                            <span className="align-text-top">
-                                                                <span className="fs-6">
-                                                                    <i className='fas fa-star text-warning'></i>
-                                                                    <i className='fas fa-star text-warning'></i>
-                                                                    <i className='fas fa-star text-warning'></i>
-                                                                    <i className='fas fa-star text-warning'></i>
-                                                                    <i className='fas fa-star-half text-warning'></i>
-                                                                </span>
-                                                            </span>
-                                                            <span className="text-warning">4.5</span>
-                                                            <span className="fs-6 ms-2">(9,300)</span>
-                                                        </div>
-                                                    </div>
-                                                    {/* Card Footer */}
-                                                    <div className="card-footer">
-                                                        <div className="row align-items-center g-0">
-                                                            <div className="col">
-                                                                <h5 className="mb-0">$39.00</h5>
-                                                            </div>
-                                                            <div className="col-auto">
-                                                                <a href="#" className="text-inherit text-decoration-none btn btn-primary">
-                                                                    <i className="fas fa-shopping-cart text-primary align-middle me-2 text-white" />
-                                                                    Enroll Now
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="col">
-                                                {/* Card */}
-                                                <div className="card card-hover">
-                                                    <Link to={`/course-detail/slug/`}>
-                                                        <img
-                                                            src="https://geeksui.codescandy.com/geeks/assets/images/course/course-python.jpg"
-                                                            alt="course"
-                                                            className="card-img-top"
-                                                        />
-                                                    </Link>
-                                                    {/* Card Body */}
-                                                    <div className="card-body">
-                                                        <div className="d-flex justify-content-between align-items-center mb-3">
-                                                            <span className="badge bg-info">Intermediate</span>
-                                                            <a href="#" className="fs-5">
-                                                                <i className="fas fa-heart text-danger align-middle" />
-                                                            </a>
-                                                        </div>
-                                                        <h4 className="mb-2 text-truncate-line-2 ">
-                                                            <Link to={`/course-detail/slug/`} className="text-inherit text-decoration-none text-dark fs-5">
-                                                                How to easily create a website with JavaScript
-                                                            </Link>
-                                                        </h4>
-                                                        <small>By: Claire Evans</small> <br />
-                                                        <small>16k Students</small> <br />
-                                                        <div className="lh-1 mt-3 d-flex">
-                                                            <span className="align-text-top">
-                                                                <span className="fs-6">
-                                                                    <i className='fas fa-star text-warning'></i>
-                                                                    <i className='fas fa-star text-warning'></i>
-                                                                    <i className='fas fa-star text-warning'></i>
-                                                                    <i className='fas fa-star text-warning'></i>
-                                                                    <i className='fas fa-star-half text-warning'></i>
-                                                                </span>
-                                                            </span>
-                                                            <span className="text-warning">4.5</span>
-                                                            <span className="fs-6 ms-2">(9,300)</span>
-                                                        </div>
-                                                    </div>
-                                                    {/* Card Footer */}
-                                                    <div className="card-footer">
-                                                        <div className="row align-items-center g-0">
-                                                            <div className="col">
-                                                                <h5 className="mb-0">$39.00</h5>
-                                                            </div>
-                                                            <div className="col-auto">
-                                                                <a href="#" className="text-inherit text-decoration-none btn btn-primary">
-                                                                    <i className="fas fa-shopping-cart text-primary align-middle me-2 text-white" />
-                                                                    Enroll Now
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
                                         </div>
-
+                                        {/* Card Footer */}
+                                        <div className="card-footer">
+                                            <div className="row align-items-center g-0">
+                                                <div className="col">
+                                                    <h5 className="mb-0">${recCourse.price || "Free"}</h5>
+                                                </div>
+                                                <div className="col-auto">
+                                                    <a href="#" className="text-inherit text-decoration-none btn btn-primary">
+                                                        <i className="fas fa-shopping-cart text-primary align-middle me-2 text-white" />
+                                                        Enroll Now
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                <p>No recommendations available.</p>
+            )}
+                                
                             </div>
                         </section>
                     </>
@@ -1291,3 +1142,5 @@ function CourseDetail() {
 }
 
 export default CourseDetail;
+
+

@@ -1,13 +1,24 @@
-import { defineConfig } from 'vite';
-import path from 'path';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite'
 
-// Corrected single export
+
+import react from '@vitejs/plugin-react'
+
+
+
+// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],  // Moved plugins inside the single export
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
+  plugins: [react()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("react")) return "react-vendor";
+            if (id.includes("lodash")) return "lodash-vendor";
+            return "vendor";
+          }
+        },
+      },
     },
   },
-});
+})

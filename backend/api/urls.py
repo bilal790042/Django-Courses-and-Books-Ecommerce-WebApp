@@ -1,3 +1,4 @@
+from django.conf import settings
 from api import views as api_views
 from django.urls import path
 # from .views import RegisterView, VerifyEmailView, ResendVerificationView
@@ -24,6 +25,9 @@ urlpatterns = [
     path("course/search/", api_views.SearchCourseAPIView.as_view()),
     path("course/course-detail/<slug>/", api_views.CourseDetailAPIView.as_view()),
     path("course/cart/", api_views.CartAPIView.as_view()),
+
+    # path("book/cart/", api_views.BookCartAPIView.as_view()),
+    
     path("course/cart-list/<cart_id>/", api_views.CartListAPIView.as_view()),
     path("cart/stats/<cart_id>/", api_views.CartStatsAPIView.as_view()),
     path("course/cart-item-delete/<cart_id>/<item_id>/", api_views.CartItemDeleteAPIView.as_view()),
@@ -49,12 +53,16 @@ urlpatterns = [
 
     # one to one mentoring
     path('mentoring-sessions/', api_views.MentoringSessionListCreateAPIView.as_view(), name='mentoring-session-list-create'),
+
     path('mentoring-sessions/<int:pk>/', api_views.MentoringSessionDetailAPIView.as_view(), name='mentoring-session-detail'),
     path('mentoring-sessions/upcoming/', api_views.UpcomingSessionsAPIView.as_view(), name='upcoming-sessions'),
     path('mentoring-sessions/past/', api_views.PastSessionsAPIView.as_view(), name='past-sessions'),
 
 
     # Teacher Routes
+    path("teachers/", api_views.TeacherListView.as_view()),
+
+
     path("teacher/summary/<teacher_id>/", api_views.TeacherSummaryAPIView.as_view()),
     path("teacher/course-lists/<teacher_id>/", api_views.TeacherCourseListAPIView.as_view()),
     path("teacher/review-lists/<teacher_id>/", api_views.TeacherReviewListAPIView.as_view()),
@@ -81,10 +89,20 @@ urlpatterns = [
 
     # Books
     path('books/', api_views.BookListCreateView.as_view(), name='book-list'),
+    path('books/create/', api_views.BookCreateAPIView.as_view(), name='book-create'),
+
     path('books/<int:pk>/', api_views.BookDetailView.as_view(), name='book-detail'),
     path('books/purchase/', api_views.BookPurchaseView.as_view(), name='book-purchase'),
+    
+    path("books/books-detail/<int:id>/", api_views.BookDetailView.as_view()),
+    path('books/create/', api_views.BookCreateAPIView.as_view(), name='book-create'),
+
+    path('recommend-courses/<int:course_id>/', api_views.recommend_courses, name='recommend_courses'),
+    
+    path('books/<int:book_id>/preview/', api_views.preview_book, name='preview_book'),
+    path('books/<int:book_id>/recommendations/', api_views.category_based_recommendations, name='category_recommendations'),
+    # path("recommended-books/<int:book_id>/", api_views.recommended_books, name="recommended-books"),
+
 
 
 ]
-
-
