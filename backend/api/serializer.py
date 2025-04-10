@@ -314,7 +314,7 @@ class TeacherSummarySerializer(serializers.Serializer):
 class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
         model = api_models.Teacher
-        fields = ['full_name', 'expertise']
+        fields = ['id','full_name', 'expertise']
 
 
 
@@ -346,10 +346,10 @@ class MentoringSessionSerializer(serializers.ModelSerializer):
             'id', 'title', 'mentor', 'student', 'date', 'time', 'status', 
             'join_link', 'feedback', 'rating', 'goals', 'resources', 'slug'
         ]
-
-
-
-
+        extra_kwargs = {
+            'mentor': {'required': True},
+            'student': {'required': True},
+        }
 
 
 # Books 

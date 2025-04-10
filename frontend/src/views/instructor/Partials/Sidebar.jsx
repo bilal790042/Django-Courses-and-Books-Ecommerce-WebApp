@@ -43,12 +43,20 @@ function Sidebar() {
                                     <i className="fas fa-plus me-2"></i>Create Course
                                 </Link>
                             </li>
+                            
+                            <li className="nav-item">
+                                <Link className="nav-link " to={`/books/create`}>
+                                    {" "}
+                                    <i className="fas fa-add me-2"></i>Add Book
+                                </Link>
+                            </li>
                             <li className="nav-item">
                                 <Link className="nav-link " to={`/instructor/reviews/`}>
                                     {" "}
                                     <i className="fas fa-star me-2"></i>Review
                                 </Link>
                             </li>
+
                             <li className="nav-item">
                                 <Link className="nav-link " to={`/instructor/students/`}>
                                     {" "}

@@ -35,35 +35,38 @@ AUTH_USER_MODEL = 'userauths.User'
 
 # Application definition
 
-INSTALLED_APPS = [
-    'jazzmin',
-    "django.contrib.admin",
-    # "corsheaders",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
+# INSTALLED_APPS = [
+#     'jazzmin',
+#     "django.contrib.admin",
+#     # "corsheaders",
+#     "django.contrib.auth",
+#     "django.contrib.contenttypes",
+#     "django.contrib.sessions",
+#     "django.contrib.messages",
+#     "django.contrib.staticfiles",
 
-    'core',
-    'userauths',
-    'api',
+#     'core',
+#     'userauths',
+#     'api',
     
-    'rest_framework',
-    'rest_framework_simplejwt.token_blacklist',
-	'corsheaders',
-    'anymail',
-    "rest_framework.authtoken",  # Ensure this is included
+#     'rest_framework',
+#     'rest_framework_simplejwt.token_blacklist',
+# 	'corsheaders',
+#     'anymail',
+#     "rest_framework.authtoken",  # Ensure this is included
     
-    'drf_yasg',
+#     'drf_yasg',
     
-]
+# ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     # "django.middleware.CorsMiddleware",
     "corsheaders.middleware.CorsMiddleware", 
     "django.contrib.sessions.middleware.SessionMiddleware",
+    
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -75,35 +78,11 @@ ROOT_URLCONF = "backend.urls"
 
 from datetime import timedelta
 CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
-TEMPLATES = [
-    {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, 'templates')],
-        "APP_DIRS": True,
-        "OPTIONS": {
-            "context_processors": [
-                "django.template.context_processors.debug",
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
-            ],
-        },
-    },
-]
+
 
 WSGI_APPLICATION = "backend.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-        
-    }
-}
 
 MAILGUN_API_KEY = env("MAILGUN_API_KEY")
 MAILERSEND_API_TOKEN = env("MAILERSEND_API_TOKEN")
@@ -270,21 +249,113 @@ SIMPLE_JWT = {
 }
 
 
-CORS_ALLOW_ALL_ORIGINS = True
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+SECRET_KEY = "django-insecure-5z7e)3m*5=d_iln#tsvh#-350%rp%+ans6d&h8obmm4lq2-gis"
+
+DEBUG = True
+
+ALLOWED_HOSTS = []
+AUTH_USER_MODEL = 'userauths.User'
+
+WHEREBY_API_KEY = env("WHEREBY_API_KEY")
 
 
+INSTALLED_APPS = [
+    'jazzmin',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Allow requests from your frontend
+    'core',
+    'userauths',
+    'api',
+    
+
+    'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
+    'corsheaders',
+    'anymail',
+    "rest_framework.authtoken",  # Ensure this is included
+    
+    'drf_yasg',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # ✅ Keep only one instance
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",  # ✅ Keep only one instance
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
 
+ROOT_URLCONF = "backend.urls"
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
+
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [os.path.join(BASE_DIR, 'templates')],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ],
+        },
+    },
+]
+
+WSGI_APPLICATION = "backend.wsgi.application"
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
+
+# CORS SETTINGS ✅ Properly Configured
+CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins (Disable in production)
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Allow frontend
+]
+
+CORS_ALLOW_CREDENTIALS = True  # Allow cookies & auth headers
+# CORS_ALLOW_CREDENTIALS = True
+# REST Framework Authentication ✅ Now includes JWT
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ]
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",  # ✅ Add JWT Authentication
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticated",
+    ),
+}
+
+# JWT SETTINGS ✅
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=50),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),  # ✅ Ensure this is used in frontend
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
 }

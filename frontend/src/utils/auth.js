@@ -58,6 +58,7 @@ export const register = async (full_name, email, password, password2) => {
 export const logout = () => {
   Cookies.remove("access_token");
   Cookies.remove("refresh_token");
+  localStorage.removeItem("userId"); 
   useAuthStore.getState().setUser(null);
   console.log("User logged out.");
 };
@@ -65,7 +66,9 @@ export const logout = () => {
 // Token refresh logic
 export const getRefreshedToken = async () => {
   const refresh_token = Cookies.get("refresh_token");
-
+  
+  console.log("Checking refresh token:", refresh_token); // <-- Add this line
+  
   if (!refresh_token) {
     console.error("No refresh token found.");
     throw new Error("No refresh token.");
@@ -88,7 +91,7 @@ export const setAuthUser = (access_token, refresh_token) => {
   Cookies.set("access_token", access_token, { expires: 1, sameSite: "Lax" });
   Cookies.set("refresh_token", refresh_token, { expires: 7, sameSite: "Lax" });
   console.log("Access token:", access_token);
-console.log("Refresh token:", refresh_token);
+  console.log("Refresh token:", refresh_token);
 
   try {
     console.log("Token being decoded:", access_token);
@@ -96,6 +99,13 @@ console.log("Refresh token:", refresh_token);
 
     if (user) {
       console.log("Decoded user:", user);
+      useAuthStore.getState().setUser(user);
+
+      
+      // Store userId in localStorage
+      localStorage.setItem("userId", user.user_id);  // Assuming the payload contains `user_id`
+      console.log("User ID stored in localStorage:", user.user_id);
+
       useAuthStore.getState().setUser(user);
     } else {
       console.error("Decoded token invalid.");
@@ -114,8 +124,8 @@ export const setUser = async () => {
   const access_token = Cookies.get("access_token");
   const refresh_token = Cookies.get("refresh_token");
 
-  if (!access_token || !refresh_token) {
-    console.error("Tokens are missing.");
+  if (!access_token && !refresh_token) {
+    console.warn("Tokens are missing, user might be logged out.");
     return;
   }
 
@@ -127,8 +137,7 @@ export const setUser = async () => {
         console.log("Token refreshed successfully.");
         setAuthUser(response.access, response.refresh);
       } else {
-        console.error("Failed to refresh token.");
-        logout();
+        console.warn("Token refresh failed, staying logged in but requiring re-authentication.");
       }
     } else {
       console.log("Token is still valid.");
@@ -136,7 +145,6 @@ export const setUser = async () => {
     }
   } catch (error) {
     console.error("Error during token refresh:", error);
-    logout();
   }
 };
 

@@ -1364,14 +1364,33 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class MentoringSessionListCreateAPIView(generics.ListCreateAPIView):
-    queryset = MentoringSession.objects.all()
-    serializer_class = api_serializer.MentoringSessionSerializer
-    permission_classes = [AllowAny]
+# class MentoringSessionListCreateAPIView(generics.ListCreateAPIView):
+#     # queryset = MentoringSession.objects.all()
+#     serializer_class = api_serializer.MentoringSessionSerializer
+#     permission_classes = [IsAuthenticated]
 
+#     def get_queryset(self):
+#         return MentoringSession.objects.filter(student=self.request.user)
+    
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+
+class MentoringSessionListView(generics.ListCreateAPIView):
+    serializer_class = api_serializer.MentoringSessionSerializer
+    permission_classes = [AllowAny]  # Ensure user is authenticated
+    
     def get_queryset(self):
-        user = self.request.user
-        return MentoringSession.objects.filter(student=user)
+        student_id = self.request.query_params.get('student')
+
+        if student_id:
+            try:
+                return MentoringSession.objects.filter(student_id=int(student_id))
+            except (ValueError, TypeError):
+                return MentoringSession.objects.none()  # Avoid fallback on user
+
+        # If no student ID is provided, just return all sessions publicly
+        return MentoringSession.objects.all()
+    
+    
 
 class MentoringSessionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MentoringSession.objects.all()
@@ -1383,17 +1402,20 @@ class UpcomingSessionsAPIView(generics.ListAPIView):
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        user = self.request.user
-        return MentoringSession.objects.filter(student=user, status='upcoming')
+        student_id = self.request.query_params.get('student')
+        if student_id:
+            return MentoringSession.objects.filter(student_id=student_id, status='upcoming')
+        return MentoringSession.objects.none()
 
 class PastSessionsAPIView(generics.ListAPIView):
     serializer_class = api_serializer.MentoringSessionSerializer
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        user = self.request.user
-        return MentoringSession.objects.filter(student=user, status='completed')
-
+        student_id = self.request.query_params.get('student')
+        if student_id:
+            return MentoringSession.objects.filter(student_id=student_id, status='completed')
+        return MentoringSession.objects.none()
 
 
 
@@ -1403,7 +1425,7 @@ class PastSessionsAPIView(generics.ListAPIView):
 class BookListCreateView(generics.ListCreateAPIView):
     queryset = api_models.Book.objects.all()
     serializer_class = api_serializer.BookSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [AllowAny]
 
     def perform_create(self, serializer):
         serializer.save(uploaded_by=self.request.user)
@@ -1412,7 +1434,7 @@ class BookListCreateView(generics.ListCreateAPIView):
 class BookDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = api_models.Book.objects.all()
     serializer_class = api_serializer.BookSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [AllowAny]
 
     def get_serializer_context(self):
         return {'request': self.request}
@@ -1560,3 +1582,56 @@ def category_based_recommendations(request, book_id):
     ]
     
     return JsonResponse(data, safe=False)
+
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+# from .models import Mentor, MentoringSession
+
+@api_view(['GET'])
+def mentor_list(request):
+    mentors = api_models.Teacher.objects.all().values('id', 'name', 'expertise')
+    return Response(list(mentors))
+
+@api_view(['POST'])
+def book_session(request):
+    data = request.data
+    mentor = api_models.Teacher.objects.get(id=data['id'])
+    session = MentoringSession.objects.create(
+        mentor=mentor,
+        student=request.user,
+        date=data['date'],
+        time=data['time']
+    )
+    return Response({"message": "Session booked successfully!"})
+
+
+
+import requests
+from django.conf import settings
+from django.http import JsonResponse
+from .models import MentoringSession
+
+def create_meeting_link():
+    response = requests.post(
+        "https://api.whereby.dev/v1/meetings",
+        headers={"Authorization": f"Bearer {settings.WHEREBY_API_KEY}"},
+        json={"isLocked": False, "roomName": "mentor-session"}
+    )
+    return response.json().get("roomUrl")
+
+def book_session(request):
+    if request.method == "POST":
+        mentor_id = request.POST["mentor"]
+        student_id = request.user.id  # Assuming user is logged in
+        date = request.POST["date"]
+        time = request.POST["time"]
+
+        meeting_link = create_meeting_link()
+
+        session = MentoringSession.objects.create(
+            mentor_id=mentor_id, student_id=student_id,
+            date=date, time=time, meeting_link=meeting_link
+        )
+
+        return JsonResponse({"message": "Session booked!", "meeting_link": meeting_link})

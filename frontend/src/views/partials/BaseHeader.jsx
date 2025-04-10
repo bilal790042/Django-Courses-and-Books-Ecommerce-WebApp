@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { CartContext } from "../plugin/Context";
 import { useAuthStore } from "../../store/auth";
@@ -20,7 +20,33 @@ function BaseHeader() {
     ]);
     console.log(isLoggedIn()); // Call the function
 
+    
+    const handleScrollToFooter = () => {
+        const footer = document.getElementById("footer-section");
+        if (footer) {
+          footer.scrollIntoView({ behavior: "smooth" });
+        }
+      };
+    
 
+      useEffect(() => {
+        if (isLoggedIn() && user?.id) {
+            fetchCart(user.id);
+        } else {
+            setCartCount(0); // Reset cart when logged out
+        }
+    }, [isLoggedIn, user?.id]);
+    
+    const fetchCart = async (userId) => {
+        try {
+            const res = await apiInstance().get(`course/cart-list/${userId}/`);
+            setCartCount(res.data?.length);
+        } catch (error) {
+            console.error("Error fetching cart:", error);
+        }
+    };
+    
+    
 
 
     return (
@@ -43,17 +69,20 @@ function BaseHeader() {
                     </button>
                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li className="nav-item">
-                                <Link className="nav-link" to="/pages/contact-us/">
-                                    {" "}
-                                    <i className="fas fa-phone"></i> Contact Us
-                                </Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to="/pages/about-us/">
-                                    <i className="fas fa-address-card"></i> About Us
-                                </Link>
-                            </li>
+                        
+                        <li className="nav-item">
+    <button className="nav-link text-white d-flex align-items-center" style={{ border: 'none', background: 'none' }} onClick={handleScrollToFooter}>
+        <i className="fas fa-envelope me-1"></i> Contact Us
+    </button>
+</li>
+
+<li className="nav-item">
+    <button className="nav-link text-white d-flex align-items-center" style={{ border: 'none', background: 'none' }} onClick={handleScrollToFooter}>
+        <i className="fas fa-address-card me-1"></i> About Us
+    </button>
+</li>
+
+        
                             <li className="nav-item dropdown">
                                 <a
                                     className="nav-link dropdown-toggle"
@@ -186,10 +215,10 @@ function BaseHeader() {
                         </form>
                         {isLoggedIn() === true ?
                             <>
-                                {/* logout button */}
-                                <Link to="/logout/" className="btn btn-primary ms-2" type="submit">
-                                    Logout <i className="fas fa-sign-out-alt"></i>
-                                </Link>
+                                <Link to="/logout/" className="btn btn-primary ms-2" type="submit" onClick={() => setCartCount(0)}>
+    Logout <i className="fas fa-sign-out-alt"></i>
+</Link>
+
                             </>
                             :
                             <>

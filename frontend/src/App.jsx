@@ -42,6 +42,8 @@ import Profile from "./views/instructor/Profile";
 import CourseCreate from "./views/instructor/CourseCreate";
 import CourseEdit from "./views/instructor/CourseEdit";
 import BookDetail from './views/base/bookDetail';
+import AddBook from './views/instructor/addBook';
+import BaseFooter from './views/partials/BaseFooter';
 
 function App() {
   const [cartCount, setCartCount] = useState(0);
@@ -106,6 +108,11 @@ function App() {
                 <Route path="/instructor/edit-course/:course_id/" element={<CourseEdit />} />
 
                 <Route path="/books/books-detail/:id/" element={<BookDetail />} />
+                <Route path="/books/create/" element={<AddBook />} />
+
+                <Route path="/pages/about-us/" element={<BaseFooter />} />
+                <Route path="/pages/contact-us/" element={<BaseFooter />} />
+
               </Routes>
             </MainWrapper>
           </BrowserRouter>

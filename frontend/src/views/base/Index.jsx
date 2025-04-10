@@ -22,6 +22,7 @@ import nomanImage from '../../assets/images/noman.jpg';
 import teacherImage from '../../assets/images/th.jpeg';
 import sirImage from '../../assets/images/teacher.jpeg';
 
+import axios from 'axios';
 
 function Index() {
 
@@ -35,10 +36,11 @@ function Index() {
     const cartId = CartId();
 
 
+
     const fetchBooks = async () => {
         setIsLoading(true);
         try {
-            await useAxios().get(`/books/`).then((res) => {
+            await axios.get(`http://127.0.0.1:8000/api/v1/books/`).then((res) => {
                 setBooks(res.data);
                 setIsLoading(false);
             });
@@ -55,7 +57,7 @@ function Index() {
     const fetchCourse = async () => {
         setIsLoading(true);
         try {
-            await useAxios().get(`/course/course-list/`).then((res) => {
+            await axios.get(`http://127.0.0.1:8000/api/v1/course/course-list/`).then((res) => {
                 setCourses(res.data);
                 setIsLoading(false);
             })
@@ -74,43 +76,46 @@ function Index() {
 
     console.log(courses);
 
-
+    const fetchCart = async (userId) => {
+        try {
+            const res = await apiInstance().get(`course/cart-list/${userId}/`);
+            setCartCount(res.data?.length || 0); // Ensure it's always a valid number
+        } catch (error) {
+            console.error("Error fetching cart:", error);
+        }
+    };
+    
 
     const addToCart = async (courseId, userId, price, country, cartId) => {
-
+        if (!userId) {
+            console.error("User ID is missing! Ensure user is logged in.");
+            return;
+        }
+    
         const formdata = new FormData();
-
         formdata.append("course_id", courseId);
         formdata.append("user_id", userId);
         formdata.append("price", price);
         formdata.append("country_name", country);
         formdata.append("cart_id", cartId);
-        console.log("User ID:", userId); // Verify if `userId` is undefined here
-
-
+    
         try {
             await useAxios().post(`course/cart/`, formdata).then((res) => {
-                console.log(res.data);
-
+                console.log("Cart response:", res.data);
+    
                 toast().fire({
                     title: "Added To Cart",
                     icon: "success",
-
                 });
-                //set cart count after adding to cart
-                apiInstance().get(`course/cart-list/${CartId()}/`).then((res) => {
-                    setCartCount(res.data?.length);
-                });
-
-
-
+    
+                // Fetch the updated cart list after adding an item
+                fetchCart(userId); 
             });
         } catch (error) {
-            console.log(error);
-
-
+            console.error("Error adding to cart:", error);
         }
     };
+    
 
     //Pagination
     const itemPerPage = 1
@@ -723,7 +728,7 @@ function Index() {
                                                             {/* text */}
                                                         </div>
                                                         <h3 className="mb-0 h4">Dr. Laeeq</h3>
-                                                        <span>Software Engineer at JHK</span>
+                                                        <span>Software Engineer at UET</span>
                                                     </div>
                                                 </div>
                                             </div>

@@ -2,7 +2,7 @@ import React from 'react'
 
 function BaseFooter() {
   return (
-    <footer className="pt-lg-8 pt-5 footer bg-dark text-white mt-5">
+    <footer className="pt-lg-8 pt-5 footer bg-dark text-white mt-5" id="footer-section">
       <div className="container mt-lg-2">
         <div className="row">
           <div className="col-lg-4 col-md-6 col-12 text-white">
