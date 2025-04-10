@@ -494,6 +494,22 @@ class MentoringSession(models.Model):
         super(MentoringSession, self).save(*args, **kwargs)
 
 
+# Teacher application 
+
+class LearningModule(models.Model):
+    title = models.CharField(max_length=255)
+    category = models.CharField(max_length=255)
+    time_commitment = models.CharField(max_length=50)
+    learning_objectives = models.JSONField()
+    intended_learners = models.JSONField()
+    prerequisites = models.JSONField()
+    is_approved = models.BooleanField(default=False)  # New field for approval
+    feedback = models.TextField(blank=True, null=True)  # Admin feedback
+
+    def __str__(self):
+        return self.title
+
+
 
 
 # Books Backend

@@ -101,14 +101,14 @@ ANYMAIL = {
 }
 
 FROM_EMAIL = env("FROM_EMAIL")
-EMAIL_BACKEND = 'anymail.backends.mailgun.EmailBackend'
+# EMAIL_BACKEND = 'anymail.backends.mailgun.EmailBackend'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 FROM_EMAIL = env("FROM_EMAIL")
 # EMAIL_BACKEND = 'anymail.backends.mailgun.EmailBackend'
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = "no-reply@bilalcompany.com"
 
 
@@ -122,6 +122,7 @@ EMAIL_HOST_USER = 'nomanwahdat@gmail.com'  # Replace with your email
 EMAIL_HOST_PASSWORD = 'wdqm wblz tlxi dklo'  # Replace with your email password
 DEFAULT_FROM_EMAIL = 'nomanwahdat@gmail.com'  # Replace with your email
 FROM_EMAIL = 'nomanwahdat@gmail.com'  # Replace with your email
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

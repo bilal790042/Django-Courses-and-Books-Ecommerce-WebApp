@@ -1,10 +1,12 @@
 from django.contrib.auth.password_validation import validate_password
 from api import models as api_models
+import json
 
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from userauths.models import Profile, User
+from .models import LearningModule
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -337,6 +339,17 @@ class StudentSummerySerializer(serializers.Serializer):
     completed_lessons = serializers.IntegerField(default=0)
     achieved_certificates = serializers.IntegerField(default=0)
 
+# Teacher application 
+class LearningModuleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LearningModule
+        fields = '__all__'
+        read_only_fields = ['is_approved', 'feedback']  # Users can't set approval statusy
+
+class LearningModuleAdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LearningModule
+        fields = ["is_approved", "feedback"] 
 
 
 class MentoringSessionSerializer(serializers.ModelSerializer):

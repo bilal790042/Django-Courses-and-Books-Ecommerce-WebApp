@@ -41,9 +41,16 @@ import ChangePassword from "./views/instructor/ChangePassword";
 import Profile from "./views/instructor/Profile";
 import CourseCreate from "./views/instructor/CourseCreate";
 import CourseEdit from "./views/instructor/CourseEdit";
+import TeachOnSkillz from './views/base/TeachOnSkillz';
+import ApplyInstructor from './views/base/ApplyInstructor';
 import BookDetail from './views/base/bookDetail';
+<<<<<<< HEAD
 import AddBook from './views/instructor/addBook';
 import BaseFooter from './views/partials/BaseFooter';
+=======
+// import AddBook from './views/instructor/addBook'
+
+>>>>>>> d9711c1717f7a8e56d01c2c8b77b2b935ba12204
 
 function App() {
   const [cartCount, setCartCount] = useState(0);
@@ -81,32 +88,22 @@ function App() {
                 <Route path="/payment-success/:order_oid" element={<Success />} />
                 <Route path="/Search/" element={<Search />} />
 
-                {/* Student route */}
-                <Route path="/student/dashboard/" element={<StudentDashboard />} />
-                <Route path="/student/courses/" element={<StudentCourses />} />
-                <Route path="/student/courses/:enrollment_id" element={<StudentCourseDetail />} />
-                <Route path="/student/wishlist/" element={<Wishlist />} />
-                <Route path="/student/profile/" element={<StudentProfile />} />
-                <Route path="/student/change-password/" element={<StudentChangePassword />} />
-                {/* Student mentoring sessions */}
-                <Route path="/student/mentoring-sessions" element={<MentoringSessions />} />
-                <Route path="/books" element={<Books />} />
+            {/* Student route */}
+            <Route path = "/student/dashboard/" element = {<StudentDashboard />}/>
+            <Route path = "/student/courses/" element = {<StudentCourses/>}/>
+            <Route path = "/student/courses/:enrollment_id" element = {<StudentCourseDetail />}/>
 
-                {/* Teacher Routes */}
-                <Route path="/instructor/dashboard/" element={<Dashboard />} />
-                <Route path="/instructor/courses/" element={<Courses />} />
-                <Route path="/instructor/reviews/" element={<Review />} />
-                <Route path="/instructor/students/" element={<Students />} />
-                <Route path="/instructor/earning/" element={<Earning />} />
-                <Route path="/instructor/orders/" element={<Orders />} />
-                <Route path="/instructor/coupon/" element={<Coupon />} />
-                <Route path="/instructor/notifications/" element={<TeacherNotification />} />
-                <Route path="/instructor/question-answer/" element={<QA />} />
-                <Route path="/instructor/change-password/" element={<ChangePassword />} />
-                <Route path="/instructor/profile/" element={<Profile />} />
-                <Route path="/instructor/create-course/" element={<CourseCreate />} />
-                <Route path="/instructor/edit-course/:course_id/" element={<CourseEdit />} />
+            <Route path="/student/wishlist/" element={<Wishlist />} />
+              <Route path="/student/profile/" element={<StudentProfile />} />
+              <Route
+                path="/student/change-password/"
+                element={<StudentChangePassword />}
+              />
+            {/* Student mentoring sessions */}
+            <Route path="/student/mentoring-sessions" element={<MentoringSessions />} />
+            <Route path="/books" element={<Books />} />
 
+<<<<<<< HEAD
                 <Route path="/books/books-detail/:id/" element={<BookDetail />} />
                 <Route path="/books/create/" element={<AddBook />} />
 
@@ -118,6 +115,54 @@ function App() {
           </BrowserRouter>
         </ProfileContext.Provider>
       </CartContext.Provider>
+=======
+            {/* Teacher Routes */}
+            <Route path="/instructor/dashboard/" element={<Dashboard />} />
+              <Route path="/instructor/courses/" element={<Courses />} />
+              <Route path="/instructor/reviews/" element={<Review />} />
+              <Route path="/instructor/students/" element={<Students />} />
+              <Route path="/instructor/earning/" element={<Earning />} />
+              <Route path="/instructor/orders/" element={<Orders />} />
+              <Route path="/instructor/coupon/" element={<Coupon />} />
+              <Route
+                path="/instructor/notifications/"
+                element={<TeacherNotification />}
+              />
+              <Route path="/instructor/question-answer/" element={<QA />} />
+              <Route
+                path="/instructor/change-password/"
+                element={<ChangePassword />}
+              />
+              <Route path="/instructor/profile/" element={<Profile />} />
+              <Route
+                path="/instructor/create-course/"
+                element={<CourseCreate />}
+              />
+              <Route
+                path="/instructor/edit-course/:course_id/"
+                element={<CourseEdit />}
+              />
+
+
+            {/* new routs */}
+
+            <Route path="/teach-on-skillz/" element={<TeachOnSkillz />} />
+            <Route path="/apply-instructor/" element={<ApplyInstructor />} />
+            
+            <Route path="/books/books-detail/:id/" element={<BookDetail />} />
+            {/* <Route path="/books/create/" element={<AddBook />} /> */}
+
+
+
+
+
+
+          </Routes>
+        </MainWrapper>
+      </BrowserRouter>
+      </ProfileContext.Provider>
+    </CartContext.Provider>
+>>>>>>> d9711c1717f7a8e56d01c2c8b77b2b935ba12204
     </AuthProvider>
   );
 }

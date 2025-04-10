@@ -1,7 +1,21 @@
 from django.contrib import admin
 
 from api import models
+
 # Register your models here.
+from .models import LearningModule
+
+@admin.register(LearningModule)
+class LearningModuleAdmin(admin.ModelAdmin):
+    list_display = ('title', 'category', 'is_approved')
+    list_filter = ('is_approved',)
+    actions = ['approve_selected']
+
+    def approve_selected(self, request, queryset):
+        queryset.update(is_approved=True)
+        self.message_user(request, "Selected modules approved successfully.")
+
+    approve_selected.short_description = "Approve selected learning modules"
 admin.site.register(models.Test)
 
 admin.site.register(models.Teacher)
