@@ -1,8 +1,6 @@
-<<<<<<< HEAD
+
 import React, { useContext, useState, useEffect} from "react";
-=======
-import React, { useContext, useState, useEffect } from "react";
->>>>>>> d9711c1717f7a8e56d01c2c8b77b2b935ba12204
+
 import { Link, useNavigate } from "react-router-dom";
 import { CartContext } from "../plugin/Context";
 import { useAuthStore } from "../../store/auth";
@@ -31,7 +29,7 @@ function BaseHeader() {
       };
     
 
-<<<<<<< HEAD
+
       useEffect(() => {
         if (isLoggedIn() && user?.id) {
             fetchCart(user.id);
@@ -50,15 +48,15 @@ function BaseHeader() {
     };
     
     
-=======
+
     const handleSearchSubmit = (e) => {
         e.preventDefault(); // Prevent page reload
         if (searchQuery.trim()) {
             navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
         }
     };
->>>>>>> d9711c1717f7a8e56d01c2c8b77b2b935ba12204
 
+    
 
     return (
         <div>
@@ -80,7 +78,7 @@ function BaseHeader() {
                     </button>
                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-<<<<<<< HEAD
+
                         
                         <li className="nav-item">
     <button className="nav-link text-white d-flex align-items-center" style={{ border: 'none', background: 'none' }} onClick={handleScrollToFooter}>
@@ -95,101 +93,6 @@ function BaseHeader() {
 </li>
 
         
-                            <li className="nav-item dropdown">
-                                <a
-                                    className="nav-link dropdown-toggle"
-                                    href="#"
-                                    role="button"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                >
-                                    <i className="fas fa-chalkboard-user"></i> Instructor
-                                </a>
-                                <ul className="dropdown-menu">
-                                    <li>
-                                        <Link
-                                            className="dropdown-item"
-                                            to={`/instructor/dashboard/`}
-                                        >
-                                            <i className="bi bi-grid-fill"></i> Dashboard
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link className="dropdown-item" to={`/instructor/courses/`}>
-                                            <i className="fas fa-shopping-cart"></i> My Courses
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link
-                                            className="dropdown-item"
-                                            to={`/instructor/create-course/`}
-                                        >
-                                            <i className="fas fa-plus"></i> Create Course
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link className="dropdown-item" to={`/instructor/reviews/`}>
-                                            <i className="fas fa-star"></i> Reviews{" "}
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link
-                                            className="dropdown-item"
-                                            to={`/instructor/question-answer/`}
-                                        >
-                                            <i className="fas fa-envelope"></i> Q/A{" "}
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link
-                                            className="dropdown-item"
-                                            to={`/instructor/students/`}
-                                        >
-                                            <i className="fas fa-users"></i> Students{" "}
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link className="dropdown-item" to={`/instructor/earning/`}>
-                                            <i className="fas fa-dollar-sign"></i> Earning{" "}
-                                        </Link>
-                                    </li>
-=======
-                            <li className="nav-item">
-                                <Link className="nav-link" to="/pages/contact-us/">
-                                    {" "}
-                                    <i className="fas fa-phone"></i> Contact Us
-                                </Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to="/pages/about-us/">
-                                    <i className="fas fa-address-card"></i> About Us
-                                </Link>
-                            </li>
-                            {userRole === "instructor" ? (
-                                <li className="nav-item dropdown">
-                                    <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i className="fas fa-chalkboard-user"></i> Instructor
-                                    </a>
-                                    <ul className="dropdown-menu">
-                                        <li><Link className="dropdown-item" to={`/instructor/dashboard/`}><i className="bi bi-grid-fill"></i> Dashboard</Link></li>
-                                        <li><Link className="dropdown-item" to={`/instructor/courses/`}><i className="fas fa-shopping-cart"></i> My Courses</Link></li>
-                                        <li><Link className="dropdown-item" to={`/instructor/create-course/`}><i className="fas fa-plus"></i> Create Course</Link></li>
-                                        <li><Link className="dropdown-item" to={`/instructor/reviews/`}><i className="fas fa-star"></i> Reviews</Link></li>
-                                        <li><Link className="dropdown-item" to={`/instructor/question-answer/`}><i className="fas fa-envelope"></i> Q/A</Link></li>
-                                        <li><Link className="dropdown-item" to={`/instructor/students/`}><i className="fas fa-users"></i> Students</Link></li>
-                                        <li><Link className="dropdown-item" to={`/instructor/earning/`}><i className="fas fa-dollar-sign"></i> Earning</Link></li>
-                                        <li><Link className="dropdown-item" to={`/instructor/profile/`}><i className="fas fa-gear"></i> Settings & Profile</Link></li>
-                                    </ul>
-                                </li>
-                            ) : (
-                                <li className="nav-item">
-                                    <Link className="nav-link" to="/teach-on-skillz/">
-                                        <i className="fas fa-chalkboard-user"></i> Teach on Skillz
-                                    </Link>
-                                </li>
-                            )}
->>>>>>> d9711c1717f7a8e56d01c2c8b77b2b935ba12204
-
                             <li className="nav-item dropdown">
                                 <a
                                     className="nav-link dropdown-toggle"
@@ -284,5 +187,6 @@ function BaseHeader() {
         </div>
     );
 }
+
 
 export default BaseHeader;

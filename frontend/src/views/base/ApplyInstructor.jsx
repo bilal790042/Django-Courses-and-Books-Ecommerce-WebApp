@@ -25,9 +25,12 @@ const CourseCreationForm = ({ userToken, courseId }) => {
 
     const checkApprovalStatus = async () => {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/v1/learning-modules/${courseId}/`, {
-                method: "GET",
-                headers: { Authorization: `Bearer ${userToken}` }
+            const response = await fetch("http://127.0.0.1:8000/api/v1/learning-modules/", {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${userToken}`, // ✅ Add this!
+            },
+            body: formdata,
             });
 
             if (!response.ok) throw new Error("Failed to fetch course status");
@@ -72,11 +75,12 @@ const CourseCreationForm = ({ userToken, courseId }) => {
         // Check if required fields are empty
         if (!formData.title || !formData.category || !formData.timeCommitment) {
             toast().fire({
-                icon: "error",
-                title: "Please fill in all required fields before submitting."
-            })
-
-
+                icon: "success",
+                title: "Your request has been submitted. Please wait for admin approval"
+              });
+              setIsSubmitted(true);
+              navigate("/instructor/dashboard/");
+              
             return;
         }
 

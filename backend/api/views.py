@@ -1443,8 +1443,10 @@ class PastSessionsAPIView(generics.ListAPIView):
 class LearningModuleCreateView(generics.CreateAPIView):
     queryset = LearningModule.objects.all()
     serializer_class = LearningModuleSerializer
+    permission_classes = [IsAuthenticated]
 
-# ✅ Admin Approval View
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class LearningModuleApprovalView(generics.UpdateAPIView):
