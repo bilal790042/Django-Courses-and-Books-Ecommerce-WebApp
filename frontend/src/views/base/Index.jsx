@@ -266,7 +266,7 @@ function Index() {
                                     {courses?.map((c, index) => (
                                         <div className="col" key={index}>
                                             {/* Card */}
-                                            <div className="card card-hover">
+                                            <div className="card card-hover uniform-card h-100">
                                                 <Link to={`/course-detail/${c.slug}/`}>
                                                     <img
                                                         src={c.image}
@@ -280,7 +280,7 @@ function Index() {
                                                     />
                                                 </Link>
                                                 {/* Card Body */}
-                                                <div className="card-body">
+                                                <div className="card-body ">
                                                     <div className="d-flex justify-content-between align-items-center mb-3">
                                                         <div>
                                                             <span className="badge bg-info">{c.level}</span>
@@ -317,7 +317,7 @@ function Index() {
                                                     </div>
                                                 </div>
                                                 {/* Card Footer */}
-                                                <div className="card-footer">
+                                                <div className="card-footer mt-auto">
                                                     <div className="row align-items-center g-0">
                                                         <div className="col">
                                                             <h5 className="mb-0">${c.price}</h5>
@@ -338,13 +338,18 @@ function Index() {
                                                             >
                                                                 <i className="fas fa-shopping-cart text-primary text-white" />
                                                             </button>
+                                                          
                                                             <Link
-                                                                to=""
+                                                                to="/cart"
                                                                 className="text-inherit text-decoration-none btn btn-primary"
-                                                            >
-                                                                Enroll Now{" "}
-                                                                <i className="fas fa-arrow-right text-primary align-middle me-2 text-white" />
+                                                                onClick={() => {
+                                                                    addToCart(c.id, userId, c.price, country, cartId);
+                                                                }}
+                                                                >
+                                                                Enroll Now <i className="fas fa-arrow-right text-white ms-2" />
                                                             </Link>
+
+
                                                         </div>
                                                     </div>
                                                 </div>
@@ -406,7 +411,7 @@ function Index() {
                         ) : (
                             books.map((book) => (
                                 <div key={book.id} className="col">
-                                    <div className="card card-hover">
+                                    <div className="card card-hover h-100">
                                         <Link to={`/books/books-detail/${book.id}/`}>
                                             <img
                                                 src={book.image} // Fetching Image from Backend
