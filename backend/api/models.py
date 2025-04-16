@@ -497,6 +497,8 @@ class MentoringSession(models.Model):
 # Teacher application 
 
 class LearningModule(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
     title = models.CharField(max_length=255)
     category = models.CharField(max_length=255)
     time_commitment = models.CharField(max_length=50)

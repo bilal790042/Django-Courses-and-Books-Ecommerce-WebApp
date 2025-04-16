@@ -145,7 +145,7 @@ function App() {
       <Route path="/books/books-detail/:id/" element={<BookDetail />} />
       {/* <Route path="/books/create/" element={<AddBook />} /> */}
 
-
+      <Route path="/become-instructor/" element={<ApplyInstructor />} />
 
     </Routes>
     

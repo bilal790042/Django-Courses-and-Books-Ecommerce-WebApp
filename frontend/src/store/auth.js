@@ -5,11 +5,14 @@ const useAuthStore = create((set, get) => ({
   allUserData: null,
   loading: false,
 
+  // 🔁 Return all relevant fields including teacher_id
   user: () => {
     const data = get().allUserData;
     return {
       user_id: data?.user_id || null,
       username: data?.username || null,
+      teacher_id: data?.teacher_id || null,  // ✅ Add this line
+      
     };
   },
 

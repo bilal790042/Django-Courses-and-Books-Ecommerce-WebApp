@@ -341,10 +341,12 @@ class StudentSummerySerializer(serializers.Serializer):
 
 # Teacher application 
 class LearningModuleSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source = "user.id")
     class Meta:
         model = LearningModule
         fields = '__all__'
         read_only_fields = ['is_approved', 'feedback']  # Users can't set approval statusy
+
 
 class LearningModuleAdminSerializer(serializers.ModelSerializer):
     class Meta:

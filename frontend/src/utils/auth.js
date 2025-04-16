@@ -66,25 +66,28 @@ export const logout = () => {
 // Token refresh logic
 export const getRefreshedToken = async () => {
   const refresh_token = Cookies.get("refresh_token");
-  
-  console.log("Checking refresh token:", refresh_token); // <-- Add this line
-  
+
   if (!refresh_token) {
     console.error("No refresh token found.");
-    throw new Error("No refresh token.");
+    return null;
   }
 
   try {
-    const response = await axios.post(`user/token/refresh/`, {
-      refresh: refresh_token,
-    });
-    console.log("Token refresh response:", response?.data);
-    return response?.data;
+    const response = await axios.post("user/token/refresh/", { refresh: refresh_token });
+    if (response.data.access && response.data.refresh) {
+      console.log("Token refreshed successfully.");
+      setAuthUser(response.data.access, response.data.refresh);
+      return response.data.access; // Return new token
+    } else {
+      console.warn("Refresh token failed.");
+      return null;
+    }
   } catch (error) {
     console.error("Error refreshing token:", error);
-    throw error;
+    return null;
   }
 };
+
 
 // Set authenticated user and cookies
 export const setAuthUser = (access_token, refresh_token) => {
@@ -151,12 +154,13 @@ export const setUser = async () => {
 // JWT token expiration check
 export const isAccessTokenExpired = (access_token) => {
   try {
+    if (!access_token) return true; // Treat as expired if missing
     const decodedToken = jwt_decode(access_token);
-    const expired = decodedToken?.exp < Date.now() / 1000;
+    const expired = decodedToken?.exp < Math.floor(Date.now() / 1000); 
     console.log("Token expiration status:", expired);
     return expired;
   } catch (error) {
     console.error("Error decoding token:", error);
-    return true; // Treat as expired if decoding fails
+    return true; // If decoding fails, treat as expired
   }
 };

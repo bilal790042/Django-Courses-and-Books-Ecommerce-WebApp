@@ -3,6 +3,7 @@ import BaseHeader from '../partials/BaseHeader'
 import BaseFooter from '../partials/BaseFooter'
 import toast from "../plugin/toast";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie"; // ✅ Add this!
 
 const CourseCreationForm = ({ userToken, courseId }) => {
     const navigate = useNavigate();
@@ -14,23 +15,31 @@ const CourseCreationForm = ({ userToken, courseId }) => {
     const [formData, setFormData] = useState({
         title: "",
         category: "",
-        learningObjectives: ["", "", "", ""],
-        prerequisites: [""],
-        intendedLearners: [""],
+        learningObjectives: [""],  // ✅ Initialize as array
+        intendedLearners: [""],    // ✅ Initialize as array
+        prerequisites: [""],       // ✅ Initialize as array
         timeCommitment: "",
     });
+
     useEffect(() => {
         checkApprovalStatus(); // Check approval status when component loads
     }, []);
+    
+    
+    console.log("Course ID:", courseId); // Debugging check
 
     const checkApprovalStatus = async () => {
+        if (!courseId) {
+            console.error("Error: courseId is missing or undefined.");
+            return;
+        }
+
         try {
-            const response = await fetch("http://127.0.0.1:8000/api/v1/learning-modules/", {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${userToken}`, // ✅ Add this!
-            },
-            body: formdata,
+            const response = await fetch(`http://127.0.0.1:8000/api/v1/learning-modules/${courseId}/approval-status/`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${userToken}`,
+                },
             });
 
             if (!response.ok) throw new Error("Failed to fetch course status");
@@ -38,11 +47,6 @@ const CourseCreationForm = ({ userToken, courseId }) => {
             const data = await response.json();
             setIsApproved(data.is_approved);
             setFeedback(data.feedback);
-
-            if (data.is_approved) {
-                toast().fire({ icon: "success", title: "✅ Your course has been approved!" });
-                navigate("/instructor/dashboard/");
-            }
         } catch (error) {
             console.error("Error checking approval status:", error);
         }
@@ -67,62 +71,62 @@ const CourseCreationForm = ({ userToken, courseId }) => {
         setStep(step - 1);
     };
 
-
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        // Check if required fields are empty
-        if (!formData.title || !formData.category || !formData.timeCommitment) {
-            toast().fire({
-                icon: "success",
-                title: "Your request has been submitted. Please wait for admin approval"
-              });
-              setIsSubmitted(true);
-              navigate("/instructor/dashboard/");
-              
+    
+        let userToken = Cookies.get("access_token");
+    
+        if (!userToken) {
+            console.error("Authentication failed: No valid token.");
             return;
         }
-
-        const formdata = new FormData();
-        formdata.append("title", formData.title);
-        formdata.append("category", formData.category);
-        formdata.append("time_commitment", formData.timeCommitment);
-        formdata.append("learning_objectives", JSON.stringify(formData.learningObjectives));
-        formdata.append("intended_learners", JSON.stringify(formData.intendedLearners));
-        formdata.append("prerequisites", JSON.stringify(formData.prerequisites));
-
+    
+        console.log("Using Token:", userToken);
+    
+        // ✅ Check if values exist before converting to JSON
+        if (!formData.learningObjectives || !formData.intendedLearners || !formData.prerequisites) {
+            console.error("Error: Missing required fields.");
+            return;
+        }
+    
+        console.log("learning_objectives (JSON):", JSON.stringify(formData.learningObjectives));
+        console.log("intended_learners (JSON):", JSON.stringify(formData.intendedLearners));
+        console.log("prerequisites (JSON):", JSON.stringify(formData.prerequisites));
+    
+        const formattedData = new FormData();
+        formattedData.append("title", formData.title);
+        formattedData.append("category", formData.category);
+        formattedData.append("time_commitment", formData.timeCommitment);
+        
+        // ✅ Convert arrays to JSON before appending
+        formattedData.append("learning_objectives", JSON.stringify(formData.learningObjectives));
+        formattedData.append("intended_learners", JSON.stringify(formData.intendedLearners));
+        formattedData.append("prerequisites", JSON.stringify(formData.prerequisites));
+    
         try {
             const response = await fetch("http://127.0.0.1:8000/api/v1/learning-modules/", {
                 method: "POST",
-                body: formdata,
+                headers: {
+                    Authorization: `Bearer ${userToken}`,
+                },
+                body: formattedData,
             });
-
+    
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(`Error ${response.status}: ${errorText}`);
             }
+    
             toast().fire({
                 icon: "success",
-                title: "Your request has been submitted. Please wait for admin approval"
-            })
+                title: "✅ Your request has been submitted. Please wait for admin approval",
+            });
+    
             navigate("/instructor/dashboard/");
-
-
         } catch (error) {
             console.error("Error submitting form:", error);
-            alert(`Failed to submit the course. ${error.message}`);
         }
     };
-
-
-
-
-
-
-
-
-
 
     return (
         <>
@@ -157,7 +161,6 @@ const CourseCreationForm = ({ userToken, courseId }) => {
                                             </div>
                                         </>
                                     )}
-
                                     {step === 2 && (
                                         <>
                                             <h2 className="text-primary text-center">What category best fits your knowledge?</h2>
@@ -172,8 +175,6 @@ const CourseCreationForm = ({ userToken, courseId }) => {
                                                 <option>Health & Fitness</option>
                                                 <option>Photography</option>
                                                 <option>Music</option>
-
-
                                             </select>
                                             <div className="d-flex justify-content-between mt-3">
                                                 <button className="btn btn-primary" onClick={prevStep}>Previous</button>
@@ -181,7 +182,6 @@ const CourseCreationForm = ({ userToken, courseId }) => {
                                             </div>
                                         </>
                                     )}
-
                                     {step === 3 && (
                                         <>
                                             <h2 className="text-primary text-center">Intended Learners</h2>
@@ -193,9 +193,6 @@ const CourseCreationForm = ({ userToken, courseId }) => {
                                                     className="form-control mb-2"
                                                     required
                                                     value={learner}  // Instead of value={learner.intendedLearners}
-
-
-
                                                     placeholder={`Learner ${index + 1}`}
                                                     onChange={(e) => handleArrayChange(e, index, "intendedLearners")}
                                                 />
@@ -206,7 +203,6 @@ const CourseCreationForm = ({ userToken, courseId }) => {
                                             </div>
                                         </>
                                     )}
-
                                     {step === 4 && (
                                         <>
                                             <h2 className="text-primary text-center">What will students learn in your course?</h2>
@@ -228,7 +224,6 @@ const CourseCreationForm = ({ userToken, courseId }) => {
                                             </div>
                                         </>
                                     )}
-
                                     {step === 5 && (
                                         <>
                                             <h2 className="text-primary text-center">What are the prerequisites for your course?</h2>
@@ -251,7 +246,6 @@ const CourseCreationForm = ({ userToken, courseId }) => {
                                             </div>
                                         </>
                                     )}
-
                                     {step === 6 && (
                                         <>
                                             <h2 className="text-primary text-center">How much time can you spend per week?</h2>
@@ -262,7 +256,6 @@ const CourseCreationForm = ({ userToken, courseId }) => {
                                                 <option>2-4 hours</option>
                                                 <option>5+ hours</option>
                                                 <option>Not sure yet</option>
-
                                             </select>
                                             <div className="d-flex justify-content-between mt-3">
                                                 <button className="btn btn-primary" onClick={prevStep}>Previous</button>
@@ -270,7 +263,6 @@ const CourseCreationForm = ({ userToken, courseId }) => {
                                             </div>
                                         </>
                                     )}
-
                                     {step === 7 && (
                                         <>
                                             <h2 className="text-primary text-center">Submit for Review</h2>
@@ -291,5 +283,4 @@ const CourseCreationForm = ({ userToken, courseId }) => {
         </>
     );
 };
-
 export default CourseCreationForm;

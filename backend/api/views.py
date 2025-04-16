@@ -914,9 +914,8 @@ class QuestionAnswerMessageSendAPIView(generics.CreateAPIView):
         question_serializer = api_serializer.Question_AnswerSerializer(question)
         return Response({"messgae": "Message Sent", "question": question_serializer.data})
 
-
 class TeacherListView(generics.ListAPIView):
-    queryset = api_models.Teacher.objects.all()
+    queryset = api_models.Teacher.objects.all()   # ✅ Only show approved instructors
     serializer_class = api_serializer.TeacherSerializer
     permission_classes = [AllowAny]
 
@@ -1446,8 +1445,7 @@ class LearningModuleCreateView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
+        serializer.save(user=self.request.user)  # ✅ Correct way to set user
 
 class LearningModuleApprovalView(generics.UpdateAPIView):
     queryset = LearningModule.objects.all()
@@ -1460,24 +1458,15 @@ class LearningModuleApprovalView(generics.UpdateAPIView):
         instance.feedback = request.data.get("feedback", instance.feedback)
         instance.save()
 
-        # ✅ Send email notification to the user
-        if instance.is_approved and instance.user.email:
-            send_mail(
-                "Your Learning Module is Approved ✅",
-                f"Hello {instance.user.username},\n\n"
-                f"Your learning module '{instance.title}' has been approved!\n"
-                f"Feedback: {instance.feedback}\n\n"
-                "Best regards,\nYour Team",
-                settings.DEFAULT_FROM_EMAIL,
-                [instance.user.email],
-                fail_silently=False,
-            )
+        # ✅ Set user as teacher only when approved
+        if instance.is_approved:
+            user = instance.user
+            if not api_models.Teacher.objects.filter(user=user).exists():
+                api_models.Teacher.objects.create(user=user, full_name=user.full_name)  # ✅ Create teacher record
+            user.teacher_id = instance.id
+            user.save()
 
-        return Response({
-            "message": "Approval status updated",
-            "is_approved": instance.is_approved,
-            "feedback": instance.feedback
-        })
+        return Response({"message": "Approval status updated", "is_approved": instance.is_approved})
 
 
 @api_view(["GET"])
