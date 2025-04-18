@@ -97,8 +97,8 @@ function Earning() {
                                             <div className="border p-3 rounded shadow-sm">
                                                 <i className="fe fe-shopping-cart icon-shape icon-sm rounded-3 bg-light-success text-dark-success mt-2" />
                                                 <h3 className="display-4 fw-bold mt-3 mb-0">
-                                                    ${(stats[0]?.total_revenue ?? 0).toFixed(2)}
-                                                </h3>
+                                                ${(stats?.total_revenue ?? 0).toFixed(2)}
+                                            </h3>
 
                                                 {earning.length > 0 && earning.map((e, index) => (
                                                     <span key={index}>Monthly Earnings
@@ -126,8 +126,8 @@ function Earning() {
                                             <div className="border p-3 rounded shadow-sm">
                                                 <i className="fe fe-shopping-cart icon-shape icon-sm rounded-3 bg-light-success text-dark-success mt-2" />
                                                 <h3 className="display-4 fw-bold mt-3 mb-0">
-                                                    ${(stats[0]?.monthly_revenue ?? 0).toFixed(2)}
-                                                </h3>
+                                                ${(stats?.monthly_revenue ?? 0).toFixed(2)}
+                                            </h3>
 
                                                 <span>Your Revenue</span>
                                             </div>

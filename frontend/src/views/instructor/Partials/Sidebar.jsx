@@ -35,6 +35,7 @@ function Sidebar() {
                                 <Link className="nav-link " to={`/instructor/courses/`}>
                                     {" "}
                                     <i className="fas fa-shopping-cart me-2"></i>My Courses
+                                    
                                 </Link>
                             </li>
                             <li className="nav-item">
